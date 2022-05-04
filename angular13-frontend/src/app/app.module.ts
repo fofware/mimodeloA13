@@ -19,6 +19,7 @@ import { TopMenuComponent } from './components/top-menu/top-menu.component';
 import { ApiInterceptor } from './interceptors/api.interceptor';
 import { NoPageComponent } from './components/no-page/no-page.component';
 import { HtmldataComponent } from './components/htmldata/htmldata.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,8 @@ import { HtmldataComponent } from './components/htmldata/htmldata.component';
     AppRoutingModule,
     NgbModule,
     BrowserAnimationsModule,
+    FormsModule,
+    ReactiveFormsModule,
     NgxSpinnerModule,
     SocketIoModule,
     HttpClientModule,

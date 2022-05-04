@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, retry, throwError } from 'rxjs';
+import { catchError, Observable, Observer, retry, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 const ORI_API = environment.API_URL
@@ -19,6 +19,10 @@ export class ApiService {
   //  return this.http.get(`${ORI_API}/${fileName}`);
   //}
 
+  get(fileName:string, data?:any) {
+    console.log("service",data)
+    return this.http.get(`${ORI_API}${fileName}`, {params: data});
+  }
   leer(fileName:string) {
     return this.http.get(`${ORI_API}${fileName}`).pipe(retry(1), catchError(this.processError));
   }

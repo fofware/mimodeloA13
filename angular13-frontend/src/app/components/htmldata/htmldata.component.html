@@ -1,7 +1,11 @@
 <p>htmldata works!</p>
+<input type="search" id="busca" aria-label="Search" class="form-control mr-sm-2" placeholder="Buscar por Nombre"
+  name="searchItem" #searchInput [(ngModel)]="searchItem">
+
 <table>
   <tr *ngFor="let item of data">
     <td>{{item.fullName}} </td>
-    <td>{{item.calc_precio}} </td>
+    <td width="40px" align="right">{{item.stock}}</td>
+    <td width="80px" align="right">{{item.showPrecio}}</td>
   </tr>
 </table>

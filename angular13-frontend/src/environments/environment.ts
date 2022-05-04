@@ -8,9 +8,14 @@ export const environment = {
   AUTH_URL: 'http://192.168.100.150:4444',
   SKT1: {
     ENABLE: false,
-    URL: 'http://192.168.100.150:4444',
+    URL: 'https://api.fofware.com.ar',
     OPTIONS: {}
   },
+  //SKT1: {
+  //  ENABLE: false,
+  //  URL: 'http://192.168.100.150:4444',
+  //  OPTIONS: {}
+  //},
 };
 
 /*

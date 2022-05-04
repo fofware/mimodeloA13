@@ -24,6 +24,12 @@ export class TestdataComponent implements OnInit {
         this.datos.push(element)
       }
     })
+    this.socket.leer('server:mp:ipn', (data:any):void =>{
+      console.log(data);
+    })
+    this.socket.leer('server:mp:webhooks', (data:any):void =>{
+      console.log(data);
+    })
   }
 
 }

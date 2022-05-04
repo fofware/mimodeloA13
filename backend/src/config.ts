@@ -15,4 +15,18 @@ export default {
   }
   ,public: process.env.PUBLIC_HTML
   ,app_port: process.env.APP_PORT
+  ,mp:{
+    mode: process.env.mode || 'prod',
+    userID: process.env.MP_USER_ID,
+    clientID: process.env.MP_CLIENTE_ID,
+    clientSecret: process.env.MP_CLIENTE_SECRET,
+    prod:{
+      publicKey: process.env.MPP_PUBLIC_KEY,
+      accessTocken: process.env.MPP_ACCESS_TOCKEN,
+    },
+    dev:{
+      publicKey: process.env.MPD_PUBLIC_KEY,
+      accessTocken: process.env.MPD_ACCESS_TOCKEN,
+    }
+  }
 }

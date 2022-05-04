@@ -1,75 +1,54 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <div class="container-fluid">
-    <div>
-      <img width="40" alt="Firulais Logo" src="favicon.ico" />
-
-      <a class="navbar-brand" routerLink="/" (click)='isMenuCollapsed = true'>Firulais</a>
-      <a class="navbar-brand" href="https://wa.me/+5493624683656" (click)='isMenuCollapsed = true'> <i class="fab fa-whatsapp"></i> +54 9 (362) 468-3656 </a>
-
-    </div>
-    <button
-      class="navbar-toggler"
-      type="button"
-      (click)='isMenuCollapsed = !isMenuCollapsed'
-      >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/home"  routerLinkActive="active" (click)='isMenuCollapsed = true'>Inicio</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/socketdata" routerLinkActive="active" (click)='isMenuCollapsed = true'>Ws:Data</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/htmldata" routerLinkActive="active" (click)='isMenuCollapsed = true'>Http:Data</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/users" routerLinkActive="active" (click)='isMenuCollapsed = true'>Users</a>
-        </li>
-        <!--li class="nav-item">
-          <a class="nav-link" routerLink="/reventalist" routerLinkActive="active" (click)='isMenuCollapsed = true'>Revendedores</a>
-        </li-->
-        <!--li class="nav-item">
-          <a class="nav-link" routerLink="/articuloslist" routerLinkActive="active" (click)='isMenuCollapsed = true'>Artículos</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/productlist" routerLinkActive="active" (click)='isMenuCollapsed = true'>Productos</a>
-        </li-->
-        <li class="nav-item">
-          <ng-container *ngIf="user.exp">
-            <a class="nav-link" routerLink="/private/menu" routerLinkActive="active" (click)='isMenuCollapsed = true'><i class="fa fa-th" aria-hidden="true"></i> &nbsp; Más Aplicaciones</a>
-          </ng-container>
-        </li>
-      </ul>
-    </div>
-    <div class="float-end">
-      <form class="d-flex">
-        <ul class="navbar-nav mt-auto">
-          <ng-container *ngIf="!user.exp; else showLogout">
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/auth/signin" routerLinkActive="active" (click)='isMenuCollapsed = true'>Ingresar</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/auth/signup" routerLinkActive="active" (click)='isMenuCollapsed = true'>Registrarse</a>
-            </li>
-          </ng-container>
-          <ng-template #showLogout >
-            <li ngbDropdown class="nav-item">
-              <a href (click)="false" class="nav-link" ngbDropdownToggle>{{user.nickname}}</a>
-              <div ngbDropdownMenu>
-                <button ngbDropdownItem (click)="isMenuCollapsed = true;authService.profile()">Perfil</button>
-                <button ngbDropdownItem>Another action</button>
-                <button ngbDropdownItem>Something else here</button>
-                <div class="dropdown-divider"></div>
-                <button ngbDropdownItem (click)="isMenuCollapsed = true;authService.logout()">Cerrar Sesión</button>
-              </div>
-            </li>
-          </ng-template>
+<div class="container-fluid navbar-dark bg-primary">
+  <div class="float-end d-flex align-content-end flex-column h-100" style="color: white;">
+    <img class="align-self-center" width="32px" height="32px" src="{{user.image}}" />
+    <div class="align-self-center">{{user.nickname}}</div>
+  </div>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <div>
+        <img width="32" alt="Brand Logo" src="favicon.ico" />
+        <a class="navbar-brand" routerLink="/" (click)='isMenuCollapsed = true'>Brand</a>
+        <a class="navbar-brand" href="https://wa.me/+5493624683656" (click)='isMenuCollapsed = true'> <i class="fab fa-whatsapp"></i> +54 9 (362) 468-3656 </a>
+      </div>
+      <div class="d-flex">
+        <button
+          class="navbar-toggler align-self-center"
+          type="button"
+          (click)='isMenuCollapsed = !isMenuCollapsed'
+          >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+      <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/home"  routerLinkActive="active" (click)='isMenuCollapsed = true'><i class="fas fa-home-lg fa-lg"></i></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/socketdata" routerLinkActive="active" (click)='isMenuCollapsed = true'>Ws:Data</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/htmldata" routerLinkActive="active" (click)='isMenuCollapsed = true'>Http:Data</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/users" routerLinkActive="active" (click)='isMenuCollapsed = true'>Users</a>
+          </li>
+          <!--li class="nav-item">
+            <a class="nav-link" routerLink="/reventalist" routerLinkActive="active" (click)='isMenuCollapsed = true'>Revendedores</a>
+          </li-->
+          <!--li class="nav-item">
+            <a class="nav-link" routerLink="/articuloslist" routerLinkActive="active" (click)='isMenuCollapsed = true'>Artículos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/productlist" routerLinkActive="active" (click)='isMenuCollapsed = true'>Productos</a>
+          </li-->
+          <li class="nav-item">
+            <ng-container *ngIf="user.exp">
+              <a class="nav-link" routerLink="/private/menu" routerLinkActive="active" (click)='isMenuCollapsed = true'><i class="fa fa-th" aria-hidden="true"></i> &nbsp; Más Aplicaciones</a>
+            </ng-container>
+          </li>
         </ul>
-      </form>
-
+      </div>
     </div>
+  </nav>
 </div>
-</nav>

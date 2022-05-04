@@ -14,5 +14,5 @@ const io = new WebSocketServer( httpServer,{
     origin: "*",
   }
 } );
+app.set('sio',io)
 sockets(io);
-

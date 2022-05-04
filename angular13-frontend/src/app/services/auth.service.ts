@@ -21,9 +21,15 @@ export class AuthService {
       const jwtToken = JSON.parse(decodeURIComponent(atob(token.split('.')[1]).split('').map(function(c) {
           return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join('')));
-      //const jwtToken = JSON.parse(atob(token.split('.')[1]));
-      //console.log(jwtToken);
-      return jwtToken;
+      const d = new Date().getTime();
+      //console.log ("expired", d <= jwtToken.exp);
+      //console.log(d-jwtToken.exp);
+      //console.log("tocken",jwtToken);
+      //console.log("Now",d);
+      if (jwtToken.exp <= d){
+        return jwtToken;
+      }
+      localStorage.removeItem('token');
     }
     return {
       nickname: 'Anónimo',
@@ -37,11 +43,11 @@ export class AuthService {
     return this.httpClient.post(this.URL + '/signin', user);
   }
 
-  signUp( user:any ): Observable<object>  {
+  signUp( user: string ): Observable<object>  {
     return this.httpClient.post(this.URL + '/signup', user);
   }
 
-  getToken(): string | null {
+  getToken(): string | null{
     const token = localStorage.getItem('token');
     return token;
   }
@@ -55,7 +61,9 @@ export class AuthService {
 
   async emailFind(email:string): Promise<[string]> {
     console.log(email);
-    const rpta:any = await this.httpClient.get(`${this.URL}/emailcheck/${email}`).toPromise();
+    const rpta:any = await this.httpClient.get(`${this.URL}/emailcheck/${email}`).subscribe( (res) => {
+      return res;
+    });
     console.log(rpta);
     return rpta
   }
@@ -77,14 +85,14 @@ export class AuthService {
     this.router.navigate([`auth/signin`]);
   }
 
-  getUser(): any {
-    const token = localStorage.getItem('token');
-    if (token && token !== null ) {
-      const jwtToken = JSON.parse(atob(token.split('.')[1]));
-      return jwtToken
-    }
-    return false;
-  }
+  //getUser(): any {
+  //  const token = localStorage.getItem('token');
+  //  if (token && token !== null ) {
+  //    const jwtToken = JSON.parse(atob(token.split('.')[1]));
+  //    return jwtToken
+  //  }
+  //  return false;
+  //}
 /*
   public getUserRoless(): Promise<string[]> {
     return new Promise((resolve, reject) => {
