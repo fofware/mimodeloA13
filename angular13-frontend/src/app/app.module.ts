@@ -20,6 +20,8 @@ import { ApiInterceptor } from './interceptors/api.interceptor';
 import { NoPageComponent } from './components/no-page/no-page.component';
 import { HtmldataComponent } from './components/htmldata/htmldata.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SigninBtnComponent } from './components/signin-btn/signin-btn.component';
+import { NotifyBtnComponent } from './components/notify-btn/notify-btn.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     HomeComponent,
     TopMenuComponent,
     NoPageComponent,
-    HtmldataComponent
+    HtmldataComponent,
+    SigninBtnComponent,
+    NotifyBtnComponent
   ],
   imports: [
     BrowserModule,

@@ -39,6 +39,31 @@ export class AuthService {
     };
   }
 
+  decodeTocken(token:any){
+    if (token && token !== null ) {
+      const jwtToken = JSON.parse(decodeURIComponent(atob(token.split('.')[1]).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join('')));
+      const d = new Date().getTime()/1000;
+      console.log ("expired", d >= jwtToken.exp);
+      console.log(d)
+      console.log(jwtToken.exp)
+      console.log(jwtToken.exp-d);
+      //console.log("tocken",jwtToken);
+      console.log("Now",d);
+      if (jwtToken.exp >= d){
+        return jwtToken;
+      }
+      localStorage.removeItem('token');
+    }
+    return {
+      nickname: 'Anónimo',
+      image: '/assets/images/defuser.png',
+      iat: 0,
+      exp: 0
+    };
+
+  }
   signIn( user: any ): Observable<object> {
     return this.httpClient.post(this.URL + '/signin', user);
   }

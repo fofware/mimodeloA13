@@ -1,8 +1,6 @@
 <div class="container-fluid navbar-dark bg-primary">
-  <div class="float-end d-flex align-content-end flex-column h-100" style="color: white;">
-    <img class="align-self-center" width="32px" height="32px" src="{{user.image}}" />
-    <div class="align-self-center">{{user.nickname}}</div>
-  </div>
+  <app-notify-btn></app-notify-btn>  
+  <app-signin-btn></app-signin-btn>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
       <div>
@@ -42,11 +40,11 @@
           <li class="nav-item">
             <a class="nav-link" routerLink="/productlist" routerLinkActive="active" (click)='isMenuCollapsed = true'>Productos</a>
           </li-->
-          <li class="nav-item">
+          <!--li class="nav-item">
             <ng-container *ngIf="user.exp">
               <a class="nav-link" routerLink="/private/menu" routerLinkActive="active" (click)='isMenuCollapsed = true'><i class="fa fa-th" aria-hidden="true"></i> &nbsp; Más Aplicaciones</a>
             </ng-container>
-          </li>
+          </li-->
         </ul>
       </div>
     </div>

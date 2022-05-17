@@ -4,11 +4,11 @@
 
 export const environment = {
   production: false,
-  API_URL: 'http://192.168.100.150:4444',
-  AUTH_URL: 'http://192.168.100.150:4444',
+  API_URL: 'http://194.113.75.156:4444',
+  AUTH_URL: 'http://194.113.75.156:4444',
   SKT1: {
     ENABLE: false,
-    URL: 'https://api.fofware.com.ar',
+    URL: 'https://194.113.75.156:4444',
     OPTIONS: {}
   },
   //SKT1: {

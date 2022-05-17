@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -8,17 +7,13 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./top-menu.component.css']
 })
 export class TopMenuComponent implements OnInit {
-  user: any;
-  
-  authorized: boolean = false;
-  
+
   public isMenuCollapsed = true;
 
-  constructor(public authService: AuthService ) { }
+  constructor( ) { }
 
   ngOnInit(): void {
-    this.user = this.authService.user
-    console.log(this.user)
+
   }
 
 }

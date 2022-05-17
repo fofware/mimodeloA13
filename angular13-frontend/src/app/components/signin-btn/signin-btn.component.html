@@ -1,0 +1,31 @@
+<div class="h-100">
+
+<div ngbDropdown class="float-end h-100" style="color: #ededed;">
+  <div class="d-flex align-content-end flex-column mx-4" id="dropdownForm1" ngbDropdownToggle>
+    <!--img class="align-self-center" width="32px" height="32px" src="{{user.image}}" /-->
+    <div class="align-self-center">{{user.nickname}}</div>
+  </div>
+  <div ngbDropdownMenu aria-labelledby="dropdownForm1">
+    <form class="px-4 py-3">
+      <div class="mb-3">
+        <label for="exampleDropdownFormEmail1">Email address</label>
+        <input type="email" class="form-control" id="exampleDropdownFormEmail1" placeholder="email@example.com" autocomplete="username">
+      </div>
+      <div class="mb-3">
+        <label for="exampleDropdownFormPassword1">Password</label>
+        <input type="password" class="form-control" id="exampleDropdownFormPassword1" placeholder="Password" autocomplete="current-password">
+      </div>
+      <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="dropdownCheck">
+        <label class="form-check-label" for="dropdownCheck">
+          Remember me
+        </label>
+      </div>
+      <button type="submit" class="btn btn-primary">Sign in</button>
+    </form>
+    <div class="dropdown-divider"></div>
+    <button type="button" ngbDropdownItem>New around here? Sign up</button>
+    <button type="button" ngbDropdownItem>Forgot password?</button>
+  </div>
+</div>
+</div>
