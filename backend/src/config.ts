@@ -22,11 +22,11 @@ export default {
     clientSecret: process.env.MP_CLIENTE_SECRET,
     prod:{
       publicKey: process.env.MPP_PUBLIC_KEY,
-      accessTocken: process.env.MPP_ACCESS_TOCKEN,
+      accessToken: process.env.MPP_ACCESS_TOKEN,
     },
     dev:{
       publicKey: process.env.MPD_PUBLIC_KEY,
-      accessTocken: process.env.MPD_ACCESS_TOCKEN,
+      accessToken: process.env.MPD_ACCESS_TOKEN,
     }
   }
 }

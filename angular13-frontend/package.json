@@ -25,6 +25,7 @@
     "ngx-socket-io": "^4.2.0",
     "ngx-spinner": "^13.1.1",
     "ngx-toastr": "^14.2.3",
+    "npm": "^8.10.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

@@ -30,7 +30,7 @@ export class devControler {
       port: 443,
       headers: {
         'Accept': 'application/json',
-        'Authorization': `Bearer ${config.mp[config.mp.mode].accessTocken}`,
+        'Authorization': `Bearer ${config.mp[config.mp.mode].accessToken}`,
         'Content-Type': 'application/json; charset=UTF-8'
       }
     };
@@ -54,7 +54,7 @@ export class devControler {
       port: 443,
       headers: {
         'Accept': 'application/json',
-        'Authorization': `Bearer ${config.mp[config.mp.mode].accessTocken}`,
+        'Authorization': `Bearer ${config.mp[config.mp.mode].accessToken}`,
         'Content-Type': 'application/json; charset=UTF-8'
       }
     };
@@ -85,7 +85,7 @@ export class devControler {
       port: 443,
       headers: {
         'Accept': 'application/json',
-        'Authorization': `Bearer ${config.mp[config.mp.mode].accessTocken}`,
+        'Authorization': `Bearer ${config.mp[config.mp.mode].accessToken}`,
         'Content-Type': 'application/json; charset=UTF-8'
       }
     };
@@ -109,7 +109,7 @@ export class devControler {
        port: 443,
        headers: {
          'Accept': 'application/json',
-         'Authorization': `Bearer ${config.mp[config.mp.mode].accessTocken}`,
+         'Authorization': `Bearer ${config.mp[config.mp.mode].accessToken}`,
          'Content-Type': 'application/json; charset=UTF-8'
        }
      };
@@ -143,7 +143,7 @@ export class devControler {
       port: 443,
       headers: {
         'Accept': 'application/json',
-        'Authorization': `Bearer ${config.mp[config.mp.mode].accessTocken}`,
+        'Authorization': `Bearer ${config.mp[config.mp.mode].accessToken}`,
         'Content-Type': 'application/json; charset=UTF-8'
       }
     };
@@ -181,7 +181,7 @@ export class devControler {
       port: 443,
       headers: {
         'Accept': 'application/json',
-        'Authorization': `Bearer ${config.mp[config.mp.mode].accessTocken}`,
+        'Authorization': `Bearer ${config.mp[config.mp.mode].accessToken}`,
         'Content-Type': 'application/json; charset=UTF-8'
       }
     };
@@ -207,7 +207,7 @@ export class devControler {
       port: 443,
       headers: {
         'Accept': 'application/json',
-        'Authorization': `Bearer ${config.mp[config.mp.mode].accessTocken}`,
+        'Authorization': `Bearer ${config.mp[config.mp.mode].accessToken}`,
         'Content-Type': 'application/json; charset=UTF-8'
       }
     };
@@ -248,7 +248,7 @@ export class devControler {
       port: 443,
       headers: {
         'Accept': 'application/json',
-        'Authorization': `Bearer ${config.mp[config.mp.mode].accessTocken}`,
+        'Authorization': `Bearer ${config.mp[config.mp.mode].accessToken}`,
         'Content-Type': 'application/json; charset=UTF-8'
       }
     };
