@@ -47,7 +47,7 @@ export class HtmldataComponent implements OnInit {
       this.searchData();
     })
     const params = {
-      limit: 50,
+      limit: 850,
       offset: this.offset,
       searchItem: this.searchItem
     };
@@ -91,5 +91,12 @@ export class HtmldataComponent implements OnInit {
     this.count = 0;
     this.data = [];
     this.setData();
+  }
+  grabar(){
+    for (let i = 0; i < this.data.length; i++) {
+      const e = this.data[i];
+      console.log(e);
+      
+    }
   }
 }

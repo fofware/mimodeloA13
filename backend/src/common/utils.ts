@@ -14,7 +14,7 @@ export function round(num: number, dec: number) {
 
   const strNumber = num.toFixed(dec);
   var n = strNumber.search(".");
-  strNumber.substr(n+2);
+  strNumber.substring(n+2);
   return Number(strNumber);
 }
 export const decimales:number = 2;
@@ -44,7 +44,7 @@ export function saniObject(element): any {
       if ( typeof(element[key]) === 'object'){
         element[key] = this.sanitize(element[key]);
       } else {
-        if (key.substr(0, 1) === '$') {
+        if (key.substring(0, 1) === '$') {
           element = new element[key];
         }
       }
@@ -53,4 +53,52 @@ export function saniObject(element): any {
     }
   }
   return element;
+}
+
+export function makeFilter(fldsString:any,params:any){
+  const filter = {};
+  for (let i = 0; i < fldsString.length; i++) {
+    const key = fldsString[i];
+    if (Object.prototype.hasOwnProperty.call(params, key)) {
+      filter[key] = new RegExp(params[key],'i');
+      const idx = fldsString.indexOf(key);
+      if( idx !== -1){
+        fldsString.splice ( idx, 1)
+      }
+    }
+  }
+  
+  if(params.searchItem.length){
+    let searchItem = params.searchItem ? params.searchItem.replace(/  /g, ' ') : '';
+    const searcharray: any[] = searchItem.trim().split(' ');
+  
+    if (searcharray.length > 0){
+      /*
+      for (let i = 0; i < searcharray.length; i++) {
+        extRegEx.push(new RegExp( searcharray[i], 'i' )); 
+      }
+      for (let i = 0; i < extFlds.length; i++) {
+        const fld = extFlds[i];
+        const o = {};
+        o[fld] = {'$in': extRegEx }
+        e.push(o)
+      }
+      Extra['$or'] = e;
+      */
+      const v = [];
+      const regStr = [];
+      for (let i = 0; i < searcharray.length; i++) {
+        const str = searcharray[i];
+        const v = [];
+        for (let n = 0; n < fldsString.length; n++) {
+          const fld = fldsString[n];
+          const o = {};
+          o[fld] = new RegExp( str, 'i' );
+          v.push(o);
+        }
+        console.log(v);
+      }
+    }
+  }
+  return filter;
 }

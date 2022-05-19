@@ -1,40 +1,72 @@
 import { Schema, model, Document } from "mongoose";
 
 export interface IProductoName extends Document {
-  fullName: string;
-  contiene?: number;
-  unidad?: string;
-  pVenta?: boolean;
-  pCompra?: boolean;
-  ean?: string;
-  plu?: number;
-  image?: string;
-  tags?: string;
+  fullName: String;
+  fabricante?: String;
+  marca?: String;
+  rubro?: String;
+  linea?: String;
+  especie?: String;
+  edad?: String;
+  raza?: String;
+  contiene?: Number;
+  unidad?: String;
+  pVenta?: Boolean;
+  pCompra?: Boolean;
+  ean?: String;
+  plu?: Number;
+  image?: String;
+  tags?: String;
+  lista?: Number;
+  calc_precio?: Number;
+  showPrecio?: Number;
+  precio?: Number;
+  precio_desde?: Date;
+  precio_hasta?: Date;
+  oferta: Boolean;
+  reventa?: Number;
+  reventa1?: Number;
+  reventa2?: Number;
+  stock?: Number;
+  precioref?: Number;
 }
 
 const productoNameSchema = new Schema({
   _id: { type: Schema.Types.ObjectId, ref: "productos", default: null }
   , fullName: { type: Schema.Types.String, default: ''}
   , fabricante: { type: String, trim: true, default: '', index: true } // Nestle
-  , marca: { type: String, trim: true, default: '', index: true }      // Purina Dog Chow / Purina Cat Chow
-  , rubro: { type: String, trim: true, default: '', index: true }      // Alimento Seco / Alimento Húmedo
-  , linea: { type: String, trim: true, default: '', index: true }      // ???????
-  , especie: { type: String, trim: true, default: '', index: true }   // Gato
-  , edad: { type: String, trim: true, default: '', index: true }
-  , raza: { type: String, trim: true, default: '', index: true }
-  , contiene: { type: Number, default: 0, index: true }
+  , marca: { type: Schema.Types.String, trim: true, default: '', index: true }      // Purina Dog Chow / Purina Cat Chow
+  , rubro: { type: Schema.Types.String, trim: true, default: '', index: true }      // Alimento Seco / Alimento Húmedo
+  , linea: { type: Schema.Types.String, trim: true, default: '', index: true }      // ???????
+  , especie: { type: Schema.Types.String, trim: true, default: '', index: true }   // Gato
+  , edad: { type: Schema.Types.String, trim: true, default: '', index: true }
+  , raza: { type: Schema.Types.String, trim: true, default: '', index: true }
+  , contiene: { type: Schema.Types.Number, default: 0, index: true }
   , unidad: { type: String, trim: true, default: "" }
-  , pVenta: { type: Boolean, default: true, index: true }
-  , pCompra: { type: Boolean, default: true, index: true }
-  , ean: { type: String, trim: true, default: '', index: true }
-  , plu: { type: String, default: "", index: true }
-  , image: { type: String, trim: true, default: "" }
-  , tags: { ref: "tags", type: String, default: ''}
+  , pVenta: { type: Schema.Types.Boolean, default: true, index: true }
+  , pCompra: { type: Schema.Types.Boolean, default: true, index: true }
+  , ean: { type: Schema.Types.String, trim: true, default: '', index: true }
+  , plu: { type: Schema.Types.String, default: "", index: true }
+  , image: { type: Schema.Types.String, trim: true, default: "" }
+  , tags: { type: Schema.Types.String, default: '' }
+  , lista: { type: Schema.Types.Number, default: 0, index: true }
+  , calc_precio: { type: Schema.Types.Number, default: 0, index: true }
+  , showPrecio: { type: Schema.Types.Number, default: 0, index: true }
+  , precio: { type: Schema.Types.Number, default: 0, index: true }
+  , precio_desde: { type: Schema.Types.Date, default: null, index: true }
+  , precio_hasta: { type: Schema.Types.Date, default: null, index: true }
+  , oferta: { type: Schema.Types.Boolean, default: false, index: true }
+  , reventa: { type: Schema.Types.Number, default: 0, index: true }
+  , revent1: { type: Schema.Types.Number, default: 0, index: true }
+  , revent2: { type: Schema.Types.Number, default: 0, index: true }
+  , stock: { type: Schema.Types.Number, default: 0, index: true }
+  , precioref: { type: Schema.Types.Number, default: 0, index: true }
 },{
   timestamps: false,
 })
 
 
+/*
 productoNameSchema.index(
   { 
     fullName : "text",
@@ -54,6 +86,7 @@ productoNameSchema.index(
     name: "ProductoNameTextIndex"
   }
 )
+*/
 
 productoNameSchema.on('index', error => {
   // "_id index cannot be sparse"
