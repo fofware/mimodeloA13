@@ -8,14 +8,22 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class SigninBtnComponent implements OnInit {
   user:any = {};
+  username: string = '';
+  password: string = '';
 
   constructor(public authService: AuthService ) { }
 
   ngOnInit(): void {
     const token = localStorage.getItem('token');
-  
+    
     this.user = this.authService.decodeTocken(token);
-    console.log(this.user)
+    console.log(this.username);
   }
 
+  login(myDrop:any){
+    console.log('login');
+    console.log(this.username)
+    myDrop.close();
+    myDrop.open();
+  }
 }
