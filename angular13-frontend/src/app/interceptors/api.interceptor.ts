@@ -25,6 +25,7 @@ export class ApiInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       retry(1),
       catchError( error => {
+        console.log(error);
         switch (error.status) {
           case 200:
             this.toastr.info('Todo Bien','Api');
