@@ -15,7 +15,6 @@ export class SigninBtnComponent implements OnInit {
 
   ngOnInit(): void {
     const token = localStorage.getItem('token');
-    
     this.user = this.authService.decodeTocken(token);
     console.log(this.username);
   }
@@ -24,6 +23,11 @@ export class SigninBtnComponent implements OnInit {
     console.log('login');
     console.log(this.username)
     myDrop.close();
+    this.authService.signIn(this.user).subscribe(token => {
+      console.log(token);
+      this.user = this.authService.decodeTocken(token);
+      console.log(this.username);
+    })
     myDrop.open();
   }
 }

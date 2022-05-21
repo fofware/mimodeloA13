@@ -13,6 +13,8 @@ import { WebHooksCtrl } from './mp/controlers/webhooksControler';
 import { SucursalesCtrl } from './mp/controlers/sucursalesControler';
 import { devCtrl } from './mp/controlers/devControlers';
 import { prodNameCtrl } from './controlers/productonameControler';
+import authRoutes from './routes/authRoutes';
+
 //import { articuloCtrl } from './controlers/articuloControler';
 //import { productoCtrl } from './controlers/productoControler';
 const app = express();
@@ -34,4 +36,6 @@ app.use(ipnCtrl.router);
 app.use(WebHooksCtrl.router);
 app.use(SucursalesCtrl.router);
 app.use(devCtrl.router);
+app.use(devCtrl.router);
+app.use(authRoutes);
 export default app;
