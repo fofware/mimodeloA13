@@ -92,11 +92,14 @@ export class HtmldataComponent implements OnInit {
     this.data = [];
     this.setData();
   }
+
   grabar(){
     for (let i = 0; i < this.data.length; i++) {
       const e = this.data[i];
-      console.log(e);
-      
+      this.api.post('/productoname',e).subscribe((data:any) => {
+        console.log(e);
+        console.log(data);
+      });
     }
   }
 }

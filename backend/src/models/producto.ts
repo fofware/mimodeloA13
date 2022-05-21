@@ -57,7 +57,7 @@ const productoSchema = new Schema({
   , stockMax: { type: Number, default: 0 }
   , iva: { type:Number, default: 0 }
   , margen: { type: Number, default: 35 }
-  , tags: { ref: "tags", type: String, default: ''}
+  , tags: { type: String, default: ''}
 },{
   timestamps: true,
 })

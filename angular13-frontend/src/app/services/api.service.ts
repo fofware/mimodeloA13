@@ -23,6 +23,12 @@ export class ApiService {
     console.log("service",data)
     return this.http.get(`${ORI_API}${fileName}`, {params: data});
   }
+
+  post(fileName:string, data?:any) {
+    console.log("service",data)
+    return this.http.post(`${ORI_API}${fileName}`, data);
+  }
+
   leer(fileName:string) {
     return this.http.get(`${ORI_API}${fileName}`).pipe(retry(1), catchError(this.processError));
   }

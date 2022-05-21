@@ -60,45 +60,106 @@ export function makeFilter(fldsString:any,params:any){
   for (let i = 0; i < fldsString.length; i++) {
     const key = fldsString[i];
     if (Object.prototype.hasOwnProperty.call(params, key)) {
-      filter[key] = new RegExp(params[key],'i');
+      //filter[key] = new RegExp(params[key],'i');
+      filter[key] = { '$regex': `${params[key]}`, '$options': 'i' };
       const idx = fldsString.indexOf(key);
       if( idx !== -1){
-        fldsString.splice ( idx, 1)
+        fldsString.splice ( idx, 1);
       }
     }
   }
   
   if(params.searchItem.length){
+    const or = [];
     let searchItem = params.searchItem ? params.searchItem.replace(/  /g, ' ') : '';
     const searcharray: any[] = searchItem.trim().split(' ');
   
     if (searcharray.length > 0){
-      /*
+      filter['$and'] = [];
+
+      //for (let n = 0; n < fldsString.length; n++) {
+      //  const fld = fldsString[n];
+      //  const o = {};
+      //  const v = [];
+      //  for (let i = 0; i < searcharray.length; i++) {
+      //    const str = searcharray[i];
+      //    v.push(new RegExp( str, 'i' ));
+      //    //v.push({ '$regex': `${str}`, '$options': 'i' })
+      //  }
+      //  o[fld] = {'$in': v};
+      //  filter['$or'].push(o);
+      //}
       for (let i = 0; i < searcharray.length; i++) {
-        extRegEx.push(new RegExp( searcharray[i], 'i' )); 
-      }
-      for (let i = 0; i < extFlds.length; i++) {
-        const fld = extFlds[i];
-        const o = {};
-        o[fld] = {'$in': extRegEx }
-        e.push(o)
-      }
-      Extra['$or'] = e;
-      */
-      const v = [];
-      const regStr = [];
-      for (let i = 0; i < searcharray.length; i++) {
+        const or = []
         const str = searcharray[i];
         const v = [];
         for (let n = 0; n < fldsString.length; n++) {
           const fld = fldsString[n];
           const o = {};
-          o[fld] = new RegExp( str, 'i' );
-          v.push(o);
+          o[fld] = { '$regex': `${str}`, '$options': 'i' }
+          v.push( o );
+          or.push(o)
         }
-        console.log(v);
+        const m = {'$or': or}
+        filter['$and'].push(m);
       }
     }
   }
   return filter;
+}
+
+export function makeAggregate (fldsString:any,params:any) {
+  const aggregate = [];
+  for (let i = 0; i < fldsString.length; i++) {
+    const key = fldsString[i];
+    if (Object.prototype.hasOwnProperty.call(params, key)) {
+      const fld = {};
+      fld[fldsString[i]] = { '$regex': `${params[key]}`, '$options': 'i' };
+      const m = {
+        '$match': fld
+      };
+      aggregate.push( m );
+      const idx = fldsString.indexOf(key);
+      if( idx !== -1){
+        fldsString.splice ( idx, 1);
+      }
+    }
+  }
+  if(params.searchItem.length){
+    const or = [];
+    let searchItem = params.searchItem ? params.searchItem.replace(/  /g, ' ') : '';
+    const searcharray: any[] = searchItem.trim().split(' ');
+    if (searcharray.length > 0){
+      const o = {};
+      for (let n = 0; n < fldsString.length; n++) {
+        const fld = fldsString[n];
+        const v = [];
+        for (let i = 0; i < searcharray.length; i++) {
+          const str = searcharray[i];
+          v.push(new RegExp( str, 'i' ));
+          //v.push({ '$regex': `${str}`, '$options': 'i' })
+        }
+        o[fld] = {'$in': v};
+      }
+      const m = {
+        '$match': o
+      };
+      aggregate.push( m );
+      console.log(o);
+      //for (let i = 0; i < searcharray.length; i++) {
+      //  const str = searcharray[i];
+      //  const v = [];
+      //  for (let n = 0; n < fldsString.length; n++) {
+      //    const fld = fldsString[n];
+      //    o[fld] = { '$regex': `${str}`, '$options': 'i' }
+      //  }
+      //  console.log(o)
+      //  const m = {
+      //    '$match': o
+      //  };
+      //  aggregate.push( m );
+      //}
+    }
+  }
+  return aggregate;
 }
