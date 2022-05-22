@@ -41,14 +41,15 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
 };
 
 export const signIn = async (req: Request, res: Response): Promise<Response> => {
+  console.log(req.body);
   if (!req.body.email || !req.body.password)
-    return res.status(401).json({ msg: 'Por favor. Envíe su e-Mail y contraseña' });
+    return res.status(401).json({ title: 'Datos insuficientes', text: 'Usuario y contraseña son requeridos' });
   let user = await User.findOne({ email: req.body.email });
   if (!user)
-    return res.status(401).json({ msg: 'Usuario y/o contraseña ivalidos' });
+    return res.status(401).json({ title: 'No Autorizado', text: 'Usuario y/o contraseña ivalidos' });
   const isMatch = await user.comparePassword(req.body.password);
   if (!isMatch)
-    return res.status(401).json({ msg: 'Contraseña y/o Usuario ivalidos' });
+    return res.status(401).json({ title: 'No Autorizado', text: 'Contraseña y/o Usuario ivalidos' });
   const token = createToken(user);
   console.log(user);
   delete user.__v ;
@@ -63,7 +64,7 @@ export const renew = async (req: Request, res: Response): Promise<Response> => {
   const newToken = createToken(user);
   console.log("Renovó token");
   console.log(user);
-  return res.status(200).json({ newToken });
+  return res.status(200).json( newToken );
 };
 
 export const emailcheck = async (req: Request, res: Response) => {

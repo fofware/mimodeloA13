@@ -8,26 +8,34 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class SigninBtnComponent implements OnInit {
   user:any = {};
-  username: string = '';
-  password: string = '';
 
   constructor(public authService: AuthService ) { }
 
   ngOnInit(): void {
     const token = localStorage.getItem('token');
-    this.user = this.authService.decodeTocken(token);
-    console.log(this.username);
+    this.user = this.authService.decodeToken(token);
   }
 
   login(myDrop:any){
     console.log('login');
-    console.log(this.username)
-    myDrop.close();
-    this.authService.signIn(this.user).subscribe(token => {
-      console.log(token);
-      this.user = this.authService.decodeTocken(token);
-      console.log(this.username);
+    this.authService.signIn(this.user).subscribe(res => {
+      const token:any = res;
+      localStorage.setItem('token', token );
+      this.user = this.authService.decodeToken(token);
+      myDrop.close();
     })
-    myDrop.open();
+  }
+
+  isLogged(){
+    const d = new Date().getTime()/1000;
+    if (this.user.exp && d>this.user.exp){
+      this.logout();
+    }
+
+    return d<this.user.exp;
+  }
+  logout(){
+    localStorage.removeItem('token');
+    this.user = this.authService.decodeToken();
   }
 }

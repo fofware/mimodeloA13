@@ -13,32 +13,35 @@ import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class ApiInterceptor implements HttpInterceptor {
-
+  spinnerCount = 0;
   constructor(
     private spinner: NgxSpinnerService,
     private toastr: ToastrService
     ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    this.spinner.show();
-    console.log(request);
+    if (this.spinnerCount === 0) this.spinner.show();
+    this.spinnerCount++;
     return next.handle(request).pipe(
       retry(1),
-      catchError( error => {
-        console.log(error);
-        switch (error.status) {
-          case 200:
-            this.toastr.info('Todo Bien','Api');
-            break;
+      catchError( res => {
+        console.log(res);
+        res.error.title = !res.error.title || res.error.title === '' ? `(${res.status} - ${res.statusText})` : res.error.title;
+        res.error.text = !res.error.text || res.error.text === '' ? `${res.message}` : res.error.text;
+        switch (res.status) {
+          //case 200:
+          //  this.toastr.info('Todo Bien','Api');
+          //  break;
           case 401:
-            this.toastr.info('No está autorizado','Debe autenticarse');
+            this.toastr.warning( res.error.text, res.error.title );
             //this.auth.logout();
             console.log("No esta logueado")
+            console.log(res)
             break;
           case 404:
             this.toastr.warning(
-              error.message,
-              error.statusText,
+              res.error.text,
+              res.error.title,
               {
                 closeButton: true,
                 disableTimeOut: true
@@ -50,33 +53,34 @@ export class ApiInterceptor implements HttpInterceptor {
             break;
           case 500:
             this.toastr.error(
-              error.message,
-              error.statusText,
+              res.error.text,
+              res.error.title,
               {
                 closeButton: true,
                 disableTimeOut: true
               }).onTap.pipe(take(1)).subscribe(() => {
                 console.log("Cerro");
               })
-            console.log("Default Error",error);
+            console.log("Default Error",res);
             break;
           default:
             this.toastr.error(
-              error.message,
-              error.statusText,
+              res.message,
+              res.statusText,
               {
                 closeButton: true,
                 disableTimeOut: true
               }).onTap.pipe(take(1)).subscribe(() => {
                 console.log("Cerro");
               })
-            console.log("Default Error",error);
+            console.log("Default Error",res);
             break;
         }
-        return throwError(error);
+        return throwError(() => new Error('test'));
       }),
       finalize( () => {
-        this.spinner.hide();
+        this.spinnerCount--;
+        if(this.spinnerCount === 0) this.spinner.hide();
       })
     );
   }
