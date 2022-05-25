@@ -15,6 +15,7 @@ export class HtmldataComponent implements OnInit {
   limit = 50;
   count = 0;
   offset = 0;
+  nextOffset: number | boolean = 0;
   loading = false;
   constructor(
     private api: ApiService
@@ -25,8 +26,7 @@ export class HtmldataComponent implements OnInit {
   @HostListener('scroll', ['$event.target'])
   onScroll(elem:any){
    if(( elem.offsetHeight + elem.scrollTop) >=  elem.scrollHeight-200) {
-      if(this.count === 0 || this.offset < this.count )
-        this.setData();
+      if( this.nextOffset !== false ) this.setData();
     }
   }
 
@@ -46,48 +46,51 @@ export class HtmldataComponent implements OnInit {
     ).subscribe((text: string) => {
       this.searchData();
     })
-    const params = {
-      limit: 850,
-      offset: this.offset,
-      searchItem: this.searchItem
-    };
-    console.log(params);
-    //this.api.get('/productos/textsearch',params).subscribe((data:any) => {
-    this.api.get('/productos/fulldata',params).subscribe((data:any) => {
-        console.log(data);
-      this.count = data.count;
-      this.offset = data.nextOffset;
-
-      this.data = this.data.concat(data.data);
-      console.log(this.data.length);
-      this.loading = false;
-    });
+    this.setData();
+    //const params = {
+    //  limit: 50,
+    //  offset: this.nextOffset,
+    //  searchItem: this.searchItem
+    //};
+    //console.log(params);
+    ////this.api.get('/productos/textsearch',params).subscribe((data:any) => {
+    //this.api.get('/productoname',params).subscribe((data:any) => {
+    //  console.log(data);
+    //  this.count = data.count;
+    //  this.offset = data.offset;
+    //  this.nextOffset = data.nextOffset;
+//
+    //  this.data = this.data.concat(data.data);
+    //  console.log(this.data.length);
+    //  this.loading = false;
+    //});
 
     //this.setData();
   }
 
   setData(){
     if(this.loading) return;
+    if(this.nextOffset === false) return;
     this.loading = true;
     const params = {
       limit: this.limit,
-      offset: this.offset,
+      offset: this.nextOffset,
       searchItem: this.searchItem
     };
     console.log(params);
-    this.api.get('/productos/textsearch',params).subscribe((data:any) => {
-    //this.api.get('/productos/fulldata',params).subscribe((data:any) => {
-        console.log(data);
+    this.api.get('/productoname',params).subscribe((data:any) => {
+      console.log(data);
       this.count = data.count;
-      this.offset = data.nextOffset;
-
+      this.offset = data.offset;
+      this.nextOffset = data.nextOffset;
       this.data = this.data.concat(data.data);
       console.log(this.data.length);
+      console.log(data.apiTime);
       this.loading = false;
     });
   }
   searchData(){
-    this.offset = 0;
+    this.nextOffset = 0;
     this.count = 0;
     this.data = [];
     this.setData();

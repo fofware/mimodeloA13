@@ -31,9 +31,9 @@ export class SigninBtnComponent implements OnInit {
     if (this.user.exp && d>this.user.exp){
       this.logout();
     }
-
     return d<this.user.exp;
   }
+
   logout(){
     localStorage.removeItem('token');
     this.user = this.authService.decodeToken();

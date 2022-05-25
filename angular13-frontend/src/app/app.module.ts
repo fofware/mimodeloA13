@@ -22,6 +22,7 @@ import { HtmldataComponent } from './components/htmldata/htmldata.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SigninBtnComponent } from './components/signin-btn/signin-btn.component';
 import { NotifyBtnComponent } from './components/notify-btn/notify-btn.component';
+import { TokenInterceptor } from './interceptors/token.interceptor';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,12 @@ import { NotifyBtnComponent } from './components/notify-btn/notify-btn.component
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     Socket1Service,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    },
+
     {provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]

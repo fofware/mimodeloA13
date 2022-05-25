@@ -63,17 +63,22 @@ class ProductoNameControler {
     //console.log(filter);
     //console.log(filter['$or'][0]);
     const count = await prodName.count(filter);
+    
     params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
     params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
+
+    let nextOffset = params.offset+params.limit;
+    nextOffset = nextOffset > count ? false : params.offset+params.limit;
     
     const data = await prodName.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
     const ret = {
       url: req.headers.host+req.url,
       limit: params.limit,
       offset: params.offset,
+      nextOffset,
       sort: params.sort,
       count,
-      searchTime: new Date().getTime() - params.iniTime,
+      apiTime: new Date().getTime() - params.iniTime,
       filter,
       data,
     }
@@ -81,8 +86,11 @@ class ProductoNameControler {
   }
   async get(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
+    const prod = await prodName.find({_id: params.id})
     console.log('get',params)
+    res.status(200).json(prod)
   }
+
   async add(req: Request, res: Response){
     try {
       const update = Object.assign({},req.query,req.params,req.body);
@@ -91,7 +99,6 @@ class ProductoNameControler {
       const filter = { 
         _id: update._id
       };
-  
       let ret = await prodName.findOneAndUpdate(filter, update, {
         new: true,
         upsert: true,
@@ -103,11 +110,11 @@ class ProductoNameControler {
       ret.lastErrorObject.updatedExisting; // false
       //console.log('precios',ret);
       return res.status(200).json(ret);
-    
     } catch (error) {
       console.log(error)      
     }
   }
+
   async delete(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
     console.log("delete",params)

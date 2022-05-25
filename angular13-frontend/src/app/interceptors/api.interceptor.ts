@@ -26,22 +26,22 @@ export class ApiInterceptor implements HttpInterceptor {
       retry(1),
       catchError( res => {
         console.log(res);
-        res.error.title = !res.error.title || res.error.title === '' ? `(${res.status} - ${res.statusText})` : res.error.title;
-        res.error.text = !res.error.text || res.error.text === '' ? `${res.message}` : res.error.text;
+        const title = !res.error.title || res.error.title === '' ? `(${res.status}) - ${res.statusText}` : res.error.title;
+        const text = !res.error.text || res.error.text === '' ? `${res.message}` : res.error.text;
         switch (res.status) {
           //case 200:
           //  this.toastr.info('Todo Bien','Api');
           //  break;
           case 401:
-            this.toastr.warning( res.error.text, res.error.title );
+            this.toastr.warning( text, title );
             //this.auth.logout();
             console.log("No esta logueado")
             console.log(res)
             break;
           case 404:
             this.toastr.warning(
-              res.error.text,
-              res.error.title,
+              text,
+              title,
               {
                 closeButton: true,
                 disableTimeOut: true
@@ -53,8 +53,8 @@ export class ApiInterceptor implements HttpInterceptor {
             break;
           case 500:
             this.toastr.error(
-              res.error.text,
-              res.error.title,
+              text,
+              title,
               {
                 closeButton: true,
                 disableTimeOut: true
@@ -65,8 +65,8 @@ export class ApiInterceptor implements HttpInterceptor {
             break;
           default:
             this.toastr.error(
-              res.message,
-              res.statusText,
+              text,
+              title,
               {
                 closeButton: true,
                 disableTimeOut: true
