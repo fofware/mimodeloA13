@@ -10,6 +10,7 @@ export interface IArticulo extends Document {
   edad: string;
   raza: string;
   name: string;
+  tags: string;
   d_fabricante: boolean;
   d_marca: boolean;
   d_rubro: boolean;
@@ -24,12 +25,11 @@ export interface IArticulo extends Document {
   url: string;
   iva: number;
   margen: number;
-  tags: string;
   formula: [];
   detalles: [];
   beneficios: [];
-//  getFullName: () => Promise<string>
-  setObjectIDs: () => Promise<void>
+  //makeFullName: () => Promise<string>
+  //setObjectIDs: () => Promise<void>
 };
 
 const articuloSchema = new Schema({
@@ -41,6 +41,7 @@ const articuloSchema = new Schema({
   edad: { type: String, trim: true, default: '', index: true },
   raza: { type: String, trim: true, default: '', index: true },
   name: { type: String, trim: true, default: '', index: true },      // Gatitos Carne y Leche
+  tags: { type: String, trim: true, default: '', index: true },
   d_fabricante: {type: Boolean, default: false },
   d_marca: {type: Boolean, default: true },
   d_rubro: {type: Boolean, default: false },
@@ -55,38 +56,59 @@ const articuloSchema = new Schema({
   url: { type: String, trim: true, required: false, default:'' },
   iva: {type:Number, default: 0},
   margen: { type: Number, default: 35},
-  tags: { type: String, trim: true, default: '', index: true },
   formula: [],
   detalles: { type: String, trim: true, default: '' },
   beneficios: []
-});
+  },{ 
+    toJSON: { virtuals: true },
+    strict: false,
+  });
 
-articuloSchema.index(
-  {
-    fabricante: "text",
-    marca: "text",
-    rubro: "text",
-    linea: "text",
-    especie: "text",
-    edad: "text",
-    raza: "text",
-    name: "text",
-    tags: "text"
-  },
-  {
-    default_language: "spanish",
-    name: "ArticuloTextIndex"
-  }
-)
+//articuloSchema.index(
+//  {
+//    fabricante: "text",
+//    marca: "text",
+//    rubro: "text",
+//    linea: "text",
+//    especie: "text",
+//    edad: "text",
+//    raza: "text",
+//    name: "text",
+//    tags: "text"
+//  },
+//  {
+//    default_language: "spanish",
+//    name: "ArticuloTextIndex"
+//  }
+//)
 
 articuloSchema.on('index', error => {
   // "_id index cannot be sparse"
-  console.log(error.message);
+  console.log(error);
 });
 
-articuloSchema.methods.setObjectIDs = async function (): Promise<void> {
-  this._id = new ObjectID(this._id);
-}
+articuloSchema.virtual('fullname').get(function(){
+  let fullName = '';
+  let sep = '';
+  if(this.d_fabricante){
+    fullName = this.fabricante;
+    sep = ' ';
+  }
+  if(this.d_marca){
+    fullName += sep+this.marca;
+    sep = ' ';
+  }
+  fullName += sep+this.name;
+  sep = ' ';
+  if(this.d_especie){
+    fullName += sep+this.especie;
+  }
+  if(this.d_edad) fullName += sep+this.edad;
+  if(this.d_raza) fullName += sep+this.raza;
+  if(this.d_rubro) fullName += sep+this.rubro;
+  if(this.d_linea) fullName += sep+this.linea;
+  return fullName;
+})
 
 export default model<IArticulo>('Articulo', articuloSchema);
 

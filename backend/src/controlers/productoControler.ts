@@ -1258,6 +1258,7 @@ class ProductoControler {
 		this.router.post('/productos/fulldata', this.fulldataP);
 		//this.router.get('/productos/textlink/:search', this.textFulldata);
 		//this.router.get('/productos/crealista', this.creaLista);
+		this.router.get('/productos/newfulldata', this.newfulldata);
 	}
 
 	public index(req: Request, res: Response) {
@@ -1367,6 +1368,10 @@ class ProductoControler {
 			data
 		}
 		res.status(200).json(retData);
+	}
+	async newfulldata(req: Request, res: Response) {
+		const data = await producto.find().populate({ path: 'Articulos'});
+		res.status(200).json(data);
 	}
 	async fulldataG(req: Request, res: Response) {
 		const searchItem = req.query.searchItem;

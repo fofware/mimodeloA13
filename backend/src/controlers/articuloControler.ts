@@ -872,6 +872,7 @@ class ArticuloControler {
 		this.router.put( '/articulo/:id', this.modifica );
 
 		this.router.get( '/articulos/test/:search', this.test );
+		this.router.get( '/articulos/lista', this.lista );
 		this.router.get( '/articulos/list', this.searchArticulos );
 		this.router.get( '/articulos/list/:search', this.searchArticulos )
 		this.router.post( '/articulos/list', this.findArticulos );
@@ -891,12 +892,25 @@ class ArticuloControler {
 		this.router.post( '/articulos/productos/updatefullData', passport.authenticate('jwt', { session: false }), this.updateFullData );
 //		this.router.post( '/articulos/productos/updatefullData', this.updateFullData );
 		this.router.get( '/articulos/productos/text/:search', this.textSearch );
+		this.router.get( '/marca',this.marca);
+		this.router.get( '/cambia',this.cambia);
 	}
 
 	public index(req: Request, res: Response) {
 		res.send('Articulos');
 	}
-
+	async marca(req: Request, res: Response){
+		const fabricante = await articulo.distinct('fabricante');
+		const marca = await articulo.distinct('marca');
+		const rubro = await articulo.distinct('rubro');
+		const linea = await articulo.distinct('linea');
+		const especie = await articulo.distinct('especie');
+		const raza = await articulo.distinct('raza');
+		const edad = await articulo.distinct('edad');
+		const name = await articulo.distinct('name');
+		const tags = await articulo.distinct('tags');
+		res.status(200).json({fabricante,marca,rubro,linea,especie,raza,edad,name,tags});
+	}
 	async leer(req: Request, res: Response) {
 		try {
 			const { id } = req.params;
@@ -981,6 +995,45 @@ class ArticuloControler {
 		}
 	}
 
+	async cambia( req: Request, res: Response){
+		try {
+//			const par = Object.assign({},req.query,req.params,req.body);
+			const varios = [
+				{'field': 'especie', 'value': 'gato', 'newValue': 'Gato' },
+				{'field': 'edad', 'value': 'senior', 'newValue': 'Senior' },
+				{'field': 'raza', 'value': 'Minis Pequeñas', 'newValue': 'Minis y Pequeñas' },
+				{'field': 'raza', 'value': 'Pequeña', 'newValue': 'Pequeñas' },
+				{'field': 'raza', 'value': 'Medianas Grandes', 'newValue': 'Medianas y Grandes' },
+				{'field': 'tags', 'value': 'semior', 'newValue': 'Senior' },
+				{'field': 'tags', 'value': 'urinario', 'newValue': 'Urinario' },
+				{'field': 'tags', 'value': 'sanitarias,benonita', 'newValue': 'sanitarias,benonita,aglutinante' },
+
+				{'field': 'tags', 'value': 'senior', 'newValue': 'Senior,Adulto' },
+
+				{'field': 'tags', 'value': 'sobrecito', 'newValue': 'Sobrecitos' },
+				{'field': 'tags', 'value': 'sobrecitos', 'newValue': 'Sobrecitos' },
+				{'field': 'tags', 'value': 'Urinario', 'newValue': 'Urinario,Urinary' },
+				{'field': 'tags', 'value': 'urinary.urinario', 'newValue': 'Urinario,Urinary' },
+			]
+			const rpta = [];
+			for (let i = 0; i < varios.length; i++) {
+				const par = varios[i];
+				const filter = {}
+				filter[par.field] = par.value;
+				const newValue = {}
+				newValue[par.field] = par.newValue
+				rpta.push( await articulo.updateMany(filter,   // Query parameter
+					{ $set: newValue }, 
+					{ upsert: false }    // Options
+				));
+			}
+			return res.status(200).json( rpta );
+		} catch (error) {
+			console.log(error);
+			return res.status(500).json( error );
+		}
+	}
+
 	async modifica( req: Request, res: Response) {
 		try {
 			if ( req.body._id ) req.body._id = new ObjectID( req.body._id );
@@ -992,6 +1045,14 @@ class ArticuloControler {
 		} catch (error) {
 			console.log(error);
 			return res.status(500).json( error );
+		}
+	}
+	async lista( req: Request, res: Response ) {
+		try {
+			const rpta = await articulo.find();
+			res.status(200).json(rpta);
+		} catch (error) {
+			res.status(error.status).json(error);
 		}
 	}
 

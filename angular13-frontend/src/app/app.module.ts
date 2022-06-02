@@ -33,7 +33,7 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
     NoPageComponent,
     HtmldataComponent,
     SigninBtnComponent,
-    NotifyBtnComponent
+    NotifyBtnComponent,
   ],
   imports: [
     BrowserModule,

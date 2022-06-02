@@ -1,0 +1,6 @@
+<div *ngFor="let name of names;"> 
+  <h4>{{name}}</h4>
+  <ul>
+    <li *ngFor="let item of readData(name)">{{item}}</li> 
+  </ul>
+</div>

@@ -19,7 +19,7 @@ export interface IUser extends Document {
   pais: string;
   roles: [];                /*
                                 Se debe setear automáticamente al crear la cuenta, 
-                                "ADMIN" para la cuenta principal 
+                                "SYSADMIN" para la cuenta principal 
                                 "USER" para las subcuentas 
                             */
   comparePassword: ( password: string ) => Promise<boolean>;

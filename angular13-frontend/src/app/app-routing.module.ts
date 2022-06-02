@@ -20,6 +20,13 @@ const routes: Routes = [
   , component: HtmldataComponent
   },
   {
+    path: 'temp',
+    loadChildren: () => import(`./modules/temp/temp.module`)
+      .then(
+        module => module.TempModule
+      ) 
+  },
+  {
     path: 'users',
     loadChildren: () => import(`./modules/user/user.module`)
       .then(

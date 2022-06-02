@@ -94,8 +94,6 @@ class ProductoNameControler {
   async add(req: Request, res: Response){
     try {
       const update = Object.assign({},req.query,req.params,req.body);
-      //console.log('add',params)
-      console.log(update);
       const filter = { 
         _id: update._id
       };
@@ -108,10 +106,9 @@ class ProductoNameControler {
       // The below property will be `false` if MongoDB upserted a new
       // document, and `true` if MongoDB updated an existing object.
       ret.lastErrorObject.updatedExisting; // false
-      //console.log('precios',ret);
       return res.status(200).json(ret);
     } catch (error) {
-      console.log(error)      
+      console.log(error);
     }
   }
 
