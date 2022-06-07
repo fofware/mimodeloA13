@@ -58,7 +58,12 @@ const articuloSchema = new Schema({
   margen: { type: Number, default: 35},
   formula: [],
   detalles: { type: String, trim: true, default: '' },
-  beneficios: []
+  beneficios: [],
+  presentaciones: [{
+    ref: "Producto",
+    type: Schema.Types.ObjectId,
+    default: []
+  }]
   },{ 
     toJSON: { virtuals: true },
     strict: false,
@@ -98,15 +103,30 @@ articuloSchema.virtual('fullname').get(function(){
     fullName += sep+this.marca;
     sep = ' ';
   }
-  fullName += sep+this.name;
-  sep = ' ';
+  if (this.name){
+    fullName += sep+this.name;
+    sep = ' ';
+  }
   if(this.d_especie){
     fullName += sep+this.especie;
+    sep = ' ';
   }
-  if(this.d_edad) fullName += sep+this.edad;
-  if(this.d_raza) fullName += sep+this.raza;
-  if(this.d_rubro) fullName += sep+this.rubro;
-  if(this.d_linea) fullName += sep+this.linea;
+  if(this.d_edad){
+    fullName += sep+this.edad;
+    sep = ' ';
+  }
+  if(this.d_raza){
+    fullName += sep+this.raza;
+    sep = ' ';
+  } 
+  if(this.d_rubro){
+    fullName += sep+this.rubro;
+    sep = ' ';
+  } 
+  if(this.d_linea){
+    fullName += sep+this.linea;
+    sep = ' ';
+  } 
   return fullName;
 })
 

@@ -1370,7 +1370,8 @@ class ProductoControler {
 		res.status(200).json(retData);
 	}
 	async newfulldata(req: Request, res: Response) {
-		const data = await producto.find().populate({ path: 'Articulos'});
+		const data = await producto.find().populate({ path: 'articulo'}).populate({path: 'parent'});
+		//const data = await producto.find();
 		res.status(200).json(data);
 	}
 	async fulldataG(req: Request, res: Response) {

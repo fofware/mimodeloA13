@@ -33,8 +33,8 @@ export interface IProducto extends Document {
 
 const productoSchema = new Schema({
   _id: { type: Schema.Types.ObjectId }
-  , articulo: { type: Schema.Types.ObjectId, ref: "articulos", index: true }
-  , parent: { type: Schema.Types.ObjectId, ref: "productos", default: null }
+  , articulo: { type: Schema.Types.ObjectId, ref: "Articulo", index: true }
+  , parent: { type: Schema.Types.ObjectId, ref: "Producto", default: null }
   , name: { type: String, trim: true, default: "", index: true }
   , contiene: { type: Number, default: 0, index: true }
   , unidad: { type: String, trim: true, default: "" }
@@ -59,6 +59,7 @@ const productoSchema = new Schema({
   , margen: { type: Number, default: 35 }
   , tags: { type: String, default: ''}
 },{
+  toJSON: { virtuals: true },
   timestamps: true,
 })
 
@@ -74,12 +75,32 @@ productoSchema.index(
     default_language: "spanish",
     name: "ProductoTextIndex"
   }
-)
+);
 
 productoSchema.on('index', error => {
   // "_id index cannot be sparse"
   console.log(error.message);
 });
+
+productoSchema.virtual('fullname').get(function(){
+  return `${this.name} ${this.contiene} ${this.unidad}`;
+});
+
+//productoSchema.virtual('fullname').get(function(){
+  //let fullName = '';
+  //let sep = '';
+  //if(this.parent){
+  //  if (this.pesable){
+  //    fullName = `${this.articulo.fullname} ${this.name} ${this.contiene} ${this.unidad}`
+  //  } else {
+  //    fullName = `${this.articulo.fullname} ${this.name} ${this.contiene} ${this.unidad}`
+//
+  //  }
+  //} else {
+  //  fullName = `${this.articulo.fullname} ${this.name} ${this.contiene} ${this.unidad}`;
+  //}
+//  return `${this.articulo.fullname} ${this.name} ${this.contiene} ${this.unidad}`;
+//})
 
 /*
 productoSchema.methods.getFullName = async function (): Promise<string> {
