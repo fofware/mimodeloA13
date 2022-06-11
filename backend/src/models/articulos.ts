@@ -1,5 +1,4 @@
 import { Schema, model, Document, isValidObjectId } from "mongoose";
-import { ObjectID } from 'bson'
 
 export interface IArticulo extends Document {
   fabricante: string;
@@ -11,6 +10,7 @@ export interface IArticulo extends Document {
   raza: string;
   name: string;
   tags: string;
+  //
   d_fabricante: boolean;
   d_marca: boolean;
   d_rubro: boolean;
@@ -18,18 +18,20 @@ export interface IArticulo extends Document {
   d_especie: boolean;
   d_edad: boolean;
   d_raza: boolean;
+  //
+  detalles: string;
+  formula: [];
+  beneficios: [];
+  presentaciones: [];
+  //
   private_web: boolean;
   image: string;
   images: [];
   videos: [];
   url: string;
   iva: number;
+  //
   margen: number;
-  formula: [];
-  detalles: [];
-  beneficios: [];
-  //makeFullName: () => Promise<string>
-  //setObjectIDs: () => Promise<void>
 };
 
 const articuloSchema = new Schema({
@@ -42,6 +44,7 @@ const articuloSchema = new Schema({
   raza: { type: String, trim: true, default: '', index: true },
   name: { type: String, trim: true, default: '', index: true },      // Gatitos Carne y Leche
   tags: { type: String, trim: true, default: '', index: true },
+  //
   d_fabricante: {type: Boolean, default: false },
   d_marca: {type: Boolean, default: true },
   d_rubro: {type: Boolean, default: false },
@@ -49,6 +52,12 @@ const articuloSchema = new Schema({
   d_especie: {type: Boolean, default: false},
   d_edad: {type: Boolean, default: false},
   d_raza: {type: Boolean, default: false},
+  //
+  detalles: { type: String, trim: true, default: '' },
+  formula: [],
+  beneficios: [],
+  presentaciones: [{ ref: "Presentacion", type: Schema.Types.ObjectId, default: [] }],
+  //
   private_web: {type: Boolean, default: false, index: true },
   image: { type: String, trim: true, required: false },
   images: [{ type: String, trim: true, required: false }],
@@ -56,36 +65,12 @@ const articuloSchema = new Schema({
   url: { type: String, trim: true, required: false, default:'' },
   iva: {type:Number, default: 0},
   margen: { type: Number, default: 35},
-  formula: [],
-  detalles: { type: String, trim: true, default: '' },
-  beneficios: [],
-  presentaciones: [{
-    ref: "Producto",
-    type: Schema.Types.ObjectId,
-    default: []
-  }]
-  },{ 
-    toJSON: { virtuals: true },
-    strict: false,
-  });
+},
+{ 
+  toJSON: { virtuals: true },
+  strict: false,
+});
 
-//articuloSchema.index(
-//  {
-//    fabricante: "text",
-//    marca: "text",
-//    rubro: "text",
-//    linea: "text",
-//    especie: "text",
-//    edad: "text",
-//    raza: "text",
-//    name: "text",
-//    tags: "text"
-//  },
-//  {
-//    default_language: "spanish",
-//    name: "ArticuloTextIndex"
-//  }
-//)
 
 articuloSchema.on('index', error => {
   // "_id index cannot be sparse"

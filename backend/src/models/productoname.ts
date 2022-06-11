@@ -75,28 +75,6 @@ const productoNameSchema = new Schema({
 })
 
 
-/*
-productoNameSchema.index(
-  { 
-    fullName : "text",
-    fabricante: 'text',
-    marca: 'text',
-    rubro: 'text',
-    linea: 'text',
-    especie: 'text',
-    edad: 'text',
-    raza: 'text',    
-    contiene: "text",
-    unidad: "text",
-    tags: "text"
-  },
-  { 
-    default_language: "spanish",
-    name: "ProductoNameTextIndex"
-  }
-)
-*/
-
 productoNameSchema.on('index', error => {
   // "_id index cannot be sparse"
   console.log(error);

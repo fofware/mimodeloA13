@@ -33,6 +33,13 @@ const routes: Routes = [
         module => module.UserModule
       ) 
   },
+  {
+    path: 'proveedores',
+    loadChildren: () => import(`./modules/proveedor/proveedor.module`)
+      .then(
+        module => module.ProveedorModule
+      ) 
+  },
   { path: '**', component: NoPageComponent }
 ];
 

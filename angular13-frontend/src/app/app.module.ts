@@ -23,6 +23,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SigninBtnComponent } from './components/signin-btn/signin-btn.component';
 import { NotifyBtnComponent } from './components/notify-btn/notify-btn.component';
 import { TokenInterceptor } from './interceptors/token.interceptor';
+import { PruebaModule } from './modules/prueba/prueba.module';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
       preventDuplicates: true,
       //easing: 'ease-out',
       //progressAnimation: 'increasing',
-    })
+    }),
+    PruebaModule
 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

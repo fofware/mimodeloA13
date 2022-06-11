@@ -7,13 +7,8 @@ export interface IProducto extends Document {
   name?: string;
   contiene?: number;
   unidad?: string;
-  precio?: number;
-  precio_desde?: number;
-  precio_hasta?: number;
-  compra?: number;
-  compra_fecha: number;
-  reposicion?: number;
-  reposicion_fecha: number;
+  tags?: string;
+
   pesable?: boolean;
   servicio?: boolean;
   pVenta?: boolean;
@@ -21,14 +16,20 @@ export interface IProducto extends Document {
   codigo?: string;
   plu?: number;
   image?: string;
+
+  precio?: number;
+  precio_desde?: number;
+  precio_hasta?: number;
+  compra?: number;
+  compra_fecha: number;
+  reposicion?: number;
+  reposicion_fecha: number;
   stock?: number;
   stockMin?: number;
   stockMax?: number;
   iva?: number;
   margen?: number;
-  tags?: string;
-  
-//  getFullName: () => Promise<string>
+ 
 }
 
 const productoSchema = new Schema({
@@ -83,6 +84,9 @@ productoSchema.on('index', error => {
 });
 
 productoSchema.virtual('fullname').get(function(){
+  if(this.parent && this.parent.fullname && !this.pesable){
+    return `${this.name} ${this.contiene} ${this.parent.fullname}` 
+  }
   return `${this.name} ${this.contiene} ${this.unidad}`;
 });
 

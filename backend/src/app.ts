@@ -14,6 +14,8 @@ import { SucursalesCtrl } from './mp/controlers/sucursalesControler';
 import { devCtrl } from './mp/controlers/devControlers';
 import { prodNameCtrl } from './controlers/productonameControler';
 import authRoutes from './routes/authRoutes';
+import { makeCtrl } from './controlers/makeDataControler';
+import { importCtrl } from './controlers/importControler';
 
 //import { articuloCtrl } from './controlers/articuloControler';
 //import { productoCtrl } from './controlers/productoControler';
@@ -37,5 +39,7 @@ app.use(WebHooksCtrl.router);
 app.use(SucursalesCtrl.router);
 app.use(devCtrl.router);
 app.use(devCtrl.router);
+app.use(makeCtrl.router);
+app.use(importCtrl.router);
 app.use(authRoutes);
 export default app;

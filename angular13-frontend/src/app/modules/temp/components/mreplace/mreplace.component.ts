@@ -15,12 +15,12 @@ export class MreplaceComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.api.get('/marca').subscribe((data:any) => {
+    this.api.get('/import/fulldata').subscribe((data:any) => {
       console.log(data);
       this.data = data;
       for (const key in data) {
         if (Object.prototype.hasOwnProperty.call(data, key)) {
-          this.names.push(key)
+          this.names.push(data[key])
         }
       }
       console.log(this.names)
