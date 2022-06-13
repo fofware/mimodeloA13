@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { NoPageComponent } from 'src/app/components/no-page/no-page.component';
+import { FormComponent } from './components/form/form.component';
 import { HomeComponent } from './components/home/home.component';
 
 const routes: Routes = [
@@ -11,6 +13,17 @@ const routes: Routes = [
       //  path: '', redirectTo: 'temp',
       //  pathMatch: 'full' 
       //},
+      {
+        path: 'new',
+        component: FormComponent,
+        //data: {
+        //  proveedor: 'new'
+        //}
+      },
+      {
+        path: 'edit',
+        component: FormComponent
+      },
       //{
       //  path: '**',
       //  component: NoPageComponent
