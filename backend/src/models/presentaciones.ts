@@ -73,12 +73,12 @@ const presentacionSchema = new Schema({
   , precio_desde: { type: Schema.Types.Date }
   , precio_hasta: { type: Schema.Types.Date }
   //
-//  , compra: { type: Schema.Types.Number, default:0 }
-//  , compra_fecha: { type: Schema.Types.Date }
-//  //
-//  , reposicion: { type: Schema.Types.Number, default:0 }
-//  , reposicion_fecha: { type: Schema.Types.Date }
-//  //
+  , compra: { type: Schema.Types.Number, default:0 }
+  , compra_fecha: { type: Schema.Types.Date }
+  //
+  , reposicion: { type: Schema.Types.Number, default:0 }
+  , reposicion_fecha: { type: Schema.Types.Date }
+  //
   , stock: { type: Schema.Types.Number, default: 0 }
   , stockMin: { type: Schema.Types.Number, default: 0 }
   , stockMax: { type: Schema.Types.Number, default: 0 }

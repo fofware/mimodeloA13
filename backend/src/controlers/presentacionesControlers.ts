@@ -1,5 +1,6 @@
 import { Request, Response, Router } from "express";
 import prodName, { IProductoName } from "../models/productoname";
+import presentaciones, { IPresentacion } from '../models/presentaciones'
 import { ExtractJwt } from "passport-jwt";
 import jwt from 'jsonwebtoken';
 import config from '../config';
@@ -7,7 +8,7 @@ import passport from "passport";
 import { makeAggregate, makeFilter } from "../common/utils";
 import { ObjectID } from 'bson'
 
-class ProductoNameControler {
+class PresentacionesControlers {
 
 	public router: Router = Router();
 
@@ -16,19 +17,19 @@ class ProductoNameControler {
 	}
 
   config () {
-    this.router.get('/productoname',
+    this.router.get('/presentaciones',
 				//passport.authenticate('jwt', {session:false}), 
 				this.list );
-    this.router.get('/productoname/:id',
+    this.router.get('/presentaciones/:id',
         //passport.authenticate('jwt', {session:false}), 
         this.get );
-    this.router.post('/productoname',
+    this.router.post('/presentaciones',
         //passport.authenticate('jwt', {session:false}),
         this.add );
-    this.router.delete('/productoname/:id',
+    this.router.delete('/presentaciones/:id',
         passport.authenticate('jwt', {session:false}), 
         this.delete );
-    this.router.put('/productoname/:id',
+    this.router.put('/presentaciones/:id',
         passport.authenticate('jwt', {session:false}),
         this.put );
   }
@@ -45,8 +46,7 @@ class ProductoNameControler {
       'unidad',
       'ean',
       'tags',
-      'art_name',
-      'prodName'
+      'art_name'
     ];
   
     const params = Object.assign({
@@ -59,10 +59,7 @@ class ProductoNameControler {
 
     console.log('list',params,fldsString)
     const filter = makeFilter(fldsString, params);
-    //const filter = makeAggregate(fldsString, params);
-    //console.log(filter);
-    //console.log(filter['$or'][0]);
-    const count = await prodName.count(filter);
+    const count = await presentaciones.count(filter);
     
     params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
     params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
@@ -70,7 +67,7 @@ class ProductoNameControler {
     let nextOffset = params.offset+params.limit;
     nextOffset = nextOffset > count ? false : params.offset+params.limit;
     
-    const data = await prodName.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
+    const data = await presentaciones.find(filter).limit(params.limit).skip(params.offset).sort(params.sort).populate({path:'articulo'});
     const ret = {
       url: req.headers.host+req.url,
       limit: params.limit,
@@ -86,7 +83,7 @@ class ProductoNameControler {
   }
   async get(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
-    const prod = await prodName.find({_id: params.id})
+    const prod = await presentaciones.find({_id: params.id})
     console.log('get',params)
     res.status(200).json(prod)
   }
@@ -97,12 +94,12 @@ class ProductoNameControler {
       const filter = { 
         _id: update._id
       };
-      let ret = await prodName.findOneAndUpdate(filter, update, {
+      let ret = await presentaciones.findOneAndUpdate(filter, update, {
         new: true,
         upsert: true,
         rawResult: true // Return the raw result from the MongoDB driver
       });
-      ret.value instanceof prodName; // true
+      ret.value instanceof presentaciones; // true
       // The below property will be `false` if MongoDB upserted a new
       // document, and `true` if MongoDB updated an existing object.
       ret.lastErrorObject.updatedExisting; // false
@@ -122,4 +119,4 @@ class ProductoNameControler {
 
 }
 
-export const prodNameCtrl = new ProductoNameControler();
+export const presentacionCtrl = new PresentacionesControlers();

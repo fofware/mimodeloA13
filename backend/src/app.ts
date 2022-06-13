@@ -16,6 +16,7 @@ import { prodNameCtrl } from './controlers/productonameControler';
 import authRoutes from './routes/authRoutes';
 import { makeCtrl } from './controlers/makeDataControler';
 import { importCtrl } from './controlers/importControler';
+import { presentacionCtrl } from './controlers/presentacionesControlers';
 
 //import { articuloCtrl } from './controlers/articuloControler';
 //import { productoCtrl } from './controlers/productoControler';
@@ -34,6 +35,7 @@ app.use(userCtrl.router);
 app.use(articuloCtrl.router);
 app.use(productoCtrl.router);
 app.use(prodNameCtrl.router);
+app.use(presentacionCtrl.router);
 app.use(ipnCtrl.router);
 app.use(WebHooksCtrl.router);
 app.use(SucursalesCtrl.router);

@@ -65,10 +65,15 @@ class ImportDataControler {
       const ret:any = await httpClient(options);
       //const repta = ret;
       const repta = [];
+      const newData = [];
+      repta.push({next: 'http://fofware.com.ar:4444/make/articulo'})
+      repta.push(ret);
+      repta.push(newData);
       for (let i = 0; i < ret.data.length; i++) {
         const art = ret.data[i];
         if(`${art._id}` !== `623f49752129b838062ce76d`){
           const prodList = [];
+          const prodData = [];
           for (let n = 0; n < art.productos.length; n++) {
             const pro = art.productos[n];
             prodList.push(pro._id);
@@ -94,7 +99,8 @@ class ImportDataControler {
               , oferta: pro.oferta
               , oferta_desde: pro.precio_desde
               , oferta_hasta: pro.precio_hasta
-              , oferta_precio: pro.oferta ? pro.showPrecio : null
+              , oferta_precio: pro.oferta ? pro.precio : null
+              , precio: pro.calc_precio
               , compra: pro.showCompra
               , compra_fecha: null
               , reposicion: pro.reposicion
@@ -103,6 +109,7 @@ class ImportDataControler {
               , stockMin: pro.stockMin
               , stockMax: pro.stockMax
             }
+            prodData.push(pres);
             const precios = {
               _id: pro._id
               , oferta: pro.oferta
@@ -156,16 +163,17 @@ class ImportDataControler {
             ,iva: art.iva
             ,margen: art.margen
           }
+          newData.push(newArt);
           const rpta = await articulo.updateOne(
             { _id: newArt._id },   // Query parameter
             { $set: newArt }, 
             { upsert: true }    // Options
           );
+          newArt['prodData'] = prodData;
           repta.push(rpta)
           console.log("Articulos Ok",i)
         }
       }
-      repta.push({next: 'http://fofware.com.ar:4444/make/articulo'})
       res.status(200).json(repta);
     } catch (error) {
       console.log(error);

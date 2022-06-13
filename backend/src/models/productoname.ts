@@ -1,7 +1,7 @@
 import { Schema, model, Document } from "mongoose";
 
 export interface IProductoName extends Document {
-  fullName: String;
+  fullname: String;
   fabricante?: String;
   marca?: String;
   rubro?: String;
@@ -24,11 +24,11 @@ export interface IProductoName extends Document {
   precio_desde?: Date;
   precio_hasta?: Date;
   oferta: Boolean;
-  reventa?: Number;
-  reventa1?: Number;
-  reventa2?: Number;
+  //reventa?: Number;
+  //reventa1?: Number;
+  //reventa2?: Number;
   stock?: Number;
-  precioref?: Number;
+  //precioref?: Number;
   art_name?: String;
   prodName?: String;
 }
@@ -36,7 +36,7 @@ export interface IProductoName extends Document {
 const productoNameSchema = new Schema({
   // Artículo
   _id: { type: Schema.Types.ObjectId, ref: "productos", default: null }
-  , fullName: { type: Schema.Types.String, default: '', index: true }
+  , fullname: { type: Schema.Types.String, default: '', index: true }
   , fabricante: { type: String, trim: true, default: '', index: true } // Nestle
   , marca: { type: Schema.Types.String, trim: true, default: '', index: true }      // Purina Dog Chow / Purina Cat Chow
   , rubro: { type: Schema.Types.String, trim: true, default: '', index: true }      // Alimento Seco / Alimento Húmedo
@@ -55,19 +55,20 @@ const productoNameSchema = new Schema({
   , pVenta: { type: Schema.Types.Boolean, default: true, index: true }
   , pCompra: { type: Schema.Types.Boolean, default: true, index: true }
   , oferta: { type: Schema.Types.Boolean, default: false, index: true }
+  , oferta_precio: { type: Schema.Types.Number, default: 0, index: true }
   // precio
-  , desde: { type: Schema.Types.Date, default: null, index: true }
-  , lista: { type: Schema.Types.Number, default: 0, index: true }
-  , calc_precio: { type: Schema.Types.Number, default: 0, index: true }
-  , showPrecio: { type: Schema.Types.Number, default: 0, index: true }
+  , oferta_desde: { type: Schema.Types.Date, default: null, index: true }
+  , oferta_hasta: { type: Schema.Types.Date, default: null, index: true }
+  //, lista: { type: Schema.Types.Number, default: 0, index: true }
+  //, calc_precio: { type: Schema.Types.Number, default: 0, index: true }
   , precio: { type: Schema.Types.Number, default: 0, index: true }
-  , precio_desde: { type: Schema.Types.Date, default: null, index: true }
-  , precio_hasta: { type: Schema.Types.Date, default: null, index: true }
-  , reventa: { type: Schema.Types.Number, default: 0, index: true }
-  , reventa1: { type: Schema.Types.Number, default: 0, index: true }
-  , reventa2: { type: Schema.Types.Number, default: 0, index: true }
-  , stock: { type: Schema.Types.Number, default: 0, index: true }
-  , precioref: { type: Schema.Types.Number, default: 0, index: true }
+  //, precio_desde: { type: Schema.Types.Date, default: null, index: true }
+  //, precio_hasta: { type: Schema.Types.Date, default: null, index: true }
+  //, reventa: { type: Schema.Types.Number, default: 0, index: true }
+  //, reventa1: { type: Schema.Types.Number, default: 0, index: true }
+  //, reventa2: { type: Schema.Types.Number, default: 0, index: true }
+  , stock: { type: Schema.Types.Number, default: 0 }
+  //, precioref: { type: Schema.Types.Number, default: 0, index: true }
   , art_name: { type: Schema.Types.String, default: '', index: true  }
   , prodName: { type: Schema.Types.String, default: '', index: true  }
 },{

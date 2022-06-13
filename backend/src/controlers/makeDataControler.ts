@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import presentacion, { IPresentacion } from "../models/presentaciones";
 import articulo, { IArticulo } from "../models/articulos";
+import prodName, {} from '../models/productoname';
 
 class MakeDataControler {
 
@@ -103,6 +104,7 @@ class MakeDataControler {
         { upsert: false }    // Options
       ));
     }
+    const next = 'http://fofware.com.ar:4444/make/productoname';
     const fabricante = await articulo.distinct('fabricante');
 		const marca = await articulo.distinct('marca');
 		const rubro = await articulo.distinct('rubro');
@@ -112,7 +114,7 @@ class MakeDataControler {
 		const edad = await articulo.distinct('edad');
 		const name = await articulo.distinct('name');
 		const tags = await articulo.distinct('tags');
-		res.status(200).json({fabricante,marca,rubro,linea,especie,raza,edad,name,tags});
+		res.status(200).json({next,fabricante,marca,rubro,linea,especie,raza,edad,name,tags});
   }
   async presentacion(req: Request, res: Response){
     res.status(200).json('presentacion');
@@ -128,28 +130,43 @@ class MakeDataControler {
         if(tags.length) tags = (`${tags},${e.tags}`).trim();
         else tags = e.tags;
       }
-      ret.push(
-        {
-          _id: e._id,
-          articulo: e.articulo._id,
-          ean: e.ean,
-          plu: e.plu,
-          fabricante: e.articulo.fabricante,
-          marca: e.articulo.marca,
-          especie: e.articulo.especie,
-          raza: e.articulo.raza,
-          edad: e.articulo.edad,
-          rubro: e.articulo.rubro,
-          linea: e.articulo.linea,
-          tags,
-          image: e.image ? e.image : e.articulo.image,
-          fullname: e.fullname,
-          pesable: e.pesable,
-          pCompra: e.pCompra,
-          pVenta: e.pVenta,
-        }
+      const reg =         {
+        _id: e._id,
+        articulo: e.articulo._id,
+        ean: e.ean,
+        plu: e.plu,
+        fabricante: e.articulo.fabricante,
+        marca: e.articulo.marca,
+        especie: e.articulo.especie,
+        raza: e.articulo.raza,
+        edad: e.articulo.edad,
+        rubro: e.articulo.rubro,
+        linea: e.articulo.linea,
+        tags,
+        image: e.image ? e.image : e.articulo.image,
+        art_name: e.articulo.fullname,
+        fullname: e.fullname,
+        pesable: e.pesable,
+        pCompra: e.pCompra,
+        pVenta: e.pVenta,
+        precio: e.precio,
+        oferta: e.oferta,
+        oferta_precio: e.oferta_precio,
+        oferta_desde: e.oferta_desde,
+        oferta_hasta: e.oferta_hasta,
+        stock: e.stock,
+        unidad: e.unidad,
+        name: e.name,
+        contiene: e.contiene,
+        prodName: `${e.name} ${e.contiene} ${e.unidad}`
+      }
+      ret.push(reg);
+      const rpta = await prodName.updateOne(
+          { _id: reg._id },   // Query parameter
+          { $set: reg }, 
+          { upsert: true }    // Options
       );
-      
+      console.log(reg._id);
     }
     res.status(200).json({ret,array});
   }
