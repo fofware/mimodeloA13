@@ -16,9 +16,9 @@ const routes: Routes = [
       {
         path: 'new',
         component: FormComponent,
-        //data: {
-        //  proveedor: 'new'
-        //}
+        data: {
+          id: 'new'
+        }
       },
       {
         path: 'edit',

@@ -1,2 +1,16 @@
 <div>pROVEEDOR home works!</div>
+
+<ul>
+  <li><a [routerLink]="['/proveedores/new']">New Data</a></li> 
+  <!--li><a [routerLink]="['/proveedores/edit']" [state]='product'>Dynamic Data</a></li--> 
+</ul>
+<table>
+  <tr *ngFor="let item of productos" (click)="gotoDynamic(item);">
+    <td>{{item.id}}</td>
+    <td>{{item.name}}</td>
+  </tr>
+</table>
+<input type="text" name="id" [(ngModel)]="product.id" >
+<input type="text" name="name" [(ngModel)]="product.name" >
+<!--button (click)="gotoDynamic()" >Goto Dynamic Component</button-->
 <router-outlet></router-outlet>
