@@ -2,6 +2,9 @@ import { Request, Response, Router } from "express";
 import presentacion, { IPresentacion } from "../models/presentaciones";
 import articulo, { IArticulo } from "../models/articulos";
 import prodName, {} from '../models/productoname';
+import fabricantes from "../models/fabricantes";
+import marcas from "../models/marcas";
+import especies from "../models/especies";
 
 class MakeDataControler {
 
@@ -105,17 +108,37 @@ class MakeDataControler {
       ));
     }
     const next = 'http://fofware.com.ar:4444/make/productoname';
-    const fabricante = await articulo.distinct('fabricante');
-		const marca = await articulo.distinct('marca');
+    
+    const fabricante = await this.saveTablas('fabricante',fabricantes);
+    const marca = await this.saveTablas('marca',marcas);
+    const especie = await this.saveTablas('especie',especies);
+
+
 		const rubro = await articulo.distinct('rubro');
 		const linea = await articulo.distinct('linea');
-		const especie = await articulo.distinct('especie');
+
 		const raza = await articulo.distinct('raza');
 		const edad = await articulo.distinct('edad');
 		const name = await articulo.distinct('name');
 		const tags = await articulo.distinct('tags');
 		res.status(200).json({next,fabricante,marca,rubro,linea,especie,raza,edad,name,tags});
   }
+
+  async saveTablas( name: string, modelo:any):Promise<any> {
+    const rslt = [];    
+    const array = await articulo.distinct( name );
+    console.log(array);
+    for (let i = 0; i < array.length; i++) {
+      const e = {
+        name: array[i]
+      }
+      const data = new modelo(e);
+      console.log(data);
+      rslt.push(await data.save());
+    }
+    return JSON.parse(JSON.stringify(rslt));
+  }
+
   async presentacion(req: Request, res: Response){
     res.status(200).json('presentacion');
   }

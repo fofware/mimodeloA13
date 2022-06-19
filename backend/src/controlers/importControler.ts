@@ -1,6 +1,8 @@
 import { Request, Response, Router } from "express";
 import presentacion, { IPresentacion } from "../models/presentaciones";
 import articulo, { IArticulo } from "../models/articulos";
+import fabricantes from "../models/fabricantes";
+import marcas from "../models/marcas";
 
 import https from 'https';
 
@@ -66,7 +68,8 @@ class ImportDataControler {
       //const repta = ret;
       const repta = [];
       const newData = [];
-      repta.push({next: 'http://fofware.com.ar:4444/make/articulo'})
+      //repta.push({next: 'http://fofware.com.ar:4444/make/articulo'})
+      repta.push({next: 'http://fofware.com.ar:4444/make/tablas'});
       repta.push(ret);
       repta.push(newData);
       for (let i = 0; i < ret.data.length; i++) {

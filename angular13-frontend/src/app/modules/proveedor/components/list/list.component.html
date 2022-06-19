@@ -1,0 +1,41 @@
+<!--div class="container-fluid navbar-light bg-light"-->
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
+  <div class="container-fluid">
+    <!--div-->
+      <a class="navbar-brand" routerLink="" (click)='isMenuCollapsed = true'>Proveedores</a>
+    <!--/div-->
+    <!--div class="d-flex"-->
+      <button
+        class="navbar-toggler align-self-center"
+        type="button"
+        (click)='isMenuCollapsed = !isMenuCollapsed'
+        >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    <!--/div-->
+    <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
+      <!--ul ngbNav [activeId]="activatedRoute.fragment | async" class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li [ngbNavItem]="link.fragment" *ngFor="let link of links"-->
+          <!--a ngbNavLink routerLink="." [fragment]="link.fragment">{{ link.title }}</a-->
+          <!--a ngbNavLink [routerLink]="['./',link.fragment]" >{{ link.title }}</a>
+      
+        </li>
+      </ul-->
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success me-2" type="submit">Search</button>
+        <a class="btn btn-outline-success" [routerLink]="['../','new']" (click)="isMenuCollapsed=true">Add</a>
+      </form>
+    </div>
+
+  </div>
+</nav>
+<table>
+  <tr *ngFor="let item of proveedores" (click)="gotoDynamic(item);">
+    <td>{{item.id}}</td>
+    <td>{{item.name}}</td>
+  </tr>
+</table>
+
+<!--/div-->
+

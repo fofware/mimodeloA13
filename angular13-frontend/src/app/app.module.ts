@@ -24,6 +24,7 @@ import { SigninBtnComponent } from './components/signin-btn/signin-btn.component
 import { NotifyBtnComponent } from './components/notify-btn/notify-btn.component';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { PruebaModule } from './modules/prueba/prueba.module';
+import { PrivateHomeComponent } from './components/private-home/private-home.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { PruebaModule } from './modules/prueba/prueba.module';
     HtmldataComponent,
     SigninBtnComponent,
     NotifyBtnComponent,
+    PrivateHomeComponent,
   ],
   imports: [
     BrowserModule,

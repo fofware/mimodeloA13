@@ -1,16 +1,22 @@
-<div>pROVEEDOR home works!</div>
-
-<ul>
-  <li><a [routerLink]="['/proveedores/new']">New Data</a></li> 
-  <!--li><a [routerLink]="['/proveedores/edit']" [state]='product'>Dynamic Data</a></li--> 
-</ul>
-<table>
-  <tr *ngFor="let item of productos" (click)="gotoDynamic(item);">
-    <td>{{item.id}}</td>
-    <td>{{item.name}}</td>
-  </tr>
-</table>
-<input type="text" name="id" [(ngModel)]="product.id" >
-<input type="text" name="name" [(ngModel)]="product.name" >
-<!--button (click)="gotoDynamic()" >Goto Dynamic Component</button-->
-<router-outlet></router-outlet>
+<nav class="navbar navbar-expand-sm bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" [routerLink]="['../']"><i class="fa-solid fa-arrow-rotate-left"></i></a>
+      <a class="navbar-brand" [routerLink]="['./']">{{proveedor.name}}</a>
+      <div class="d-flex">
+        <button
+          class="navbar-toggler align-self-center"
+          type="button"
+          (click)='isMenuCollapsed = !isMenuCollapsed'
+          >&#9776;
+        </button>
+      </div>
+      <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
+        <ul ngbNav [activeId]="activatedRoute.fragment | async" class="navbar-nav">
+          <li [ngbNavItem]="menu.link" *ngFor="let menu of defmenu">
+            <a ngbNavLink *ngIf="menu.link" [routerLink]="menu.link" routerLinkActive="active" [innerHTML]="menu.title" (click)="isMenuCollapsed=true"></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <router-outlet></router-outlet>

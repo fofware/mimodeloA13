@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -10,7 +11,19 @@ export class TopMenuComponent implements OnInit {
 
   public isMenuCollapsed = true;
 
-  constructor( ) { }
+  public defmenu = [
+    { title: '<i class="fas fa-home-lg fa-lg"></i>', link: 'home' },
+    { title: 'Marcas', link: ['marca'] },
+    { title: 'Articulos', link: ['articulos'] },
+    { title: 'Productos', link: ['producto'] },
+    { title: 'Appicaciones', link: ['private','menu'] },
+    { title: 'Socket', link: ['socketdata'] },
+    { title: 'HttpData', link: ['htmldata'] },
+    { title: 'Usuarios', link: ['users'] },
+    { title: 'Proveedores', link: ['proveedores'] },
+    { title: 'Temporal', link: ['temp'] },
+  ];
+  constructor( public route: ActivatedRoute ) { }
 
   ngOnInit(): void {
 

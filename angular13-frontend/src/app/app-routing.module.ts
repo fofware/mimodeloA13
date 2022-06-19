@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { HtmldataComponent } from './components/htmldata/htmldata.component';
 import { NoPageComponent } from './components/no-page/no-page.component';
+import { PrivateHomeComponent } from './components/private-home/private-home.component';
 import { TestdataComponent } from './components/testdata/testdata.component';
 
 const routes: Routes = [
@@ -40,6 +41,16 @@ const routes: Routes = [
         module => module.ProveedorModule
       ) 
   },
+  {
+    path: 'private/:id',
+    component: PrivateHomeComponent,
+  },
+  {
+    path: 'private/menu/:id'
+    , component: PrivateHomeComponent
+    //, canActivate: [AuthGuard]
+  },
+
   { path: '**', component: NoPageComponent }
 ];
 

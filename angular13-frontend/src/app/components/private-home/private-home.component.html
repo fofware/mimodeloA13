@@ -1,0 +1,36 @@
+<div class="content" role="main">
+  <!-- Highlight Card -->
+  <div class="d-flex position-relative highlight-card rounded-pill p-2 pl-4 pr-4">
+    <i class="{{data.icon}}  flex-shrink-0 me-3"></i>
+    <div class="ml-2 align-self-center text-center pl-5 pr-5">
+      <h3 class="mt-0 mb-0">{{ data.title }}</h3>
+      <p> {{ data.comment }} </p>
+    </div>
+  </div>
+
+  <!-- Resources -->
+  <!--h2>{{ data.title }}</h2>
+  <p> {{ data.comment }} </p-->
+
+  <div class="card-container">
+    <div *ngFor="let item of data.menu" class="card">
+      <a *ngIf="item.route"
+        [routerLink]="[item.route, item.param ]"
+        target="{{item.target}}" rel="{{item.rel}}"
+      >
+        <i class="{{item.icon}}"></i>
+        <div>{{item.title}}</div>
+      </a>
+      <a *ngIf="!item.route"
+        href="{{item.href}}"
+        target="{{item.target}}"
+        rel="{{item.rel}}"
+      >
+        <i class="{{item.icon}}"></i>
+        <div>{{item.title}}</div>
+      </a>
+
+    </div>
+
+  </div>
+</div>

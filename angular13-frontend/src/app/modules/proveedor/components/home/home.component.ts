@@ -1,26 +1,48 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ProveedoresService } from '../../services/proveedores.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
-  public productos = [
-    { id:'1', name:"Angular"},
-    { id:'2', name:'Pepe'}
+export class HomeComponent implements OnInit, OnDestroy {
+  
+  actrt:any;
+  proveedorId:any;
+  proveedor:any;
+  public isMenuCollapsed = true;
+
+  public defmenu = [
+    //{ title: '<i class="fa-solid fa-arrow-rotate-left"></i>', link: '../' },
+    { title: 'Marcas', link: ['marcas'] },
+    //{ title: 'Articulos', link: ['articulos'] },
+    { title: 'Productos', link: ['producto'] },
+    { title: 'listas', link: ['lista'] },
+    //{ title: 'Socket', link: ['socketdata'] },
+    //{ title: 'HttpData', link: ['htmldata'] },
+    //{ title: 'Usuarios', link: ['users'] },
+    //{ title: 'Proveedores', link: ['proveedores'] },
+    //{ title: 'Temporal', link: ['temp'] },
   ];
-  public product = {id: 'new', name: '' }
-  constructor(private router : Router) { }
+
+  constructor(
+    private router : Router,
+    public activatedRoute: ActivatedRoute,
+    private provData: ProveedoresService
+  ) { }
 
   ngOnInit(): void {
-
+    this.actrt = this.activatedRoute.params.subscribe(params => {
+      console.log(params);
+      //this.proveedorId = params['id'];
+      this.proveedor = this.provData.get(params['id']);
+      //this.defmenu[0].title = this.proveedor.name;
+    });
   }
 
-  gotoDynamic(item:any) {
-    //this.router.navigateByUrl('/dynamic', { state: { id:1 , name:'Angular' } });
-    console.log(item);
-    this.router.navigate(['/proveedores/edit', item] );
+  ngOnDestroy(){
   }
+
 }

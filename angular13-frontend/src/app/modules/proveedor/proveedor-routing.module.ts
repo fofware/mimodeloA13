@@ -3,31 +3,50 @@ import { RouterModule, Routes } from '@angular/router';
 import { NoPageComponent } from 'src/app/components/no-page/no-page.component';
 import { FormComponent } from './components/form/form.component';
 import { HomeComponent } from './components/home/home.component';
+import { ListComponent } from './components/list/list.component';
+import { MarcaComponent } from './components/marca/marca.component';
+import { ProveedorComponent } from './proveedor.component';
 
 const routes: Routes = [
   {
     path: '', 
-    component: HomeComponent,
+    component: ProveedorComponent,
     children: [
-      //{
-      //  path: '', redirectTo: 'temp',
-      //  pathMatch: 'full' 
-      //},
+      //
+      // https://www.tektutorialshub.com/angular/angular-pass-data-to-route/
+      // https://www.tektutorialshub.com/angular/angular-passing-parameters-to-route/
+      // https://www.tektutorialshub.com/angular/angular-child-routes-nested-routes/
+      //
       {
-        path: 'new',
-        component: FormComponent,
-        data: {
-          id: 'new'
-        }
+        path: 'list',
+        component: ListComponent
       },
       {
-        path: 'edit',
-        component: FormComponent
+        path: ':id',
+        component: HomeComponent,
+        children: [
+          {
+            path: '',
+            component: FormComponent 
+          },
+          {
+            path: 'marcas',
+            component: MarcaComponent 
+          },
+          {
+            path: '**',
+            component: NoPageComponent
+          }
+        ]
       },
-      //{
-      //  path: '**',
-      //  component: NoPageComponent
-      //}
+      {
+        path: '', redirectTo: 'list',
+        //pathMatch: 'full' 
+      },
+      {
+        path: '**',
+        component: NoPageComponent
+      }
     
     ]
   },
