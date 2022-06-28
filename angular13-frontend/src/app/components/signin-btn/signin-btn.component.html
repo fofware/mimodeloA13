@@ -1,9 +1,9 @@
 <div ngbDropdown #myDrop="ngbDropdown" class="float-end h-100" style="color: #ededed;">
   <div class="d-flex align-content-end flex-column mx-4" id="dropdownForm1" ngbDropdownToggle>
-    <img class="align-self-center" width="32px" height="32px" src="{{user.image}}" />
-    <div class="align-self-center">{{user.nickname}}</div>
+    <img class="align-self-center" width="32px" height="32px" src="{{authService.userValue.image}}" />
+    <div class="align-self-center">{{authService.userValue.nickname}}</div>
   </div>
-  <div class="logform" *ngIf="!isLogged()" ngbDropdownMenu aria-labelledby="dropdownForm1">
+  <div class="logform" *ngIf="!authService.isLoggedValue; else viewLogged" ngbDropdownMenu aria-labelledby="dropdownForm1">
     <form class="px-3 py-3">
       <div class="mb-3">
         <label for="exampleDropdownFormEmail1">Email address</label>
@@ -25,9 +25,11 @@
     <button type="button" ngbDropdownItem>Registarse</button>
     <button type="button" ngbDropdownItem>Forgot password?</button>
   </div>
-  <div *ngIf="isLogged()" ngbDropdownMenu aria-labelledby="dropdownForm1">
-    <button type="button" ngbDropdownItem>Profile</button>
-    <div class="dropdown-divider"></div>
-    <button type="button" (click)="$event.stopPropagation();myDrop.close;logout()" ngbDropdownItem>Logout</button>
-  </div>
+  <ng-template #viewLogged>
+    <div ngbDropdownMenu aria-labelledby="dropdownForm1">
+      <button type="button" ngbDropdownItem>Profile</button>
+      <div class="dropdown-divider"></div>
+      <button type="button" (click)="$event.stopPropagation();myDrop.close;logout()" ngbDropdownItem>Logout</button>
+    </div>
+    </ng-template>
 </div>

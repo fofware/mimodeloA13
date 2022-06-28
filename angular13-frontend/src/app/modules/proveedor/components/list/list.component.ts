@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ProveedoresService } from '../../services/proveedores.service';
+import { ApiService } from '../../../../services/api.service';
 
 @Component({
   selector: 'app-list',
@@ -9,21 +9,50 @@ import { ProveedoresService } from '../../services/proveedores.service';
 })
 export class ListComponent implements OnInit {
   public isMenuCollapsed = true;
+  
   proveedores:any;
+  data:any[] = [];
+  loading = false;
+  offset: number | boolean = 0;
+  nextOffset: number | boolean = 0;
+  count = 0;
+  limit = 50;
+  searchItem = '';
 
   constructor(
     private router : Router,
-    private provData: ProveedoresService
+    private apiSrv: ApiService
   ) { }
 
   ngOnInit(): void {
-    this.proveedores = this.provData.get();
+    this.setData()
+  }
+
+  setData(){
+    if(this.loading) return;
+    if(this.nextOffset === false) return;
+    this.loading = true;
+    const params = {
+      limit: this.limit,
+      offset: this.nextOffset,
+      searchItem: this.searchItem
+    };
+    this.apiSrv.get('/proveedores',params).subscribe((data:any) => {
+      console.log(data);
+      this.count = data.count;
+      this.offset = data.offset;
+      this.nextOffset = data.nextOffset;
+      this.data = this.data.concat(data.data);
+      console.log(this.data.length);
+      console.log(data.apiTime);
+      this.loading = false;
+    });
   }
 
   gotoDynamic(item:any) {
     //this.router.navigateByUrl('/dynamic', { state: { id:1 , name:'Angular' } });
     //console.log(item);
-    this.router.navigate(['proveedores', item.id] );
+    this.router.navigate(['proveedores', item._id] );
   }
 
 }

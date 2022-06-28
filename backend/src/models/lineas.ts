@@ -1,14 +1,14 @@
 import { Schema, model, Document } from "mongoose";
 
-export interface IMarca extends Document {
+export interface ILinea extends Document {
   name: string;
-  fabricante: object;
+  rubro: object;
   images: [];
 };
 
-const marcaSchema = new Schema({
+const lineaSchema = new Schema({
   name: { type: Schema.Types.String, trim: true, default: '', index: true },
-  fabricante: { ref: "Fabricante", type: Schema.Types.ObjectId, default: null },
+  rubro: { ref: "Rubro", type: Schema.Types.ObjectId, default: null },
   images: [{ type: Schema.Types.String, default: null}]
 },
 { 
@@ -16,9 +16,9 @@ const marcaSchema = new Schema({
 });
 
 
-marcaSchema.on('index', error => {
+lineaSchema.on('index', error => {
   // "_id index cannot be sparse"
   console.log(error);
 });
 
-export default model<IMarca>('Marca', marcaSchema);
+export default model<ILinea>('Linea', lineaSchema);

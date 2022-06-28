@@ -1,10 +1,15 @@
 import { Schema, model, Document, isValidObjectId } from "mongoose";
 
-export interface IArticulo extends Document {
+export interface I_Articulo extends Document {
+  fabricante_id: object;
   fabricante: string;
+  marca_id: object;
   marca: string;
+  rubro_id: object;
   rubro: string;
+  linea_id: object;
   linea: string;
+  especie_id: object;
   especie: string;
   edad: string;
   raza: string;
@@ -34,10 +39,14 @@ export interface IArticulo extends Document {
   margen: number;
 };
 
-const articuloSchema = new Schema({
+const _articuloSchema = new Schema({
+  fabricante_id: { ref: "Fabricantes", type: Schema.Types.ObjectId, default: null },
   fabricante: { type: Schema.Types.String, trim: true, default: '', index: true }, // Nestle
+  marca_id: { ref: "Marcas", type: Schema.Types.ObjectId, default: null },
   marca: { type: Schema.Types.String, trim: true, default: '', index: true },      // Purina Dog Chow / Purina Cat Chow
+  rubro_id: { ref: "Rubros", type: Schema.Types.ObjectId, default: null },
   rubro: { type: Schema.Types.String, trim: true, default: '', index: true },      // Alimento Seco / Alimento Húmedo
+  linea_id: { ref: "Lineas", type: Schema.Types.ObjectId, default: null },
   linea: { type: Schema.Types.String, trim: true, default: '', index: true },      // ???????
   especie_id: { ref: "Especies", type: Schema.Types.ObjectId, default: null },
   especie: { type: Schema.Types.String, trim: true, default: '', index: true },   // Gato
@@ -73,12 +82,12 @@ const articuloSchema = new Schema({
 });
 
 
-articuloSchema.on('index', error => {
+_articuloSchema.on('index', error => {
   // "_id index cannot be sparse"
   console.log(error);
 });
 
-articuloSchema.virtual('fullname').get(function(){
+_articuloSchema.virtual('fullname').get(function(){
   let fullName = '';
   let sep = '';
   if(this.d_fabricante){
@@ -116,5 +125,4 @@ articuloSchema.virtual('fullname').get(function(){
   return fullName;
 })
 
-export default model<IArticulo>('Articulo', articuloSchema);
-
+export default model<I_Articulo>('_Articulo', _articuloSchema);

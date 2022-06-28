@@ -19,8 +19,17 @@ export interface IUser extends Document {
   pais: string;
   roles: [];                /*
                                 Se debe setear automáticamente al crear la cuenta, 
-                                "SYSADMIN" para la cuenta principal 
-                                "USER" para las subcuentas 
+                                "SYSADMIN" para la cuenta principal  se debe crear al inicializar el sistema obteniendo el usuario y contraseña de enviroment
+                                "SYSUSER" para la subcuenta principal
+                                // 
+                                "CLIENTEADMIN"
+                                "CLIENTEUSER" para las subcuentas 
+                                //
+                                "REVENTAADMIN"
+                                "REVENTAUSER" para las subcuentas 
+                                //
+                                "PROVEEDORADMIN"
+                                "PROVEEDORUSER" para las subcuentas 
                             */
   comparePassword: ( password: string ) => Promise<boolean>;
   encriptPassword: ( password: string ) => string;
@@ -28,27 +37,23 @@ export interface IUser extends Document {
 
 const userSchema = new Schema({
   email:{ type: String, unique: true, required: true, lowercase: true, trim: true }
-  , interna: {type: Boolean, default: false }
-  , parentAccountId: {type: Schema.Types.ObjectId}
-  , status: { type: Boolean, default: true }
-  , password: { type: String, required: true }
-  , apellido: { type: String, trim: true }
-  , nombre: { type: String, trim: true }
-  , fijo: { type: String, trim: true }
-  , celular: { type: String, trim: true }
-  , whatsapp: { type: Boolean, default: false}
-  , direccion: { type: String, trim: true }
-  , localidad: { type: String, trim: true }
-  , provincia: { type: String, trim: true }
-  , zipcode: { type: String, trim: true }
-  , pais: { type: String, trim: true }
-  , roles: [{
-    ref: "roles",
-    type: Schema.Types.ObjectId,
-    default: []
-  }]
+  , interna: {type: Schema.Types.Boolean, default: false }
+  , parentAccountId: {ref: 'user',type: Schema.Types.ObjectId, default: null}
+  , status: { type: Schema.Types.Boolean, default: true }
+  , password: { type: Schema.Types.String, required: true }
+  , apellido: { type: Schema.Types.String, trim: true }
+  , nombre: { type: Schema.Types.String, trim: true }
+  , fijo: { type: Schema.Types.String, trim: true }
+  , celular: { type: Schema.Types.String, trim: true }
+  , whatsapp: { type: Schema.Types.Boolean, default: false}
+  , direccion: { type: Schema.Types.String, trim: true }
+  , localidad: { type: Schema.Types.String, trim: true }
+  , provincia: { type: Schema.Types.String, trim: true }
+  , zipcode: { type: Schema.Types.String, trim: true }
+  , pais: { type: Schema.Types.String, trim: true }
+  , roles: []
 },{
-  timestamps: true,
+  timestamps: false,
   versionKey: false
 })
 

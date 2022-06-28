@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProveedoresService } from '../../services/proveedores.service';
+import { Subject, takeUntil } from 'rxjs';
+import { ProveedoresService } from '../../../../services/proveedores.service';
 
 @Component({
   selector: 'app-home',
@@ -27,6 +28,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     //{ title: 'Temporal', link: ['temp'] },
   ];
 
+  private destroy$ = new Subject<any>();
+
   constructor(
     private router : Router,
     public activatedRoute: ActivatedRoute,
@@ -34,15 +37,22 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.actrt = this.activatedRoute.params.subscribe(params => {
+    /*
+    this.actrt = this.activatedRoute.params
+    .pipe( takeUntil(this.destroy$) )
+    .subscribe(params => {
       console.log(params);
       //this.proveedorId = params['id'];
       this.proveedor = this.provData.get(params['id']);
+
       //this.defmenu[0].title = this.proveedor.name;
     });
+    */
   }
 
   ngOnDestroy(){
+    this.destroy$.next({});
+    this.destroy$.complete();
   }
 
 }

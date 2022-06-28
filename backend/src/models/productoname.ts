@@ -50,7 +50,7 @@ const productoNameSchema = new Schema({
   , plu: { type: Schema.Types.String, trim: true, default: "", index: true }
   , ean: { type: Schema.Types.String, trim: true, default: '', index: true }
   , contiene: { type: Schema.Types.Number, default: 0, index: true }
-  , unidad: { type: String, trim: true, default: "" }
+  , unidad: { type: Schema.Types.String, trim: true, default: "" }
 
   , pVenta: { type: Schema.Types.Boolean, default: true, index: true }
   , pCompra: { type: Schema.Types.Boolean, default: true, index: true }
@@ -73,6 +73,7 @@ const productoNameSchema = new Schema({
   , prodName: { type: Schema.Types.String, default: '', index: true  }
 },{
   timestamps: false,
+  versionKey: false
 })
 
 

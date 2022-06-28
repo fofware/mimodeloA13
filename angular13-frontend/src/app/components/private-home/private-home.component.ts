@@ -19,12 +19,14 @@ export class PrivateHomeComponent implements OnInit {
     public actRoute: ActivatedRoute,
     private menuService: MenuService
   ) {
-    //console.log(this.actRoute.snapshot.params['id']);
-    
-    this.menuId = this.actRoute.snapshot.params['id'] || 'menu';
-    this.findMenu();
-    //console.log('this.menuId', this.menuId);
-  }
+      console.log(this.actRoute.snapshot);
+      console.log("data",this.actRoute.snapshot.data);
+      console.log("queryParams", this.actRoute.snapshot.queryParams);
+
+      this.menuId = this.actRoute.snapshot.params['id'] || 'menu';
+      this.findMenu();
+      //console.log('this.menuId', this.menuId);
+    }
 
   ngOnInit(): void {
     this.actRoute.queryParams.subscribe(params => {

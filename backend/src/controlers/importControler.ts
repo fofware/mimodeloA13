@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import presentacion, { IPresentacion } from "../models/presentaciones";
-import articulo, { IArticulo } from "../models/articulos";
+import articulo from "../models/_articulos";
 import fabricantes from "../models/fabricantes";
 import marcas from "../models/marcas";
 

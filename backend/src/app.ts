@@ -17,6 +17,8 @@ import authRoutes from './routes/authRoutes';
 import { makeCtrl } from './controlers/makeDataControler';
 import { importCtrl } from './controlers/importControler';
 import { presentacionCtrl } from './controlers/presentacionesControlers';
+import { proveedorCtrl } from './controlers/proveedorControler';
+import { proveedorProductoCtrl } from './controlers/proveedorProductoControler';
 
 //import { articuloCtrl } from './controlers/articuloControler';
 //import { productoCtrl } from './controlers/productoControler';
@@ -43,5 +45,7 @@ app.use(devCtrl.router);
 app.use(devCtrl.router);
 app.use(makeCtrl.router);
 app.use(importCtrl.router);
+app.use(proveedorCtrl.router);
+app.use(proveedorProductoCtrl.router);
 app.use(authRoutes);
 export default app;
