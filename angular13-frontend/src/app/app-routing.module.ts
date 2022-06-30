@@ -7,7 +7,6 @@ import { PrivateHomeComponent } from './components/private-home/private-home.com
 import { TestdataComponent } from './components/testdata/testdata.component';
 import { AuthGuard } from './guards/auth.guard';
 import { IsLoggedGuard } from './guards/is-logged.guard';
-import { AuthService } from './services/auth.service';
 
 export function readUser(): any {
   const token = localStorage.getItem('token');

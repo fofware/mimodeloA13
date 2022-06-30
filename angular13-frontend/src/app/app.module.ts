@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SocketIoModule } from 'ngx-socket-io';
 import { ToastrModule } from 'ngx-toastr';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 
 import { TestdataComponent } from './components/testdata/testdata.component';
@@ -25,6 +26,7 @@ import { NotifyBtnComponent } from './components/notify-btn/notify-btn.component
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { PruebaModule } from './modules/prueba/prueba.module';
 import { PrivateHomeComponent } from './components/private-home/private-home.component';
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 
 @NgModule({
   declarations: [
@@ -55,6 +57,8 @@ import { PrivateHomeComponent } from './components/private-home/private-home.com
       //easing: 'ease-out',
       //progressAnimation: 'increasing',
     }),
+    TooltipModule.forRoot(),
+    TypeaheadModule.forRoot(),
     PruebaModule
 
   ],

@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NoPageComponent } from 'src/app/components/no-page/no-page.component';
+import { ArticulosComponent } from './components/articulos/articulos.component';
 import { FormComponent } from './components/form/form.component';
 import { HomeComponent } from './components/home/home.component';
 import { ListComponent } from './components/list/list.component';
 import { MarcaComponent } from './components/marca/marca.component';
+import { ProductosComponent } from './components/productos/productos.component';
 import { ProveedorComponent } from './proveedor.component';
 
 const routes: Routes = [
@@ -31,7 +33,15 @@ const routes: Routes = [
           },
           {
             path: 'marcas',
-            component: MarcaComponent 
+            component: MarcaComponent,
+          },
+          {
+            path: 'articulos',
+            component: ArticulosComponent 
+          },
+          {
+            path: 'productos',
+            component: ProductosComponent 
           },
           {
             path: '**',

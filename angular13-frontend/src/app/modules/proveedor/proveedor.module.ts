@@ -9,6 +9,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ListComponent } from './components/list/list.component';
 import { ProveedorComponent } from './proveedor.component';
 import { MarcaComponent } from './components/marca/marca.component';
+import { ProductosComponent } from './components/productos/productos.component';
+import { ArticulosComponent } from './components/articulos/articulos.component';
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 @NgModule({
@@ -17,7 +21,9 @@ import { MarcaComponent } from './components/marca/marca.component';
     FormComponent,
     ListComponent,
     ProveedorComponent,
-    MarcaComponent
+    MarcaComponent,
+    ProductosComponent,
+    ArticulosComponent
   ],
   imports: [
     CommonModule,
@@ -25,6 +31,8 @@ import { MarcaComponent } from './components/marca/marca.component';
     HttpClientJsonpModule,
     ProveedorRoutingModule,
     NgbModule,
+    TypeaheadModule.forRoot(),
+
 
   ]
 })

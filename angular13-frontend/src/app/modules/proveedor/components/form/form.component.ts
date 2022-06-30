@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { ApiService } from 'src/app/services/api.service';
 
 @Component({
   selector: 'app-form',
@@ -14,21 +15,44 @@ export class FormComponent implements OnInit {
 
   private destroy$ = new Subject<any>();
 
-  constructor(private router:Router, private activatedRoute:ActivatedRoute) { }
+  constructor(
+    private router:Router, 
+    private activatedRoute:ActivatedRoute,
+    private apiSrv: ApiService) { }
 
   ngOnInit(): void {
     this.actrt = this.activatedRoute.params
-      .pipe(
-        takeUntil(this.destroy$)
-      )
+      .pipe( takeUntil(this.destroy$) )
       .subscribe(params => {
         console.log(params);
         this.proveedorId = params['id'];
+        if(this.proveedorId !== 'new'){
+          this.apiSrv.get(`/proveedor/${this.proveedorId}`)
+          .subscribe(data => {
+            console.log(data)
+            this.proveedor = data;
+          })
+        }
       });
-    
   }
+
   ngOnDestroy(){
     this.destroy$.next({});
     this.destroy$.complete();
+  }
+
+  saveData(){
+    if(!this.proveedor._id){
+      console.log('Add',this.proveedor);
+      this.apiSrv.post('/proveedor',this.proveedor).subscribe((data:any) => {
+        console.log(data);
+      })
+    } else {
+      console.log('Modifica',this.proveedor);
+      this.apiSrv.post('/proveedor',this.proveedor).subscribe((data:any) => {
+        console.log(data);
+      })
+        
+    }
   }
 }

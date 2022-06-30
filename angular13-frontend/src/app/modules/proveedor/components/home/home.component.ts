@@ -2,7 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ProveedoresService } from '../../../../services/proveedores.service';
-
+//https://www.tektutorialshub.com/angular/angular-child-routes-nested-routes/
+//https://www.tektutorialshub.com/angular/angular-child-routes-nested-routes/
+//https://www.freakyjolly.com/angular-nested-routing-with-multiple-routeroutlet-using-loadchildren-having-own-router-modules-example-application/
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -12,20 +14,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   
   actrt:any;
   proveedorId:any;
-  proveedor:any;
-  public isMenuCollapsed = true;
+  proveedor:any = {};
+  //public isMenuCollapsed = true;
 
   public defmenu = [
     //{ title: '<i class="fa-solid fa-arrow-rotate-left"></i>', link: '../' },
     { title: 'Marcas', link: ['marcas'] },
-    //{ title: 'Articulos', link: ['articulos'] },
-    { title: 'Productos', link: ['producto'] },
+    { title: 'Articulos', link: ['articulos'] },
+    { title: 'Productos', link: ['productos'] },
     { title: 'listas', link: ['lista'] },
-    //{ title: 'Socket', link: ['socketdata'] },
-    //{ title: 'HttpData', link: ['htmldata'] },
-    //{ title: 'Usuarios', link: ['users'] },
-    //{ title: 'Proveedores', link: ['proveedores'] },
-    //{ title: 'Temporal', link: ['temp'] },
   ];
 
   private destroy$ = new Subject<any>();
@@ -37,17 +34,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    /*
     this.actrt = this.activatedRoute.params
     .pipe( takeUntil(this.destroy$) )
     .subscribe(params => {
       console.log(params);
-      //this.proveedorId = params['id'];
-      this.proveedor = this.provData.get(params['id']);
-
-      //this.defmenu[0].title = this.proveedor.name;
+      this.proveedorId = params['id'];
+      if(params['id'])
+        this.proveedor = this.provData.get(params['id'])
+        .subscribe(data => this.proveedor = data);
     });
-    */
+
   }
 
   ngOnDestroy(){

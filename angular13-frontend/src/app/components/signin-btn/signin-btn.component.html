@@ -1,9 +1,9 @@
 <div ngbDropdown #myDrop="ngbDropdown" class="float-end h-100" style="color: #ededed;">
   <div class="d-flex align-content-end flex-column mx-4" id="dropdownForm1" ngbDropdownToggle>
-    <img class="align-self-center" width="32px" height="32px" src="{{authService.userValue.image}}" />
-    <div class="align-self-center">{{authService.userValue.nickname}}</div>
+    <img class="align-self-center" width="32px" height="32px" src="{{authSrv.userValue.image}}" />
+    <div class="align-self-center">{{authSrv.userValue.nickname}}</div>
   </div>
-  <div class="logform" *ngIf="!authService.isLoggedValue; else viewLogged" ngbDropdownMenu aria-labelledby="dropdownForm1">
+  <div class="logform" *ngIf="!authSrv.isLoggedValue; else viewLogged" ngbDropdownMenu aria-labelledby="dropdownForm1">
     <form class="px-3 py-3">
       <div class="mb-3">
         <label for="exampleDropdownFormEmail1">Email address</label>

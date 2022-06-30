@@ -3,17 +3,17 @@
       <a class="navbar-brand" [routerLink]="['../']"><i class="fa-solid fa-arrow-rotate-left"></i></a>
       <a class="navbar-brand" [routerLink]="['./']">{{proveedor.name}}</a>
       <div class="d-flex">
-        <button
+        <!--button
           class="navbar-toggler align-self-center"
           type="button"
           (click)='isMenuCollapsed = !isMenuCollapsed'
           >&#9776;
-        </button>
+        </button-->
       </div>
-      <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
+      <div class="collapse navbar-collapse">
         <ul ngbNav [activeId]="activatedRoute.fragment | async" class="navbar-nav">
           <li [ngbNavItem]="menu.link" *ngFor="let menu of defmenu">
-            <a ngbNavLink *ngIf="menu.link" [routerLink]="menu.link" routerLinkActive="active" [innerHTML]="menu.title" (click)="isMenuCollapsed=true"></a>
+            <a ngbNavLink *ngIf="menu.link" [routerLink]="menu.link" routerLinkActive="active" [innerHTML]="menu.title"></a>
           </li>
         </ul>
       </div>

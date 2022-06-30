@@ -16,16 +16,16 @@ export class SigninBtnComponent implements OnInit, OnDestroy {
   
   private destroy$ = new Subject<any>();
 
-  constructor(public authService: AuthService ) { }
+  constructor(public authSrv: AuthService ) { }
 
   ngOnInit(): void {
-    this.authService.isLogged.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe( res => {
-      this.isLogged = res;
-      //this.user = this.authService.userValue;
-      this.newLoginEvent.emit(res);
-    });
+    this.authSrv.isLogged
+      .pipe( takeUntil(this.destroy$) )
+      .subscribe( res => {
+        this.isLogged = res;
+        //this.user = this.authService.userValue;
+        this.newLoginEvent.emit(res);
+      });
   }
 
   ngOnDestroy(): void {
@@ -34,14 +34,14 @@ export class SigninBtnComponent implements OnInit, OnDestroy {
   }
 
   login(myDrop:any):void {
-    this.authService.signIn(this.user).subscribe(res => {
+    this.authSrv.signIn(this.user).subscribe(res => {
       const token:any = res;
       myDrop.close();
     })
   }
 
   logout(){
-    this.authService.logout();
+    this.authSrv.logout();
     this.newLoginEvent.emit(false)
   }
 }

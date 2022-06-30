@@ -20,7 +20,7 @@ export class ApiService {
   //}
 
   get(fileName:string, data?:any) {
-    console.log("service",data)
+    console.log("service",fileName,data)
     return this.http.get(`${ORI_API}${fileName}`, {params: data});
   }
 

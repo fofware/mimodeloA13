@@ -1,14 +1,9 @@
 <div class="container">
   <div class="mb-3">
-    <label for="formGroupExampleInput" class="form-label">Example label</label>
-    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input placeholder">
-  </div>
-  <div class="mb-3">
-    <label for="formGroupExampleInput2" class="form-label">Another label</label>
-    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input placeholder">
+    <label for="formGroupProveedorName" class="form-label">Nombre</label>
+    <input type="text" class="form-control" id="formGroupProveedorName" name="name" placeholder="Nombre" [(ngModel)]="proveedor.name">
   </div>
   <div class="col-auto">
-    <button type="submit" class="btn btn-primary mb-3">Confirm identity</button>
+    <button class="btn btn-primary mb-3" (click)="saveData()">Grabar</button>
   </div>
-
 </div>

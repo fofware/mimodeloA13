@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ɵclearResolutionOfComponentResourcesQueue } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../../../services/api.service';
-
+/*
+  https://valor-software.com/ngx-bootstrap/#/components/modals?tab=overview#service-with-interceptor
+*/
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -46,6 +48,9 @@ export class ListComponent implements OnInit {
       console.log(this.data.length);
       console.log(data.apiTime);
       this.loading = false;
+      if(this.count === 0){
+        this.router.navigate(['proveedores','new'])
+      }
     });
   }
 

@@ -21,7 +21,9 @@ export class AuthService {
   constructor(
     private httpClient: HttpClient,
     private router: Router
-  ) { }
+  ) { 
+    this.decodeToken(this.getToken())
+  }
   
   get isLogged(): Observable<boolean>{
     return this.logged.asObservable();
