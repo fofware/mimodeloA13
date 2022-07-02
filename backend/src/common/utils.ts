@@ -71,6 +71,8 @@ export function makeFilter(fldsString:any,params:any){
   
   if(params.searchItem.length){
     const or = [];
+    console.log(params.searchItem);
+    //params.searchItem = params.searchItem === 'undefined' ? '' : params.searchItem;
     let searchItem = params.searchItem ? params.searchItem.replace(/  /g, ' ') : '';
     const searcharray: any[] = searchItem.trim().split(' ');
   

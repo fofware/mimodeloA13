@@ -19,9 +19,9 @@ export class ApiService {
   //  return this.http.get(`${ORI_API}/${fileName}`);
   //}
 
-  get(fileName:string, data?:any) {
+  get(fileName:string, data?:any, _headers={spinner: 'true'}): Observable<any> {
     console.log("service",fileName,data)
-    return this.http.get(`${ORI_API}${fileName}`, {params: data});
+    return this.http.get(`${ORI_API}${fileName}`, {params: data, headers: _headers });
   }
 
   post(fileName:string, data?:any) {

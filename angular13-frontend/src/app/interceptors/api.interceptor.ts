@@ -14,13 +14,17 @@ import { ToastrService } from 'ngx-toastr';
 @Injectable()
 export class ApiInterceptor implements HttpInterceptor {
   spinnerCount = 0;
+  enabled = true;
   constructor(
     private spinner: NgxSpinnerService,
     private toastr: ToastrService
     ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    if (this.spinnerCount === 0) this.spinner.show();
+    const enabled = request.headers.get('spinner');
+    this.enabled = enabled && enabled === 'false' ? false : true;
+    console.log('Interceptor', enabled, this.enabled )
+    if (this.spinnerCount === 0 && this.enabled) this.spinner.show();
     this.spinnerCount++;
     return next.handle(request).pipe(
       retry(1),
@@ -29,9 +33,9 @@ export class ApiInterceptor implements HttpInterceptor {
         const title = !res.error.title || res.error.title === '' ? `(${res.status}) - ${res.statusText}` : res.error.title;
         const text = !res.error.text || res.error.text === '' ? `${res.message}` : res.error.text;
         switch (res.status) {
-          //case 200:
-          //  this.toastr.info('Todo Bien','Api');
-          //  break;
+          case 200:
+            this.toastr.info('Todo Bien','Api');
+            break;
           case 401:
             this.toastr.warning( text, title );
             //this.auth.logout();
