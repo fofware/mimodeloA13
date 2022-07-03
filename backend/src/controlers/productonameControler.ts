@@ -48,7 +48,12 @@ class ProductoNameControler {
       'art_name',
       'prodName'
     ];
-  
+    
+    const fldsBoolean = [
+      'pCompra',
+      'pVenta'
+    ]
+
     const params = Object.assign({
       limit: 50,
       offset: 0,
@@ -59,6 +64,16 @@ class ProductoNameControler {
 
     console.log('list',params,fldsString)
     const filter = makeFilter(fldsString, params);
+    
+    if(params.pesable){
+      filter['pesable'] = params.pesable === 'false' ? { $ne: true } : true;
+    }
+    if(params.pVenta){
+      filter['pVenta'] = params.pVenta;
+    }
+    if(params.pCompra){
+      filter['pCompra'] = params.pCompra;
+    }
     //const filter = makeAggregate(fldsString, params);
     //console.log(filter);
     //console.log(filter['$or'][0]);
@@ -82,6 +97,7 @@ class ProductoNameControler {
       filter,
       data,
     }
+    console.log(filter);
     res.status(200).json(ret);
   }
   async get(req: Request, res: Response){

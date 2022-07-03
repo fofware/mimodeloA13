@@ -52,6 +52,7 @@ const productoNameSchema = new Schema({
   , contiene: { type: Schema.Types.Number, default: 0, index: true }
   , unidad: { type: Schema.Types.String, trim: true, default: "" }
 
+  , pesable: { type: Schema.Types.Boolean, default: false, index: true }
   , pVenta: { type: Schema.Types.Boolean, default: true, index: true }
   , pCompra: { type: Schema.Types.Boolean, default: true, index: true }
   , oferta: { type: Schema.Types.Boolean, default: false, index: true }

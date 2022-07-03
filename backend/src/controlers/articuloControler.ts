@@ -4,6 +4,7 @@ import { ObjectID } from 'bson'
 import passport from "passport";
 import articulo, { IArticulo } from '../models/articulos';
 import producto, { IProducto } from '../models/producto';
+import { makeFilter } from '../common/utils';
 
 class ArticuloControler {
 
@@ -13,8 +14,64 @@ class ArticuloControler {
 	}
 
 	config () {
+		this.router.get( '/articulos', this.list );
 		this.router.get( '/articulos/lista', this.lista );
 		this.router.get( '/articulos/full/lista', this.flista );
+	}
+
+	async list( req: Request, res: Response ) {
+    const fldsString = [
+      'fabricante',
+      'marca',
+      'name',
+      'rubro',
+      'linea',
+      'especie',
+      'raza',
+      'edad',
+    ];
+  
+    const params = Object.assign({
+      limit: 50,
+      offset: 0,
+      iniTime: new Date().getTime(),
+      sort: { name: 1 },
+      searchItem: ''
+    },req.query,req.params,req.body);
+
+    const filter = makeFilter(fldsString, params);
+    const count = await articulo.count(filter);
+    
+    params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
+    params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
+
+    let nextOffset = params.offset+params.limit;
+    nextOffset = nextOffset > count ? false : params.offset+params.limit;
+    let status = 0;
+    let ret = {}
+    try {
+      const data = await articulo.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
+      status = 200;
+      ret = {
+        url: req.headers.host+req.url,
+        limit: params.limit,
+        offset: params.offset,
+        nextOffset,
+        sort: params.sort,
+        count,
+        apiTime: new Date().getTime() - params.iniTime,
+        filter,
+        data,
+        message: 'Ok'
+      }
+        
+    } catch (error) {
+      console.log(error);
+      status = 400;
+      ret['message'] = 'Algo anduvo mal';
+      ret['error'] = error;
+    }
+    res.status(status).json(ret);
 	}
 
 	async lista( req: Request, res: Response ) {

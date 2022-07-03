@@ -39,7 +39,6 @@ const articuloSchema = new Schema({
   marca: { type: Schema.Types.String, trim: true, default: '', index: true },      // Purina Dog Chow / Purina Cat Chow
   rubro: { type: Schema.Types.String, trim: true, default: '', index: true },      // Alimento Seco / Alimento Húmedo
   linea: { type: Schema.Types.String, trim: true, default: '', index: true },      // ???????
-  especie_id: { ref: "Especies", type: Schema.Types.ObjectId, default: null },
   especie: { type: Schema.Types.String, trim: true, default: '', index: true },   // Gato
   edad: { type: Schema.Types.String, trim: true, default: '', index: true },
   raza: { type: Schema.Types.String, trim: true, default: '', index: true },

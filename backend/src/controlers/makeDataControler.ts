@@ -99,10 +99,11 @@ class MakeDataControler {
       }
       const data = await fabricantes.updateOne(
         { name: e.name },   // Query parameter
-        { $set: e }, 
+        { $set: e },        // Set Values
         { upsert: true }    // Options
       );
       console.log(data);
+      data['name'] = array[i];
       fabricante.push(data);
     }
     array = await fabricantes.find();
@@ -135,6 +136,7 @@ class MakeDataControler {
         { $set: e }, 
         { upsert: true }    // Options
       );
+      data['name'] = array[i];
       console.log(data);
       marca.push(data);
     }
@@ -154,6 +156,21 @@ class MakeDataControler {
       );
       console.log(retd);
     }
+    array = await fabricantes.find();
+    for (let i = 0; i < array.length; i++) {
+      const fab = array[i];
+      const _art = await _articulo.find({ fabricante_id: fab._id });
+      const tmp_marca = [];
+      for (let a = 0; a < _art.length; a++) {
+        const e = _art[a];
+        if(tmp_marca.findIndex((el) =>  `${el}` === `${e.marca_id}`) === -1) {
+          await marcas.findByIdAndUpdate(e.marca_id, {fabricante_id: _art['fabricante_id'], fabricante: _art['fabricante']});
+          tmp_marca.push(e.marca_id);
+        }
+      }
+      await fabricantes.findByIdAndUpdate(fab._id, {marcas: tmp_marca});
+    }
+
     const especie = [];    
     array = await _articulo.distinct( 'especie' );
     console.log(array);
@@ -163,9 +180,10 @@ class MakeDataControler {
       }
       const data = await especies.updateOne(
         { name: e.name },   // Query parameter
-        { $set: e }, 
+        { $set: e },        // Set values
         { upsert: true }    // Options
       );
+      data['name'] = array[i];
       console.log(data);
       especie.push(data);
     }
@@ -185,7 +203,7 @@ class MakeDataControler {
       );
       console.log(retd);
     }
-
+    
     //const fabricante = await this.saveTablas('fabricante',fabricantes);
     //const fabricante = rslt;
     //const marca = await this.saveTablas('marca',marcas);
@@ -265,25 +283,6 @@ class MakeDataControler {
 		res.status(200).json({next,fabricante,marca,rubro,linea,especie,raza,edad,name,tags});
   }
 
-  async saveTablas( name: string, modelo:any) {
-    const rslt = [];    
-    console.log("saveTablas",name,modelo)
-    const array = await _articulo.distinct( name );
-    console.log(array);
-    for (let i = 0; i < array.length; i++) {
-      const e = {
-        name: array[i]
-      }
-      const data = await modelo.updateOne(
-        { name: e.name },   // Query parameter
-        { $set: e }, 
-        { upsert: true }    // Options
-      );
-      console.log(data);
-      rslt.push(data);
-    }
-    return JSON.parse(JSON.stringify(rslt));
-  }
 
   async presentacion(req: Request, res: Response){
     res.status(200).json('presentacion');

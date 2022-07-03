@@ -8,7 +8,8 @@ export interface IMarca extends Document {
 
 const marcaSchema = new Schema({
   name: { type: Schema.Types.String, trim: true, default: '', index: true },
-  fabricante: { ref: "Fabricante", type: Schema.Types.ObjectId, default: null },
+  fabricante_id: { ref: "Fabricante", type: Schema.Types.ObjectId, default: null },
+  fabricante: { type: Schema.Types.String, default: '' },
   images: [{ type: Schema.Types.String, default: null}]
 },
 { 

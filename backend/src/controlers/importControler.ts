@@ -79,7 +79,7 @@ class ImportDataControler {
           const prodData = [];
           for (let n = 0; n < art.productos.length; n++) {
             const pro = art.productos[n];
-            prodList.push(pro._id);
+            prodList.push(pro);
             const pres = {
                 _id: pro._id
               , ean: pro.codigo
