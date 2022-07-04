@@ -1,14 +1,17 @@
 import { Schema, model, Document } from "mongoose";
 
 export interface IProductoName extends Document {
-  fullname: String;
-  fabricante?: String;
-  marca?: String;
-  rubro?: String;
-  linea?: String;
-  especie?: String;
-  edad?: String;
-  raza?: String;
+  fullname: string;
+  fabricante?: string;
+  fabricante_id?: string;
+  marca?: string;
+  marca_id?: string;
+  rubro?: string;
+  linea?: string;
+  especie?: string;
+  especie_id: string;
+  edad?: string;
+  raza?: string;
   contiene?: Number;
   unidad?: String;
   pVenta?: Boolean;
@@ -36,12 +39,18 @@ export interface IProductoName extends Document {
 const productoNameSchema = new Schema({
   // Artículo
   _id: { type: Schema.Types.ObjectId, ref: "productos", default: null }
+  , articulo: { type: Schema.Types.ObjectId, ref: "articulo", default: null }
   , fullname: { type: Schema.Types.String, default: '', index: true }
   , fabricante: { type: String, trim: true, default: '', index: true } // Nestle
+  , fabricante_id: { type: Schema.Types.ObjectId, ref: "fabricante", default: null } // Nestle
   , marca: { type: Schema.Types.String, trim: true, default: '', index: true }      // Purina Dog Chow / Purina Cat Chow
+  , marca_id: { type: Schema.Types.ObjectId, ref: "marca", default: null }      // Purina Dog Chow / Purina Cat Chow
   , rubro: { type: Schema.Types.String, trim: true, default: '', index: true }      // Alimento Seco / Alimento Húmedo
+  , rubro_id: { type: Schema.Types.ObjectId, ref: "rubro", default: null }      // Alimento Seco / Alimento Húmedo
   , linea: { type: Schema.Types.String, trim: true, default: '', index: true }      // ???????
+  , linea_id: { type: Schema.Types.ObjectId, ref: "linea", default: null }      // ???????
   , especie: { type: Schema.Types.String, trim: true, default: '', index: true }   // Gato
+  , especie_id: { type: Schema.Types.ObjectId, ref: "especie", default: null }      // ???????
   , edad: { type: Schema.Types.String, trim: true, default: '', index: true }
   , raza: { type: Schema.Types.String, trim: true, default: '', index: true }
   , image: { type: Schema.Types.String, trim: true, default: "" }

@@ -1,8 +1,6 @@
 import { Request, Response, Router } from "express";
-import presentacion, { IPresentacion } from "../models/presentaciones";
+import presentacion from "../models/_presentaciones";
 import articulo from "../models/_articulos";
-import fabricantes from "../models/fabricantes";
-import marcas from "../models/marcas";
 
 import https from 'https';
 
@@ -77,6 +75,7 @@ class ImportDataControler {
         if(`${art._id}` !== `623f49752129b838062ce76d`){
           const prodList = [];
           const prodData = [];
+          
           for (let n = 0; n < art.productos.length; n++) {
             const pro = art.productos[n];
             prodList.push(pro);
@@ -133,6 +132,7 @@ class ImportDataControler {
             );
             console.log("Productos Ok",n)
           }
+          
           const newArt = {
              _id: art._id
             ,fabricante: art.fabricante

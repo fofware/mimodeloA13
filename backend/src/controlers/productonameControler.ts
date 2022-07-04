@@ -34,7 +34,8 @@ class ProductoNameControler {
   }
   async list(req: Request, res: Response){
     const fldsString = [
-      //'fullName',
+      'fullname',
+    
       'fabricante',
       'marca',
       'rubro',
@@ -45,8 +46,9 @@ class ProductoNameControler {
       'unidad',
       'ean',
       'tags',
-      'art_name',
-      'prodName'
+    //  'art_name',
+    //  'prodName'
+    
     ];
     
     const fldsBoolean = [
@@ -62,9 +64,22 @@ class ProductoNameControler {
       searchItem: ''
     },req.query,req.params,req.body);
 
-    console.log('list',params,fldsString)
     const filter = makeFilter(fldsString, params);
-    
+    if( params.fabricante_id && params.fabricante_id !== 'undefined' ){
+      filter['fabricante_id'] = params.fabricante_id;
+    }
+    if( params.marca_id && params.marca_id !== 'undefined' ){
+      filter['marca_id'] = params.marca_id;
+    }
+    if( params.articulo && params.articulo !== 'undefined' ){
+      filter['articulo'] = params.articulo;
+    }
+
+    /*
+    if( params._id && params._id !== 'undefined' ){
+      filter['_id'] = params._id;
+    }
+    */
     if(params.pesable){
       filter['pesable'] = params.pesable === 'false' ? { $ne: true } : true;
     }
@@ -97,9 +112,9 @@ class ProductoNameControler {
       filter,
       data,
     }
-    console.log(filter);
     res.status(200).json(ret);
   }
+
   async get(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
     const prod = await prodName.find({_id: params.id})

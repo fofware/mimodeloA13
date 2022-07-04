@@ -1,4 +1,4 @@
-import { Schema, model, Document, isValidObjectId } from "mongoose";
+import { Schema, model, Document } from "mongoose";
 
 export interface IArticulo extends Document {
   fabricante: string;
@@ -116,4 +116,3 @@ articuloSchema.virtual('fullname').get(function(){
 })
 
 export default model<IArticulo>('Articulo', articuloSchema);
-

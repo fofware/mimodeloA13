@@ -1,9 +1,19 @@
+<ng-template #customItemTemplate let-model="item" let-index="index">
+    <div class="row">
+      <div class="col-6">{{model._id}}</div>
+      <div class="col-6">{{model.fullname}}</div>
+    </div>
+</ng-template>
+
 <input [(ngModel)]="fabricanteSelected"
        typeaheadOptionField="name"
        [typeahead]="fabricanteSource$"
        [typeaheadAsync]="true"
        [typeaheadMinLength]="0"
        [typeaheadWaitMs]="700"
+       [typeaheadScrollable]="true"
+       [typeaheadOptionsInScrollableView]="10"
+       [typeaheadOptionsLimit]="100"
        (typeaheadOnSelect)="onFabricanteSelect($event)"
        (typeaheadOnPreview)="onFabricantePreview($event)"
        (typeaheadLoading)="changeFabricanteLoading($event)"
@@ -11,21 +21,30 @@
        >
 <input [(ngModel)]="marcaSelected"
        typeaheadOptionField="name"
+       typeaheadGroupField="fabricante"
        [typeahead]="marcaSource$"
        [typeaheadAsync]="true"
        [typeaheadMinLength]="0"
        [typeaheadWaitMs]="700"
+       [typeaheadOptionsLimit]="100"
+       [typeaheadScrollable]="true"
+       [typeaheadOptionsInScrollableView]="30"
+
        (typeaheadOnSelect)="onMarcaSelect($event)"
        (typeaheadOnPreview)="onMarcaPreview($event)"
        (typeaheadLoading)="changeMarcaLoading($event)"
        placeholder="Marca"
        >
 <input [(ngModel)]="articuloSelected"
-       typeaheadOptionField="fullname"
+       typeaheadOptionField="name"
        [typeahead]="articuloSource$"
        [typeaheadAsync]="true"
-       [typeaheadMinLength]="2"
+       [typeaheadMinLength]="0"
        [typeaheadWaitMs]="700"
+       [typeaheadScrollable]="true"
+       [typeaheadOptionsInScrollableView]="10"
+       [typeaheadItemTemplate]="customItemTemplate"
+       [typeaheadOptionsLimit]="100"
        (typeaheadOnSelect)="onArticuloSelect($event)"
        (typeaheadOnPreview)="onArticuloPreview($event)"
        (typeaheadLoading)="changeArticuloLoading($event)"
@@ -33,6 +52,7 @@
        >
 <input [(ngModel)]="prodNameSelected"
        typeaheadOptionField="fullname"
+       [typeaheadItemTemplate]="customItemTemplate"
        [typeahead]="prodNameSource$"
        [typeaheadAsync]="true"
        [typeaheadMinLength]="2"
@@ -42,3 +62,10 @@
        (typeaheadLoading)="changeProdNameLoading($event)"
        placeholder="ProdName"
        >
+<div class="container">
+  <table>
+    <tr *ngFor="let item of newData">
+      <td>{{item.fullname}} </td>
+    </tr>
+  </table>
+</div>

@@ -1,9 +1,7 @@
-// TODO: #2 Remover lineas de codigo en desuso
 import { Request, Response, Router, urlencoded } from 'express';
 import { ObjectID } from 'bson'
 import passport from "passport";
 import articulo, { IArticulo } from '../models/articulos';
-import producto, { IProducto } from '../models/producto';
 import { makeFilter } from '../common/utils';
 
 class ArticuloControler {
@@ -35,12 +33,15 @@ class ArticuloControler {
       limit: 50,
       offset: 0,
       iniTime: new Date().getTime(),
-      sort: { name: 1 },
+      sort: { fullName: 1 },
       searchItem: ''
     },req.query,req.params,req.body);
 
     const filter = makeFilter(fldsString, params);
-    const count = await articulo.count(filter);
+    if(params.fabricante_id && params.fabricante_id !== 'undefined') filter['fabricante_id'] = new ObjectID(params.fabricante_id);
+    if(params.marca_id && params.marca_id !== 'undefined') filter['marca_id'] = new ObjectID(params.marca_id);
+		
+		const count = await articulo.count(filter);
     
     params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
     params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
@@ -71,6 +72,7 @@ class ArticuloControler {
       ret['message'] = 'Algo anduvo mal';
       ret['error'] = error;
     }
+		console.log(ret);
     res.status(status).json(ret);
 	}
 

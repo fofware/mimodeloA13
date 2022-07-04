@@ -57,14 +57,19 @@ export function saniObject(element): any {
 
 export function makeFilter(fldsString:any,params:any){
   const filter = {};
+  const keys = [];
   for (let i = 0; i < fldsString.length; i++) {
     const key = fldsString[i];
     if (Object.prototype.hasOwnProperty.call(params, key)) {
-      //filter[key] = new RegExp(params[key],'i');
-      filter[key] = { '$regex': `${params[key]}`, '$options': 'i' };
-      const idx = fldsString.indexOf(key);
-      if( idx !== -1){
-        fldsString.splice ( idx, 1);
+      if(params[key] !== 'undefined'){
+        
+        //filter[key] = new RegExp(params[key],'i');
+        filter[key] = { '$regex': `${params[key]}`, '$options': 'i' };
+        const idx = fldsString.indexOf(key);
+        if( idx !== -1){
+          keys.push(keys)
+          //fldsString.splice ( idx, 1);
+        }
       }
     }
   }
@@ -78,29 +83,19 @@ export function makeFilter(fldsString:any,params:any){
   
     if (searcharray.length > 0){
       filter['$and'] = [];
-
-      //for (let n = 0; n < fldsString.length; n++) {
-      //  const fld = fldsString[n];
-      //  const o = {};
-      //  const v = [];
-      //  for (let i = 0; i < searcharray.length; i++) {
-      //    const str = searcharray[i];
-      //    v.push(new RegExp( str, 'i' ));
-      //    //v.push({ '$regex': `${str}`, '$options': 'i' })
-      //  }
-      //  o[fld] = {'$in': v};
-      //  filter['$or'].push(o);
-      //}
       for (let i = 0; i < searcharray.length; i++) {
         const or = []
         const str = searcharray[i];
         const v = [];
         for (let n = 0; n < fldsString.length; n++) {
           const fld = fldsString[n];
-          const o = {};
-          o[fld] = { '$regex': `${str}`, '$options': 'i' }
-          v.push( o );
-          or.push(o)
+          const idx = keys.indexOf(fld);
+          if( idx === -1){
+            const o = {};
+            o[fld] = { '$regex': `${str}`, '$options': 'i' };
+            v.push( o );
+            or.push(o)
+          }
         }
         const m = {'$or': or}
         filter['$and'].push(m);

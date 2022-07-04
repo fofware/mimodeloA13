@@ -15,6 +15,9 @@ class MarcaControlers {
     this.router.get('/marcas',
 				//passport.authenticate('jwt', {session:false}), 
 				this.list );
+    this.router.get('/marcas/tah',
+				//passport.authenticate('jwt', {session:false}), 
+				this.listtah );
     this.router.get('/proveedror/:proveedor/producto/:id',
         //passport.authenticate('jwt', {session:false}), 
         this.get );
@@ -28,9 +31,11 @@ class MarcaControlers {
         passport.authenticate('jwt', {session:false}),
         this.put );
   }
+
   async list(req: Request, res: Response){
     const fldsString = [
       'name',
+      'fabricante'
     ];
   
     const params = Object.assign({
@@ -43,7 +48,57 @@ class MarcaControlers {
 
     const filter = makeFilter(fldsString, params);
     const count = await marcas.count(filter);
-    
+    if(params.fabricante && params.fabricante !== 'undefined')
+      filter['fabricante'] = params.fabircante;   
+    params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
+    params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
+
+    let nextOffset = params.offset+params.limit;
+    nextOffset = nextOffset > count ? false : params.offset+params.limit;
+    let status = 0;
+    let ret = {}
+    try {
+      const data = await marcas.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
+      status = 200;
+      ret = {
+        url: req.headers.host+req.url,
+        limit: params.limit,
+        offset: params.offset,
+        nextOffset,
+        sort: params.sort,
+        count,
+        apiTime: new Date().getTime() - params.iniTime,
+        filter,
+        data,
+        message: 'Ok'
+      }
+        
+    } catch (error) {
+      console.log(error);
+      status = 400;
+      ret['message'] = 'Algo anduvo mal';
+      ret['error'] = error;
+    }
+    res.status(status).json(ret);
+  }
+
+  async listtah(req: Request, res: Response){
+    const fldsString = [
+      'name'
+    ];
+  
+    const params = Object.assign({
+      limit: 50,
+      offset: 0,
+      iniTime: new Date().getTime(),
+      sort: { name: 1 },
+      searchItem: ''
+    },req.query,req.params,req.body);
+
+    const filter = makeFilter(fldsString, params);
+    const count = await marcas.count(filter);
+    if(params.fabricante_id && params.fabricante_id !== 'undefined')
+      filter['fabricante_id'] = params.fabricante_id;   
     params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
     params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
 

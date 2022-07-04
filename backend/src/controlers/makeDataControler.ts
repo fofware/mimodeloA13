@@ -1,5 +1,6 @@
 import { Request, Response, Router } from "express";
-import presentacion, { IPresentacion } from "../models/presentaciones";
+import _presentacion from "../models/_presentaciones";
+import presentacion from "../models/presentaciones";
 import _articulo from "../models/_articulos";
 import articulos from "../models/articulos";
 import prodName, {} from '../models/productoname';
@@ -34,7 +35,7 @@ class MakeDataControler {
 
   async articulo( req: Request, res: Response){
     const rpta = {};
-    rpta['next'] = 'http://fofware.com.ar:4444/make/productoname';
+    rpta['next'] = 'http://fofware.com.ar:4444/make/presentacion';
 
 		try {
       const _art = await _articulo.find();
@@ -48,6 +49,7 @@ class MakeDataControler {
 			return res.status(500).json( error );
 		}
 	}
+
   async tablas(req: Request, res: Response){
     const varios = [
       {'field': 'especie', 'value': 'gato', 'newValue': 'Gato' },
@@ -80,9 +82,10 @@ class MakeDataControler {
       filter[par.field] = par.value;
       const newValue = {}
       newValue[par.field] = par.newValue
-      rpta.push( await _articulo.updateMany(filter,   // Query parameter
-        { $set: newValue }, 
-        { upsert: false }    // Options
+      rpta.push( await _articulo.updateMany(
+        filter,               // Query parameter
+        { $set: newValue },   // set values
+        { upsert: false }     // Options
       ));
     }
 
@@ -90,7 +93,7 @@ class MakeDataControler {
     const test = 'fabricante';
 
     let rslt = [];
-    const fabricante = [];    
+    const fabricante = [];
     let array = await _articulo.distinct( 'fabricante' );
     console.log(array);
     for (let i = 0; i < array.length; i++) {
@@ -156,6 +159,7 @@ class MakeDataControler {
       );
       console.log(retd);
     }
+
     array = await fabricantes.find();
     for (let i = 0; i < array.length; i++) {
       const fab = array[i];
@@ -163,12 +167,21 @@ class MakeDataControler {
       const tmp_marca = [];
       for (let a = 0; a < _art.length; a++) {
         const e = _art[a];
-        if(tmp_marca.findIndex((el) =>  `${el}` === `${e.marca_id}`) === -1) {
-          await marcas.findByIdAndUpdate(e.marca_id, {fabricante_id: _art['fabricante_id'], fabricante: _art['fabricante']});
+        if(tmp_marca.findIndex((el) =>  `${el}` === `${e.marca_id}`) === -1) 
+        {
           tmp_marca.push(e.marca_id);
         }
       }
       await fabricantes.findByIdAndUpdate(fab._id, {marcas: tmp_marca});
+      for (let i = 0; i < tmp_marca.length; i++) {
+        const filter = {_id: tmp_marca[i] };
+        const update = { fabricante: fab.name, fabricante_id: fab._id}
+        let ret = await marcas.findOneAndUpdate(filter, update, {
+          new: true,
+          upsert: true,
+          rawResult: true // Return the raw result from the MongoDB driver
+        });
+      }
     }
 
     const especie = [];    
@@ -218,7 +231,7 @@ class MakeDataControler {
       }
       const data = await rubros.updateOne(
         { name: e.name },   // Query parameter
-        { $set: e }, 
+        { $set: e },        // set value
         { upsert: true }    // Options
       );
       console.log(data);
@@ -285,7 +298,21 @@ class MakeDataControler {
 
 
   async presentacion(req: Request, res: Response){
-    res.status(200).json('presentacion');
+    const rpta = {};
+    rpta['next'] = 'http://fofware.com.ar:4444/make/productoname';
+
+    try {
+      const _art = await _presentacion.find();
+      rpta['src'] = _art;
+      rpta['rslt'] = [];
+      const ret = await presentacion.insertMany(_art);
+      rpta['rslt'].push(ret);
+			return res.status(200).json( rpta );
+		} catch (error) {
+			console.log(error);
+			return res.status(500).json( error );
+		}
+    
   }
 
   async productoname(req: Request, res: Response){
@@ -300,16 +327,21 @@ class MakeDataControler {
       }
       const reg =         {
         _id: e._id,
-        articulo: e.articulo._id,
+        articulo: e.articulo,
         ean: e.ean,
         plu: e.plu,
         fabricante: e.articulo.fabricante,
+        fabricante_id: e.articulo.fabricante_id,
         marca: e.articulo.marca,
+        marca_id: e.articulo.marca_id,
         especie: e.articulo.especie,
+        especie_id: e.articulo.especie_id,
         raza: e.articulo.raza,
         edad: e.articulo.edad,
         rubro: e.articulo.rubro,
+        rubro_id: e.articulo.rubro_id,
         linea: e.articulo.linea,
+        linea_id: e.articulo.linea_id,
         tags,
         image: e.image ? e.image : e.articulo.image,
         art_name: e.articulo.fullname,

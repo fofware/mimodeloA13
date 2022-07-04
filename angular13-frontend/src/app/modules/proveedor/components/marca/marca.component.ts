@@ -122,7 +122,7 @@ interface articulo {
   fabricante: string;
   fabricante_id: string;
   formula: [];
-  fullname: string;
+  fullName: string;
   image: string;
   images: [];
   iva: number;
@@ -151,6 +151,8 @@ interface articulo {
 export class MarcaComponent implements OnInit, OnDestroy {
   proveedorId?: string;
   selected?: any[];
+  newData:any[] = [];
+  provData:any[] = [];
 
   fabricanteSelected?: string;
   fabricanteSource$?: Observable<fabricanteFD[]>;
@@ -202,7 +204,7 @@ export class MarcaComponent implements OnInit, OnDestroy {
     }).pipe(
       switchMap(( query: string ) => {
         if(query) {
-          return this.apiServ.get('/marcas',{searchItem: query, limit: 100},{spinner: 'false'})
+          return this.apiServ.get('/marcas/tah',{searchItem: query, fabricante_id: this.fabricanteSelectedOption?._id, limit: 100},{spinner: 'false'})
             .pipe(
               map((ret:marcaTypeAheadResponse) => ret && ret.data || [])
             )
@@ -215,7 +217,7 @@ export class MarcaComponent implements OnInit, OnDestroy {
     }).pipe(
       switchMap(( query: string ) => {
         if(query) {
-          return this.apiServ.get('/articulos',{searchItem: query, limit: 100},{spinner: 'false'})
+          return this.apiServ.get('/articulos',{ searchItem: query, fabricante_id: this.fabricanteSelectedOption?._id, marca_id: this.marcaSelectedOption?._id, limit: 100 },{spinner: 'false'})
             .pipe(
               map((ret:articuloResponse) => ret && ret.data || [])
             )
@@ -228,7 +230,7 @@ export class MarcaComponent implements OnInit, OnDestroy {
     }).pipe(
       switchMap(( query: string ) => {
         if(query) {
-          return this.apiServ.get('/productoname',{searchItem: query, pesable: false, limit: 100},{spinner: 'false'})
+          return this.apiServ.get('/productoname',{searchItem: query, fabricante_id: this.fabricanteSelectedOption?._id, marca_id: this.marcaSelectedOption?._id, articulo: this.articuloSelectedOption?._id, pesable: false, limit: 100},{spinner: 'false'})
             .pipe(
               map((ret: prodNameResponse) => ret && ret.data || [])
             )
@@ -238,11 +240,11 @@ export class MarcaComponent implements OnInit, OnDestroy {
     );
 
     this.proveedorId = this.router.routerState.snapshot.url.split('/')[2];
-    const allData = this.apiServ.get(`/proveedor/${this.proveedorId}/marcas/rel`)
-          .subscribe((retData:any) => {
-            this.selected = retData.provdata;
-            console.log(retData);
-          });
+    this.apiServ.get(`/proveedor/${this.proveedorId}/marcas/rel`)
+        .subscribe((retData:any) => {
+          this.provData = retData.provdata;
+          console.log(retData);
+        });
   }
 
   ngOnDestroy(){
@@ -250,32 +252,63 @@ export class MarcaComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
   
+  readNewData() {
+    console.log(this.articuloSelectedOption);
+    this.apiServ.get('/productoname',
+      {
+        fabricante_id: this.fabricanteSelectedOption?._id, 
+        marca_id: this.marcaSelectedOption?._id, 
+        articulo: this.articuloSelectedOption?._id, 
+        //_id: this.prodNameSelectedOption?._id, 
+        pesable: false, 
+        limit: 250
+      }
+      ,{spinner: 'false'}
+    ).subscribe( 
+      (retData) => {
+        console.log(retData);
+        this.newData = retData.data
+      }
+    )
+  }
+
   changeFabricanteLoading(e: boolean): void {
-    this.marcaLoading = e;
-    console.log('changeMarcaLoading',this.marcaLoading);
+    this.fabricanteLoading = e;
+    if(this.fabricanteSelectedOption){
+      this.fabricanteSelectedOption = null;
+      this.readNewData();      
+    }
+    console.log('changeFabricanteLoading',this.fabricanteLoading);
   }
   
   onFabricanteSelect(event: TypeaheadMatch): void {
-    this.marcaSelectedOption = event.item;
-    console.log(this.marcaSelectedOption)
+    this.fabricanteSelectedOption = event.item;
+    this.readNewData();
+    console.log(this.fabricanteSelectedOption)
   }
  
   onFabricantePreview(event: TypeaheadMatch): void {
     if (event) {
-      this.marcaPreviewOption = event.item;
+      this.fabricantePreviewOption = event.item;
     } else {
-      this.marcaPreviewOption = null;
+      this.fabricantePreviewOption = null;
     }
-    console.log(this.marcaPreviewOption);
+    console.log(this.fabricantePreviewOption);
   }
 
   changeMarcaLoading(e: boolean): void {
     this.marcaLoading = e;
+    if(this.marcaSelectedOption){
+      this.marcaSelectedOption = null;
+      this.readNewData();      
+    }
+    
     console.log('changeMarcaLoading',this.marcaLoading);
   }
   
   onMarcaSelect(event: TypeaheadMatch): void {
     this.marcaSelectedOption = event.item;
+    this.readNewData();
     console.log(this.marcaSelectedOption)
   }
  
@@ -290,12 +323,17 @@ export class MarcaComponent implements OnInit, OnDestroy {
 
   changeArticuloLoading(e: boolean): void {
     this.articuloLoading = e;
-    console.log('changeMarcaLoading',this.marcaLoading);
+    if(this.articuloSelectedOption){
+      this.articuloSelectedOption = null;
+      this.readNewData();
+    }
+    console.log('changeArticuloLoading',this.articuloLoading);
   }
   
   onArticuloSelect(event: TypeaheadMatch): void {
     this.articuloSelectedOption = event.item;
-    console.log(this.marcaSelectedOption)
+    this.readNewData();
+    console.log(this.articuloSelectedOption)
   }
  
   onArticuloPreview(event: TypeaheadMatch): void {
@@ -309,12 +347,16 @@ export class MarcaComponent implements OnInit, OnDestroy {
 
   changeProdNameLoading(e: boolean): void {
     this.prodNameLoading = e;
-    console.log('changeMarcaLoading',this.marcaLoading);
+    if(this.prodNameSelectedOption){
+      this.prodNameSelectedOption = null;
+      this.readNewData();
+    }
+    console.log('changeProdNameLoading',this.prodNameLoading);
   }
   
   onProdNameSelect(event: TypeaheadMatch): void {
     this.prodNameSelectedOption = event.item;
-    console.log(this.marcaSelectedOption)
+    console.log(this.prodNameSelectedOption)
   }
  
   onProdNamePreview(event: TypeaheadMatch): void {
