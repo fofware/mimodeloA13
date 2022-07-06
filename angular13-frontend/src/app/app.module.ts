@@ -59,7 +59,7 @@ import { PrivateHomeComponent } from './components/private-home/private-home.com
     }),
     TooltipModule.forRoot(),
     TypeaheadModule.forRoot(),
-    PruebaModule
+    PruebaModule,
 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

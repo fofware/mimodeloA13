@@ -36,7 +36,9 @@
        placeholder="Marca"
        >
 <input [(ngModel)]="articuloSelected"
-       typeaheadOptionField="name"
+       typeaheadOptionField="fullname"
+       typeaheadGroupField="marca"
+       [typeaheadOrderBy]="articuloSort"
        [typeahead]="articuloSource$"
        [typeaheadAsync]="true"
        [typeaheadMinLength]="0"
@@ -50,7 +52,7 @@
        (typeaheadLoading)="changeArticuloLoading($event)"
        placeholder="Articulo"
        >
-<input [(ngModel)]="prodNameSelected"
+<!--input [(ngModel)]="prodNameSelected"
        typeaheadOptionField="fullname"
        [typeaheadItemTemplate]="customItemTemplate"
        [typeahead]="prodNameSource$"
@@ -61,11 +63,56 @@
        (typeaheadOnPreview)="onProdNamePreview($event)"
        (typeaheadLoading)="changeProdNameLoading($event)"
        placeholder="ProdName"
-       >
+-->
+<button *ngIf="newData.length">Add All</button>
+<button *ngIf="newData.length" (click)="addSelected()">Add Selected</button>
 <div class="container">
-  <table>
-    <tr *ngFor="let item of newData">
+  <div class="mb-2" *ngIf="max">
+    <progressbar [max]="max" [value]="dynamic">
+      <span class="text-nowrap">{{dynamic}} / {{max}}</span>
+    </progressbar>
+  </div>
+  <table *ngIf="newData.length; else viewProvProduct">
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td>
+        <input [(ngModel)]="allNewValue" type="checkbox" name="default" (change)="toggleAll(newData,allNewValue)" />
+      </td>
+    </tr>
+    <tr *ngFor="let item of newData;index as i">
+      <td>{{item.articulo}}</td>
       <td>{{item.fullname}} </td>
+      <td>
+        <input [(ngModel)]="item.isSelected" type="checkbox" name="isSelected_{{i}}" />
+      </td>
+
+      <td (click)="addToProv(item)">add</td>
     </tr>
   </table>
+  <ng-template #viewProvProduct>
+    <div class="container">
+      <button (click)="removeSelected()">Remove Selected</button>
+      <table *ngIf="newData.length === 0">
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>
+            <input [(ngModel)]="allProvValue" type="checkbox" name="default" (change)="toggleAll(provData,allProvValue)" />
+          </td>
+        </tr>
+        <tr *ngFor="let item of provData;index as i">
+          <td>{{item.articulo}}</td>
+          <td>{{item.v_prodname[0].fullname}} </td>
+          <td (click)="delFromProv(item)">borrar</td>
+          <td>
+            <input [(ngModel)]="item.isSelected" type="checkbox" name="isSelected_{{i}}" />
+          </td>
+        </tr>
+      </table>
+    </div>
+  </ng-template>
+
 </div>

@@ -4,6 +4,7 @@ import config from '../config';
 import passport from "passport";
 import { makeFilter } from "../common/utils";
 import ProveedorProducto from "../models/proveedorProductos"
+import presentaciones from "../models/presentaciones";
 class ProveedorProductoControlers {
 
 	public router: Router = Router();
@@ -14,15 +15,15 @@ class ProveedorProductoControlers {
 
   config () {
     this.router.get('/proveedor/:proveedor/productos',
-				//passport.authenticate('jwt', {session:false}), 
+				passport.authenticate('jwt', {session:false}), 
 				this.list );
     this.router.get('/proveedror/:proveedor/producto/:id',
         //passport.authenticate('jwt', {session:false}), 
         this.get );
-    this.router.post('/proveedor/:proveedor',
-        //passport.authenticate('jwt', {session:false}),
+    this.router.post('/proveedor/producto',
+        passport.authenticate('jwt', {session:false}),
         this.add );
-    this.router.delete('/proveedor/:proveedor/producto/:id',
+    this.router.delete('/proveedor/producto/:id',
         passport.authenticate('jwt', {session:false}), 
         this.delete );
     this.router.put('/proveedor/:proveedor/producto/:id',
@@ -31,23 +32,27 @@ class ProveedorProductoControlers {
   }
   async list(req: Request, res: Response){
     const fldsString = [
-      'proveedor',
-      'codigo',
-      'name',
-      'articulo',
-      'presentacion'
+      'name'
     ];
   
     const params = Object.assign({
       limit: 50,
       offset: 0,
       iniTime: new Date().getTime(),
-      sort: { fullname: 1 },
+      sort: {},
       searchItem: ''
     },req.query,req.params,req.body);
 
     console.log('list',params,fldsString)
     const filter = makeFilter(fldsString, params);
+    if(params.proveedor && params.proveedor !== 'undefined') filter['proveedor'] = params.proveedor;
+    if(params.fabricante && params.fabricante !== 'undefined') filter['fabricante'] = params.fabricante;
+    if(params.marca && params.marca !== 'undefined') filter['marca'] = params.marca;
+    if(params.articulo && params.articulo !== 'undefined') filter['articulo'] = params.articulo;
+    if(params.presentacion && params.presentacion !== 'undefined') filter['presentacion'] = params.presentacion;
+    
+    console.log(filter);
+    
     const count = await ProveedorProducto.count(filter);
     
     params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
@@ -56,7 +61,12 @@ class ProveedorProductoControlers {
     let nextOffset = params.offset+params.limit;
     nextOffset = nextOffset > count ? false : params.offset+params.limit;
     
-    const data = await ProveedorProducto.find(filter).limit(params.limit).skip(params.offset).sort(params.sort).populate({path:'articulo'});
+    const data = await ProveedorProducto
+          .find(filter)
+          .limit(params.limit)
+          .skip(params.offset)
+          .populate({path:'v_prodname', select: 'fullname -_id'});
+    //.populate({path:'articulo'}).populate({path: 'presentacion', populate: {path: 'relacion'}}).sort(params.sort);
     const ret = {
       url: req.headers.host+req.url,
       limit: params.limit,
@@ -81,7 +91,8 @@ class ProveedorProductoControlers {
     try {
       const update = Object.assign({},req.query,req.params,req.body);
       const filter = { 
-        _id: update._id
+        proveedor: update.proveedor,
+        presentacion: update.presentacion
       };
       let ret = await ProveedorProducto.findOneAndUpdate(filter, update, {
         new: true,
@@ -100,7 +111,18 @@ class ProveedorProductoControlers {
 
   async delete(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
-    console.log("delete",params)
+    try {
+      const ret = await ProveedorProducto.findByIdAndDelete(params.id);
+      console.log("delete",params)
+
+      return res.status(200).json(ret);
+    } catch (error) {
+      res.status(400).json({
+        message: 'Borrando producto de proveedor',
+        title: 'Algo Anduvo Mal',
+        error,
+      })      
+    }
   }
   async put(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);

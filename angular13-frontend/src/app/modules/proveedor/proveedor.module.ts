@@ -12,6 +12,8 @@ import { MarcaComponent } from './components/marca/marca.component';
 import { ProductosComponent } from './components/productos/productos.component';
 import { ArticulosComponent } from './components/articulos/articulos.component';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
+import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
@@ -32,6 +34,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ProveedorRoutingModule,
     NgbModule,
     TypeaheadModule.forRoot(),
+    ProgressbarModule.forRoot()
 
 
   ]

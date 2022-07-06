@@ -12,7 +12,7 @@ const ORI_API = environment.API_URL
 })
 export class ApiService {
 
-  constructor( private http: HttpClient ) { 
+  constructor( private http: HttpClient ) {
   }
 
   //leer(fileName:string) {
@@ -24,13 +24,18 @@ export class ApiService {
     return this.http.get(`${ORI_API}${fileName}`, {params: data, headers: _headers });
   }
 
-  post(fileName:string, data?:any) {
+  post(fileName:string, data?:any, _headers={spinner: 'true'}) {
     console.log("service",data)
-    return this.http.post(`${ORI_API}${fileName}`, data);
+    return this.http.post(`${ORI_API}${fileName}`, data, {headers: _headers});
   }
 
   leer(fileName:string) {
     return this.http.get(`${ORI_API}${fileName}`).pipe(retry(1), catchError(this.processError));
+  }
+
+  delete(fileName:string, _headers={spinner: 'true'}){
+    console.log("service", fileName,)
+    return this.http.delete(`${ORI_API}${fileName}`,{ headers: _headers })
   }
 
   processError(err: any) {

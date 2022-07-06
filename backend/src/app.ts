@@ -53,5 +53,6 @@ app.use(proveedorProductoCtrl.router);
 app.use(ProveedorMarcaCtrl.router);
 app.use(FabricanteCtrl.router);
 app.use(MarcaCtrl.router);
+app.use(proveedorProductoCtrl.router);
 app.use(authRoutes);
 export default app;

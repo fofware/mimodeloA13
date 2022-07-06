@@ -33,7 +33,7 @@ class ArticuloControler {
       limit: 50,
       offset: 0,
       iniTime: new Date().getTime(),
-      sort: { fullName: 1 },
+      sort: { fabricante: 1, marca: 1, name: 1 },
       searchItem: ''
     },req.query,req.params,req.body);
 
