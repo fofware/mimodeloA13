@@ -78,59 +78,61 @@ class ImportDataControler {
           
           for (let n = 0; n < art.productos.length; n++) {
             const pro = art.productos[n];
-            prodList.push(pro);
-            const pres = {
+            if(pro.pesable !== true){
+              prodList.push(pro);
+              const pres = {
+                  _id: pro._id
+                , ean: pro.codigo
+                , plu: pro.plu
+                , articulo: art._id
+                , relacion: pro.parent
+                , name: pro.name
+                , contiene: pro.contiene
+                , unidad: pro.unidad
+                , image: pro.image
+                , images: [pro.image]
+                , tags: pro.tags
+                , servicio: false
+                , insumo: false
+                , pesable: pro.pesable
+                , pVenta: pro.pVenta
+                , pCompra: pro.pCompra
+                , iva: pro.iva
+                , margen: pro.margen
+                , oferta: pro.oferta
+                , oferta_desde: pro.precio_desde
+                , oferta_hasta: pro.precio_hasta
+                , oferta_precio: pro.oferta ? pro.precio : null
+                , precio: pro.calc_precio
+                , compra: pro.showCompra
+                , compra_fecha: null
+                , reposicion: pro.reposicion
+                , reposicion_fecha: null
+                , stock: pro.stock
+                , stockMin: pro.stockMin
+                , stockMax: pro.stockMax
+              }
+              prodData.push(pres);
+              const precios = {
                 _id: pro._id
-              , ean: pro.codigo
-              , plu: pro.plu
-              , articulo: art._id
-              , relacion: pro.parent
-              , name: pro.name
-              , contiene: pro.contiene
-              , unidad: pro.unidad
-              , image: pro.image
-              , images: [pro.image]
-              , tags: pro.tags
-              , servicio: false
-              , insumo: false
-              , pesable: pro.pesable
-              , pVenta: pro.pVenta
-              , pCompra: pro.pCompra
-              , iva: pro.iva
-              , margen: pro.margen
-              , oferta: pro.oferta
-              , oferta_desde: pro.precio_desde
-              , oferta_hasta: pro.precio_hasta
-              , oferta_precio: pro.oferta ? pro.precio : null
-              , precio: pro.calc_precio
-              , compra: pro.showCompra
-              , compra_fecha: null
-              , reposicion: pro.reposicion
-              , reposicion_fecha: null
-              , stock: pro.stock
-              , stockMin: pro.stockMin
-              , stockMax: pro.stockMax
+                , oferta: pro.oferta
+                , oferta_desde: pro.oferta ? pro.precio_desde : null
+                , oferta_hasta: pro.oferta ? pro.precio_hasta : null
+                , oferta_precio: pro.oferta ? pro.showPrecio : null
+                //
+                , compra: pro.showCompra
+                , compra_fecha: null
+                //
+                , reposicion: pro.reposicion
+                , reposicion_fecha: null
+              }
+              const rpta = await presentacion.updateOne(
+                { _id: pres._id },   // Query parameter
+                { $set: pres }, 
+                { upsert: true }    // Options
+              );
+              console.log("Productos Ok",n)
             }
-            prodData.push(pres);
-            const precios = {
-              _id: pro._id
-              , oferta: pro.oferta
-              , oferta_desde: pro.oferta ? pro.precio_desde : null
-              , oferta_hasta: pro.oferta ? pro.precio_hasta : null
-              , oferta_precio: pro.oferta ? pro.showPrecio : null
-              //
-              , compra: pro.showCompra
-              , compra_fecha: null
-              //
-              , reposicion: pro.reposicion
-              , reposicion_fecha: null
-            }
-            const rpta = await presentacion.updateOne(
-              { _id: pres._id },   // Query parameter
-              { $set: pres }, 
-              { upsert: true }    // Options
-            );
-            console.log("Productos Ok",n)
           }
           
           const newArt = {

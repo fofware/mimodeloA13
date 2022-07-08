@@ -172,10 +172,10 @@ class MakeDataControler {
           tmp_marca.push(e.marca_id);
         }
       }
-      await fabricantes.findByIdAndUpdate(fab._id, {marcas: tmp_marca});
+      //await fabricantes.findByIdAndUpdate(fab._id, {marcas: tmp_marca});
       for (let i = 0; i < tmp_marca.length; i++) {
         const filter = {_id: tmp_marca[i] };
-        const update = { fabricante: fab.name, fabricante_id: fab._id}
+        const update = { fabricante: fab._id}
         let ret = await marcas.findOneAndUpdate(filter, update, {
           new: true,
           upsert: true,
@@ -209,6 +209,7 @@ class MakeDataControler {
       const newValue = {
         'especie_id': e._id
       }
+
       const retd = await _articulo.updateMany(
         filter,               // Query parameter
         { $set: newValue },   // Set values
@@ -222,7 +223,7 @@ class MakeDataControler {
     //const marca = await this.saveTablas('marca',marcas);
     //const especie = await this.saveTablas('especie',especies);
 
-    const rubro = [];    
+    const rubro = [];
     array = await _articulo.distinct( 'rubro' );
     console.log(array);
     for (let i = 0; i < array.length; i++) {
@@ -231,11 +232,12 @@ class MakeDataControler {
       }
       const data = await rubros.updateOne(
         { name: e.name },   // Query parameter
-        { $set: e },        // set value
+        { $set: e },        // Set Values
         { upsert: true }    // Options
       );
       console.log(data);
-      especie.push(data);
+      data['name'] = array[i];
+      rubro.push(data);
     }
     array = await rubros.find();
     for (let i = 0; i < array.length; i++) {
@@ -254,10 +256,9 @@ class MakeDataControler {
       console.log(retd);
     }
 
-		//const rubro = await articulo.distinct('rubro');
 
     const linea = [];    
-    array = await _articulo.distinct( 'linea' );
+    array = await _articulo.distinct( 'linea', );
     console.log(array);
     for (let i = 0; i < array.length; i++) {
       const e = {
@@ -268,8 +269,9 @@ class MakeDataControler {
         { $set: e }, 
         { upsert: true }    // Options
       );
+      data['name'] = array[i];
       console.log(data);
-      especie.push(data);
+      linea.push(data);
     }
     array = await lineas.find();
     for (let i = 0; i < array.length; i++) {
@@ -287,6 +289,35 @@ class MakeDataControler {
       );
       console.log(retd);
     }
+
+    array = await rubros.find();
+    for (let i = 0; i < array.length; i++) {
+      const fab = array[i];
+      const _art = await _articulo.find({ rubro_id: fab._id });
+      const tmp_linea = [];
+      for (let a = 0; a < _art.length; a++) {
+        const e = _art[a];
+        if(tmp_linea.findIndex((el) =>  `${el}` === `${e.linea_id}`) === -1) 
+        {
+          tmp_linea.push(e.linea_id);
+        }
+      }
+      //await fabricantes.findByIdAndUpdate(fab._id, {marcas: tmp_marca});
+      for (let i = 0; i < tmp_linea.length; i++) {
+        const filter = {_id: tmp_linea[i] };
+        const update = { rubro: fab._id}
+        let ret = await lineas.findOneAndUpdate(filter, update, {
+          new: true,
+          upsert: true,
+          rawResult: true // Return the raw result from the MongoDB driver
+        });
+      }
+    }
+
+
+
+		//const rubro = await articulo.distinct('rubro');
+
     //const linea = await articulo.distinct('linea');
 
 		const raza = await _articulo.distinct('raza');

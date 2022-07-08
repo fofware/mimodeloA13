@@ -84,6 +84,7 @@ const presentacionSchema = new Schema({
   , stockMax: { type: Schema.Types.Number, default: 0 }
   , user_id: { type: Schema.Types.ObjectId, ref: "user", default: null, index: true }
 },{
+  versionKey: false,
   toJSON: { virtuals: true },
   timestamps: true,
 })

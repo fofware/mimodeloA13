@@ -21,7 +21,7 @@
        >
 <input [(ngModel)]="marcaSelected"
        typeaheadOptionField="name"
-       typeaheadGroupField="fabricante"
+       typeaheadGroupField="fabricante.name"
        [typeahead]="marcaSource$"
        [typeaheadAsync]="true"
        [typeaheadMinLength]="0"
@@ -64,7 +64,6 @@
        (typeaheadLoading)="changeProdNameLoading($event)"
        placeholder="ProdName"
 -->
-<button *ngIf="newData.length">Add All</button>
 <button *ngIf="newData.length" (click)="addSelected()">Add Selected</button>
 <div class="container">
   <div class="mb-2" *ngIf="max">
@@ -74,7 +73,6 @@
   </div>
   <table *ngIf="newData.length; else viewProvProduct">
     <tr>
-      <td></td>
       <td></td>
       <td></td>
       <td>
@@ -87,16 +85,13 @@
       <td>
         <input [(ngModel)]="item.isSelected" type="checkbox" name="isSelected_{{i}}" />
       </td>
-
-      <td (click)="addToProv(item)">add</td>
     </tr>
   </table>
   <ng-template #viewProvProduct>
     <div class="container">
       <button (click)="removeSelected()">Remove Selected</button>
-      <table *ngIf="newData.length === 0">
+      <table whidt="100%" *ngIf="newData.length === 0">
         <tr>
-          <td></td>
           <td></td>
           <td></td>
           <td>
@@ -105,8 +100,7 @@
         </tr>
         <tr *ngFor="let item of provData;index as i">
           <td>{{item.articulo}}</td>
-          <td>{{item.v_prodname[0].fullname}} </td>
-          <td (click)="delFromProv(item)">borrar</td>
+          <td>{{item.fullname}} </td>
           <td>
             <input [(ngModel)]="item.isSelected" type="checkbox" name="isSelected_{{i}}" />
           </td>

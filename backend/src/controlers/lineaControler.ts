@@ -2,7 +2,6 @@ import { Request, Response, Router } from "express";
 import passport from "passport";
 import { makeFilter } from "../common/utils";
 import marcas from "../models/marcas";
-import { ObjectID } from 'bson'
 
 class MarcaControlers {
 
@@ -13,29 +12,30 @@ class MarcaControlers {
 	}
 
   config () {
-    this.router.get('/marcas',
+    this.router.get('/lineas',
 				//passport.authenticate('jwt', {session:false}), 
 				this.list );
-    //this.router.get('/marcas/tah',
+    //this.router.get('/lineas/tah',
 		//		//passport.authenticate('jwt', {session:false}), 
 		//		this.listtah );
-    this.router.get('/marca/:id',
+    this.router.get('/linea/:id',
         //passport.authenticate('jwt', {session:false}), 
         this.get );
-    this.router.post('/marca',
+    this.router.post('/linea',
         passport.authenticate('jwt', {session:false}),
         this.add );
-    this.router.delete('/marca/:id',
+    this.router.delete('/linea/:id',
         passport.authenticate('jwt', {session:false}), 
         this.delete );
-    this.router.put('/marca/:id',
+    this.router.put('/linea/:id',
         passport.authenticate('jwt', {session:false}),
         this.put );
   }
 
   async list(req: Request, res: Response){
     const fldsString = [
-      'name'
+      'name',
+    //  'fabricante'
     ];
   
     const params = Object.assign({
@@ -47,21 +47,19 @@ class MarcaControlers {
     },req.query,req.params,req.body);
 
     const filter = makeFilter(fldsString, params);
-
-    if(params.fabricante && params.fabricante !== 'undefined')
-      filter['fabricante'] = params.fabricante;
-
+    const count = await marcas.count(filter);
+    if(params.rubro && params.ruro !== 'undefined')
+      filter['rubro'] = params.rubro;   
+    
     params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
     params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
 
-    let ret = {};
+    let nextOffset = params.offset+params.limit;
+    nextOffset = nextOffset > count ? false : params.offset+params.limit;
     let status = 0;
-
+    let ret = {}
     try {
-      const count = await marcas.count(filter);
-      let nextOffset = params.offset+params.limit;
-      nextOffset = nextOffset > count ? false : params.offset+params.limit;
-      const data = await marcas.find(filter).populate({path:'fabricante', select: 'name -_id'}).limit(params.limit).skip(params.offset).sort(params.sort);
+      const data = await marcas.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
       status = 200;
       ret = {
         url: req.headers.host+req.url,
@@ -75,7 +73,7 @@ class MarcaControlers {
         data,
         message: 'Ok'
       }
-      console.log(ret);        
+        
     } catch (error) {
       console.log(error);
       status = 400;
@@ -108,7 +106,7 @@ class MarcaControlers {
 //
   //  let nextOffset = params.offset+params.limit;
   //  nextOffset = nextOffset > count ? false : params.offset+params.limit;
-//
+  //  
   //  let status = 0;
   //  let ret = {}
   //  try {
@@ -146,7 +144,6 @@ class MarcaControlers {
     const update = Object.assign({},req.query,req.params,req.body);
     const filter = { 
       name: update.marca,
-      fabricante: update.fabricante
     };
     try {
       let ret = await marcas.findOneAndUpdate(filter, update, {

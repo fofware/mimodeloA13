@@ -13,6 +13,7 @@ const lineaSchema = new Schema({
 },
 { 
   strict: false,
+  versionKey: false
 });
 
 

@@ -93,6 +93,7 @@ export function makeFilter(fldsString:any,params:any){
           if( idx === -1){
             const o = {};
             o[fld] = { '$regex': `${str}`, '$options': 'i' };
+            console.log(o);
             v.push( o );
             or.push(o)
           }

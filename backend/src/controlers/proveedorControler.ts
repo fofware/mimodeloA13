@@ -14,13 +14,13 @@ class ProveedorControlers {
 
   config () {
     this.router.get('/proveedores',
-				//passport.authenticate('jwt', {session:false}), 
+				passport.authenticate('jwt', {session:false}), 
 				this.list );
     this.router.get('/proveedor/:id',
-        //passport.authenticate('jwt', {session:false}), 
+        passport.authenticate('jwt', {session:false}), 
         this.get );
     this.router.post('/proveedor',
-        //passport.authenticate('jwt', {session:false}),
+        passport.authenticate('jwt', {session:false}),
         this.add );
     this.router.delete('/proveedor/:id',
         passport.authenticate('jwt', {session:false}), 

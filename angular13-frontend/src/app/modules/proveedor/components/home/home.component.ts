@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     { title: 'Marcas', link: ['marcas'] },
     { title: 'Articulos', link: ['articulos'] },
     { title: 'Productos', link: ['productos'] },
-    { title: 'listas', link: ['lista'] },
+    { title: 'Precios', link: ['precios'] },
   ];
 
   private destroy$ = new Subject<any>();

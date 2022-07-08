@@ -62,6 +62,7 @@ const productoSchema = new Schema({
 },{
   toJSON: { virtuals: true },
   timestamps: true,
+  versionKey: false
 })
 
 

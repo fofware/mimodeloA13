@@ -69,6 +69,7 @@ const articuloSchema = new Schema({
 { 
   toJSON: { virtuals: true },
   strict: false,
+  versionKey: false
 });
 
 

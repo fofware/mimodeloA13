@@ -65,7 +65,8 @@ class ProveedorProductoControlers {
           .find(filter)
           .limit(params.limit)
           .skip(params.offset)
-          .populate({path:'v_prodname', select: 'fullname -_id'});
+          .populate({path:'v_prodname', select: 'fullname -_id'})
+          .sort(params.sort);
     //.populate({path:'articulo'}).populate({path: 'presentacion', populate: {path: 'relacion'}}).sort(params.sort);
     const ret = {
       url: req.headers.host+req.url,
