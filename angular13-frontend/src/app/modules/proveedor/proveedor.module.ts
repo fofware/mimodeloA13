@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProveedorRoutingModule } from './proveedor-routing.module';
 import { HomeComponent } from './components/home/home.component';
 import { FormComponent } from './components/form/form.component';
@@ -15,6 +15,7 @@ import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ProdNameFilterPipe } from 'src/app/pipes/prod-name-filter.pipe';
 
 
 @NgModule({
@@ -25,18 +26,18 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ProveedorComponent,
     MarcaComponent,
     ProductosComponent,
-    ArticulosComponent
+    ArticulosComponent,
+    ProdNameFilterPipe
   ],
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientJsonpModule,
     ProveedorRoutingModule,
     NgbModule,
     TypeaheadModule.forRoot(),
     ProgressbarModule.forRoot()
-
-
   ]
 })
 export class ProveedorModule { }

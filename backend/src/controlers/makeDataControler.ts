@@ -9,6 +9,8 @@ import marcas, {} from "../models/marcas";
 import especies, {} from "../models/especies";
 import rubros from "../models/rubros";
 import lineas from "../models/lineas";
+import razas from "../models/razas";
+import edades from "../models/edades";
 
 class MakeDataControler {
 
@@ -52,17 +54,17 @@ class MakeDataControler {
 
   async tablas(req: Request, res: Response){
     const varios = [
-      {'field': 'especie', 'value': 'gato', 'newValue': 'Gato' },
+      {'field': 'especieTxt', 'value': 'gato', 'newValue': 'Gato' },
       //
-      {'field': 'edad', 'value': 'senior', 'newValue': 'Senior' },
+      {'field': 'edadTxt', 'value': 'senior', 'newValue': 'Senior' },
       //
-      {'field': 'raza', 'value': 'Mini', 'newValue': 'Minis' },
-      {'field': 'raza', 'value': 'Minis Pequeñas', 'newValue': 'Minis,Pequeñas' },
-      {'field': 'raza', 'value': 'Pequeña', 'newValue': 'Pequeñas' },
-      {'field': 'raza', 'value': 'Medina y Grande', 'newValue': 'Medianas,Grandes' },
-      {'field': 'raza', 'value': 'Medianas Grandes', 'newValue': 'Medianas,Grandes' },
+      {'field': 'razaTxt', 'value': 'Mini', 'newValue': 'Minis' },
+      {'field': 'razaTxt', 'value': 'Minis Pequeñas', 'newValue': 'Minis,Pequeñas' },
+      {'field': 'razaTxt', 'value': 'Pequeña', 'newValue': 'Pequeñas' },
+      {'field': 'razaTxt', 'value': 'Medina y Grande', 'newValue': 'Medianas,Grandes' },
+      {'field': 'razaTxt', 'value': 'Medianas Grandes', 'newValue': 'Medianas,Grandes' },
       //
-      {'field': 'tags', 'value': 'semior', 'newValue': 'eenior' },
+      {'field': 'tags', 'value': 'semior', 'newValue': 'senior' },
       {'field': 'tags', 'value': 'urinario', 'newValue': 'urinario' },
       {'field': 'tags', 'value': 'sanitarias,benonita', 'newValue': 'sanitarias,benonita,aglutinante' },
       {'field': 'tags', 'value': 'senior', 'newValue': 'senior,adulto' },
@@ -94,7 +96,7 @@ class MakeDataControler {
 
     let rslt = [];
     const fabricante = [];
-    let array = await _articulo.distinct( 'fabricante' );
+    let array = await _articulo.distinct( 'fabricanteTxt' );
     console.log(array);
     for (let i = 0; i < array.length; i++) {
       const e = {
@@ -113,10 +115,11 @@ class MakeDataControler {
     for (let i = 0; i < array.length; i++) {
       const e = array[i];
       const filter = {}
-      filter['fabricante'] = e.name;
+      filter['fabricanteTxt'] = e.name;
       console.log(e);
       const newValue = {
-        'fabricante_id': e._id
+        'fabricante': e._id,
+        'fabricanteTxt': e.name
       }
       const retd = await _articulo.updateMany(
         filter,               // Query parameter
@@ -128,7 +131,7 @@ class MakeDataControler {
 
 
     const marca = [];    
-    array = await _articulo.distinct( 'marca', );
+    array = await _articulo.distinct( 'marcaTxt', );
     console.log(array);
     for (let i = 0; i < array.length; i++) {
       const e = {
@@ -147,10 +150,11 @@ class MakeDataControler {
     for (let i = 0; i < array.length; i++) {
       const e = array[i];
       const filter = {}
-      filter['marca'] = e.name;
+      filter['marcaTxt'] = e.name;
       console.log(e);
       const newValue = {
-        'marca_id': e._id
+        'marca': e._id,
+        'marcaTxt': e.name
       }
       const retd = await _articulo.updateMany(
         filter,               // Query parameter
@@ -163,13 +167,13 @@ class MakeDataControler {
     array = await fabricantes.find();
     for (let i = 0; i < array.length; i++) {
       const fab = array[i];
-      const _art = await _articulo.find({ fabricante_id: fab._id });
+      const _art = await _articulo.find({ fabricante: fab._id });
       const tmp_marca = [];
       for (let a = 0; a < _art.length; a++) {
         const e = _art[a];
-        if(tmp_marca.findIndex((el) =>  `${el}` === `${e.marca_id}`) === -1) 
+        if(tmp_marca.findIndex((el) =>  `${el}` === `${e.marca}`) === -1) 
         {
-          tmp_marca.push(e.marca_id);
+          tmp_marca.push(e.marca);
         }
       }
       //await fabricantes.findByIdAndUpdate(fab._id, {marcas: tmp_marca});
@@ -185,7 +189,7 @@ class MakeDataControler {
     }
 
     const especie = [];    
-    array = await _articulo.distinct( 'especie' );
+    array = await _articulo.distinct( 'especieTxt' );
     console.log(array);
     for (let i = 0; i < array.length; i++) {
       const e = {
@@ -204,10 +208,11 @@ class MakeDataControler {
     for (let i = 0; i < array.length; i++) {
       const e = array[i];
       const filter = {}
-      filter['especie'] = e.name;
+      filter['especieTxt'] = e.name;
       console.log(e);
       const newValue = {
-        'especie_id': e._id
+        'especie': e._id,
+        'especieTxt': e.name
       }
 
       const retd = await _articulo.updateMany(
@@ -218,13 +223,8 @@ class MakeDataControler {
       console.log(retd);
     }
     
-    //const fabricante = await this.saveTablas('fabricante',fabricantes);
-    //const fabricante = rslt;
-    //const marca = await this.saveTablas('marca',marcas);
-    //const especie = await this.saveTablas('especie',especies);
-
     const rubro = [];
-    array = await _articulo.distinct( 'rubro' );
+    array = await _articulo.distinct( 'rubroTxt' );
     console.log(array);
     for (let i = 0; i < array.length; i++) {
       const e = {
@@ -243,10 +243,11 @@ class MakeDataControler {
     for (let i = 0; i < array.length; i++) {
       const e = array[i];
       const filter = {}
-      filter['rubro'] = e.name;
+      filter['rubroTxt'] = e.name;
       console.log(e);
       const newValue = {
-        'rubro_id': e._id
+        'rubro': e._id,
+        'rubroTxt': e.name
       }
       const retd = await _articulo.updateMany(
         filter,               // Query parameter
@@ -258,7 +259,7 @@ class MakeDataControler {
 
 
     const linea = [];    
-    array = await _articulo.distinct( 'linea', );
+    array = await _articulo.distinct( 'lineaTxt', );
     console.log(array);
     for (let i = 0; i < array.length; i++) {
       const e = {
@@ -277,10 +278,11 @@ class MakeDataControler {
     for (let i = 0; i < array.length; i++) {
       const e = array[i];
       const filter = {}
-      filter['linea'] = e.name;
+      filter['lineaTxt'] = e.name;
       console.log(e);
       const newValue = {
-        'linea_id': e._id
+        'linea': e._id,
+        'lineaTxt': e.name
       }
       const retd = await _articulo.updateMany(
         filter,               // Query parameter
@@ -293,13 +295,13 @@ class MakeDataControler {
     array = await rubros.find();
     for (let i = 0; i < array.length; i++) {
       const fab = array[i];
-      const _art = await _articulo.find({ rubro_id: fab._id });
+      const _art = await _articulo.find({ rubro: fab._id });
       const tmp_linea = [];
       for (let a = 0; a < _art.length; a++) {
         const e = _art[a];
-        if(tmp_linea.findIndex((el) =>  `${el}` === `${e.linea_id}`) === -1) 
+        if(tmp_linea.findIndex((el) =>  `${el}` === `${e.linea}`) === -1) 
         {
-          tmp_linea.push(e.linea_id);
+          tmp_linea.push(e.linea);
         }
       }
       //await fabricantes.findByIdAndUpdate(fab._id, {marcas: tmp_marca});
@@ -320,8 +322,75 @@ class MakeDataControler {
 
     //const linea = await articulo.distinct('linea');
 
-		const raza = await _articulo.distinct('raza');
-		const edad = await _articulo.distinct('edad');
+    const raza = [];    
+    array = await _articulo.distinct( 'razaTxt' );
+    console.log(array);
+    for (let i = 0; i < array.length; i++) {
+      const e = {
+        name: array[i]
+      }
+      const data = await razas.updateOne(
+        { name: e.name },   // Query parameter
+        { $set: e },        // Set values
+        { upsert: true }    // Options
+      );
+      data['name'] = array[i];
+      console.log(data);
+      especie.push(data);
+    }
+    array = await razas.find();
+    for (let i = 0; i < array.length; i++) {
+      const e = array[i];
+      const filter = {}
+      filter['razaTxt'] = e.name;
+      console.log(e);
+      const newValue = {
+        'raza': e._id,
+        'razaTxt': e.name
+      }
+
+      const retd = await _articulo.updateMany(
+        filter,               // Query parameter
+        { $set: newValue },   // Set values
+        { upsert: false }     // Options
+      );
+      console.log(retd);
+    }
+    const edad = [];    
+    array = await _articulo.distinct( 'edadTxt' );
+    console.log(array);
+    for (let i = 0; i < array.length; i++) {
+      const e = {
+        name: array[i]
+      }
+      const data = await edades.updateOne(
+        { name: e.name },   // Query parameter
+        { $set: e },        // Set values
+        { upsert: true }    // Options
+      );
+      data['name'] = array[i];
+      console.log(data);
+      especie.push(data);
+    }
+    array = await edades.find();
+    for (let i = 0; i < array.length; i++) {
+      const e = array[i];
+      const filter = {}
+      filter['edadTxt'] = e.name;
+      console.log(e);
+      const newValue = {
+        'edad': e._id,
+        'edadTxt': e.name
+      }
+
+      const retd = await _articulo.updateMany(
+        filter,               // Query parameter
+        { $set: newValue },   // Set values
+        { upsert: false }     // Options
+      );
+      console.log(retd);
+    }
+    
 		const name = await _articulo.distinct('name');
 		const tags = await _articulo.distinct('tags');
 		res.status(200).json({next,fabricante,marca,rubro,linea,especie,raza,edad,name,tags});
@@ -347,7 +416,9 @@ class MakeDataControler {
   }
 
   async productoname(req: Request, res: Response){
-    const array = await presentacion.find().populate({path: 'relacion'}).populate({path: 'articulo'});
+    const array = await presentacion.find()
+      .populate({path: 'articulo', populate: { path: 'fabricante marca rubro linea especie edad raza'} })
+      .populate({path: 'relacion'});
     const ret = [];
     for (let i = 0; i < array.length; i++) {
       const e:any = array[i];
@@ -356,40 +427,41 @@ class MakeDataControler {
         if(tags.length) tags = (`${tags},${e.tags}`).trim();
         else tags = e.tags;
       }
-      const reg =         {
+      const reg = {
         _id: e._id,
         articulo: e.articulo,
         ean: e.ean,
-        plu: e.plu,
+        //fabricanteTxt: e.articulo.fabricanteTxt,
         fabricante: e.articulo.fabricante,
-        fabricante_id: e.articulo.fabricante_id,
+        //marcaTxt: e.articulo.marcaTxt,
         marca: e.articulo.marca,
-        marca_id: e.articulo.marca_id,
+        //especieTxt: e.articulo.especieTxt,
         especie: e.articulo.especie,
-        especie_id: e.articulo.especie_id,
+        //razaTxt: e.articulo.razaTxt,
         raza: e.articulo.raza,
+        //edadTxt: e.articulo.edadTxt,
         edad: e.articulo.edad,
+        //rubroTxt: e.articulo.rubroTxt,
         rubro: e.articulo.rubro,
-        rubro_id: e.articulo.rubro_id,
+        //lineaTxt: e.articulo.lineaTxt,
         linea: e.articulo.linea,
-        linea_id: e.articulo.linea_id,
         tags,
         image: e.image ? e.image : e.articulo.image,
-        art_name: e.articulo.fullname,
-        fullname: e.fullname,
+        artName: e.articulo.fullname,
+        prodName: e.relacion?.fullname ? `${e.name} de ${e.contiene} ${e.relacion.fullname}` : `${e.name} ${e.contiene} ${e.unidad}`,
+        //fullname: e.fullname,
         pesable: e.pesable,
         pCompra: e.pCompra,
         pVenta: e.pVenta,
-        precio: e.precio,
-        oferta: e.oferta,
-        oferta_precio: e.oferta_precio,
-        oferta_desde: e.oferta_desde,
-        oferta_hasta: e.oferta_hasta,
-        stock: e.stock,
-        unidad: e.unidad,
-        name: e.name,
-        contiene: e.contiene,
-        prodName: `${e.name} ${e.contiene} ${e.unidad}`
+        //precio: e.precio,
+        //oferta: e.oferta,
+        //oferta_precio: e.oferta_precio,
+        //oferta_desde: e.oferta_desde,
+        //oferta_hasta: e.oferta_hasta,
+        //stock: e.stock,
+        //unidad: e.unidad,
+        //name: e.name,
+        //contiene: e.contiene,
       }
       ret.push(reg);
       const rpta = await prodName.updateOne(

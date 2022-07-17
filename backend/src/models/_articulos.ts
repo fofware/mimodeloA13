@@ -28,6 +28,7 @@ export interface I_Articulo extends Document {
   formula: [];
   beneficios: [];
   presentaciones: [];
+  extradata: []; 
   //
   private_web: boolean;
   image: string;
@@ -40,18 +41,20 @@ export interface I_Articulo extends Document {
 };
 
 const _articuloSchema = new Schema({
-  fabricante_id: { ref: "Fabricantes", type: Schema.Types.ObjectId, default: null },
-  fabricante: { type: Schema.Types.String, trim: true, default: '', index: true }, // Nestle
-  marca_id: { ref: "Marcas", type: Schema.Types.ObjectId, default: null },
-  marca: { type: Schema.Types.String, trim: true, default: '', index: true },      // Purina Dog Chow / Purina Cat Chow
-  rubro_id: { ref: "Rubros", type: Schema.Types.ObjectId, default: null },
-  rubro: { type: Schema.Types.String, trim: true, default: '', index: true },      // Alimento Seco / Alimento Húmedo
-  linea_id: { ref: "Lineas", type: Schema.Types.ObjectId, default: null },
-  linea: { type: Schema.Types.String, trim: true, default: '', index: true },      // ???????
-  especie_id: { ref: "Especies", type: Schema.Types.ObjectId, default: null },
-  especie: { type: Schema.Types.String, trim: true, default: '', index: true },   // Gato
-  edad: { type: Schema.Types.String, trim: true, default: '', index: true },
-  raza: { type: Schema.Types.String, trim: true, default: '', index: true },
+  fabricante: { ref: "Fabricante", type: Schema.Types.ObjectId, default: null },
+  fabricanteTxt: { type: Schema.Types.String, trim: true, default: '', index: true }, // Nestle
+  marca: { ref: "Marca", type: Schema.Types.ObjectId, default: null },
+  marcaTxt: { type: Schema.Types.String, trim: true, default: '', index: true },      // Purina Dog Chow / Purina Cat Chow
+  rubro: { ref: "Rubro", type: Schema.Types.ObjectId, default: null },
+  rubroTxt: { type: Schema.Types.String, trim: true, default: '', index: true },      // Alimento Seco / Alimento Húmedo
+  linea: { ref: "Linea", type: Schema.Types.ObjectId, default: null },
+  lineaTxt: { type: Schema.Types.String, trim: true, default: '', index: true },      // ???????
+  especie: { ref: "Especie", type: Schema.Types.ObjectId, default: null },
+  especieTxt: { type: Schema.Types.String, trim: true, default: '', index: true },   // Gato
+  raza: { ref: "Raza", type: Schema.Types.ObjectId, default: null },
+  razaTxt: { type: Schema.Types.String, trim: true, default: '', index: true },
+  edad: { ref: "Edad", type: Schema.Types.ObjectId, default: null },
+  edadTxt: { type: Schema.Types.String, trim: true, default: '', index: true },
   name: { type: Schema.Types.String, trim: true, default: '', index: true },      // Gatitos Carne y Leche
   tags: { type: Schema.Types.String, trim: true, default: '', index: true },
   //
@@ -66,6 +69,7 @@ const _articuloSchema = new Schema({
   detalles: { type: Schema.Types.String, trim: true, default: '' },
   formula: [],
   beneficios: [],
+  extadata: [],
   presentaciones: [{ ref: "Presentacion", type: Schema.Types.ObjectId, default: [] }],
   //
   private_web: {type: Schema.Types.Boolean, default: false, index: true },

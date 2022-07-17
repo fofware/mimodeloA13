@@ -19,8 +19,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   public defmenu = [
     //{ title: '<i class="fa-solid fa-arrow-rotate-left"></i>', link: '../' },
-    { title: 'Marcas', link: ['marcas'] },
-    { title: 'Articulos', link: ['articulos'] },
+    //{ title: 'Marcas', link: ['marcas'] },
+    //{ title: 'Articulos', link: ['articulos'] },
     { title: 'Productos', link: ['productos'] },
     { title: 'Precios', link: ['precios'] },
   ];

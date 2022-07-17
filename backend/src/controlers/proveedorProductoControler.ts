@@ -53,7 +53,10 @@ class ProveedorProductoControlers {
     
     console.log(filter);
     
-    const count = await ProveedorProducto.count(filter);
+    const count = await ProveedorProducto
+    .count(filter)
+    .populate({path: 'articulo', populate: { path: 'fabricante marca rubro linea especie edad raza' }})
+    .populate({path: 'presentacion', populate: {path: 'relacion'}});
     
     params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
     params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
@@ -65,9 +68,10 @@ class ProveedorProductoControlers {
           .find(filter)
           .limit(params.limit)
           .skip(params.offset)
-          .populate({path:'v_prodname', select: 'fullname -_id'})
+          .populate({path: 'articulo', populate: { path: 'fabricante marca rubro linea especie edad raza' }})
+          .populate({path: 'presentacion', populate: {path: 'relacion'}})
+          //.populate({path:'v_prodname', select: 'fullname -_id'})
           .sort(params.sort);
-    //.populate({path:'articulo'}).populate({path: 'presentacion', populate: {path: 'relacion'}}).sort(params.sort);
     const ret = {
       url: req.headers.host+req.url,
       limit: params.limit,
@@ -81,6 +85,7 @@ class ProveedorProductoControlers {
     }
     res.status(200).json(ret);
   }
+
   async get(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
     const prod = await ProveedorProducto.find({_id: params.id})
@@ -115,7 +120,6 @@ class ProveedorProductoControlers {
     try {
       const ret = await ProveedorProducto.findByIdAndDelete(params.id);
       console.log("delete",params)
-
       return res.status(200).json(ret);
     } catch (error) {
       res.status(400).json({
@@ -125,8 +129,28 @@ class ProveedorProductoControlers {
       })      
     }
   }
+
   async put(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
+    const {id, ...update} = params;
+    try {
+      let ret = await ProveedorProducto.findOneAndUpdate(id, update, {
+        new: true,
+        upsert: true,
+        rawResult: true // Return the raw result from the MongoDB driver
+      });
+      ret.value instanceof ProveedorProducto; // true
+      // The below property will be `false` if MongoDB upserted a new
+      // document, and `true` if MongoDB updated an existing object.
+      ret.lastErrorObject.updatedExisting; // false
+      return res.status(200).json(ret);
+    } catch (error) {
+      res.status(400).json({
+        message: 'Borrando producto de proveedor',
+        title: 'Algo Anduvo Mal',
+        error,
+      })      
+    }
   }
 
 }

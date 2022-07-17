@@ -23,9 +23,7 @@ export interface ArticuloFd {
   detalles: string;
   edad: string;
   especie: string;
-  especia_id: string;
   fabricante: string;
-  fabricante_id: string;
   formula: [];
   fullName: string;
   image: string;

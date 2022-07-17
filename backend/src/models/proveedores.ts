@@ -23,6 +23,7 @@ const proveedorSchema = new Schema({
 },
 { 
   strict: false,
+  versionKey: false
 });
 
 proveedorSchema.on('index', error => {

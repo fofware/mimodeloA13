@@ -64,6 +64,7 @@
        (typeaheadLoading)="changeProdNameLoading($event)"
        placeholder="ProdName"
 -->
+<input name="filtro" [(ngModel)]="filtro" placeholder="filtro">
 <button *ngIf="newData.length" (click)="addSelected()">Add Selected</button>
 <div class="container">
   <div class="mb-2" *ngIf="max">
@@ -73,14 +74,14 @@
   </div>
   <table *ngIf="newData.length; else viewProvProduct">
     <tr>
-      <td></td>
+      <!--td></td-->
       <td></td>
       <td>
         <input [(ngModel)]="allNewValue" type="checkbox" name="default" (change)="toggleAll(newData,allNewValue)" />
       </td>
     </tr>
-    <tr *ngFor="let item of newData;index as i">
-      <td>{{item.articulo}}</td>
+    <tr *ngFor="let item of newData | prodNameFilter: filtro; index as i">
+      <!--td>{{item.articulo}}</td-->
       <td>{{item.fullname}} </td>
       <td>
         <input [(ngModel)]="item.isSelected" type="checkbox" name="isSelected_{{i}}" />
@@ -92,14 +93,14 @@
       <button (click)="removeSelected()">Remove Selected</button>
       <table whidt="100%" *ngIf="newData.length === 0">
         <tr>
-          <td></td>
+          <!--td></td-->
           <td></td>
           <td>
             <input [(ngModel)]="allProvValue" type="checkbox" name="default" (change)="toggleAll(provData,allProvValue)" />
           </td>
         </tr>
-        <tr *ngFor="let item of provData;index as i">
-          <td>{{item.articulo}}</td>
+        <tr *ngFor="let item of provData | prodNameFilter: filtro;index as i">
+          <!--td>{{item.articulo}}</td-->
           <td>{{item.fullname}} </td>
           <td>
             <input [(ngModel)]="item.isSelected" type="checkbox" name="isSelected_{{i}}" />

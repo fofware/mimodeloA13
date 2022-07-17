@@ -19,14 +19,14 @@ class ArticuloControler {
 
 	async list( req: Request, res: Response ) {
     const fldsString = [
-      'fabricante',
-      'marca',
+      'fabricante.name',
+      'marca.name',
       'name',
-      'rubro',
-      'linea',
-      'especie',
-      'raza',
-      'edad',
+      'rubro.name',
+      'linea.name',
+      'especie.name',
+      'raza.name',
+      'edad.name',
     ];
   
     const params = Object.assign({
@@ -38,8 +38,8 @@ class ArticuloControler {
     },req.query,req.params,req.body);
 
     const filter = makeFilter(fldsString, params);
-    if(params.fabricante_id && params.fabricante_id !== 'undefined') filter['fabricante_id'] = new ObjectID(params.fabricante_id);
-    if(params.marca_id && params.marca_id !== 'undefined') filter['marca_id'] = new ObjectID(params.marca_id);
+    if(params.fabricante && params.fabricante !== 'undefined') filter['fabricante'] = params.fabricante;
+    if(params.marca && params.marca !== 'undefined') filter['marca'] = params.marca;
 		
 		const count = await articulo.count(filter);
     
@@ -51,7 +51,17 @@ class ArticuloControler {
     let status = 0;
     let ret = {}
     try {
-      const data = await articulo.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
+      const data = await articulo.find(filter)
+			.populate('fabricante')
+			.populate('marca')
+			.populate('rubro')
+			.populate('linea')
+			.populate('especie')
+			.populate('raza')
+			.populate('edad')
+			.limit(params.limit)
+			.skip(params.offset)
+			.sort(params.sort);
       status = 200;
       ret = {
         url: req.headers.host+req.url,
@@ -88,7 +98,8 @@ class ArticuloControler {
 
 	async flista( req: Request, res: Response ) {
 		try {
-			const rpta = await articulo.find().populate({path: 'presentaciones', populate: {path: 'relacion'}});
+			const rpta = await articulo.find()
+			.populate({path: 'presentaciones', populate: {path: 'relacion'}});
 			res.status(200).json(rpta);
 		} catch (error) {
 			res.status(error.status).json(error);

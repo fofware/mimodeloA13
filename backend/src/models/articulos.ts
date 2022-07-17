@@ -20,8 +20,9 @@ export interface IArticulo extends Document {
   d_raza: boolean;
   //
   detalles: string;
-  formula: [];
-  beneficios: [];
+  //formula: [];
+  //beneficios: [];
+  extradata: [];
   presentaciones: [];
   //
   private_web: boolean;
@@ -35,28 +36,29 @@ export interface IArticulo extends Document {
 };
 
 const articuloSchema = new Schema({
-  fabricante: { type: Schema.Types.String, trim: true, default: '', index: true }, // Nestle
-  marca: { type: Schema.Types.String, trim: true, default: '', index: true },      // Purina Dog Chow / Purina Cat Chow
-  rubro: { type: Schema.Types.String, trim: true, default: '', index: true },      // Alimento Seco / Alimento Húmedo
-  linea: { type: Schema.Types.String, trim: true, default: '', index: true },      // ???????
-  especie: { type: Schema.Types.String, trim: true, default: '', index: true },   // Gato
-  edad: { type: Schema.Types.String, trim: true, default: '', index: true },
-  raza: { type: Schema.Types.String, trim: true, default: '', index: true },
-  name: { type: Schema.Types.String, trim: true, default: '', index: true },      // Gatitos Carne y Leche
+  fabricante: { ref: "Fabricante", type: Schema.Types.ObjectId, default: '', index: true },
+  marca: { ref: "Marca", type: Schema.Types.ObjectId, default: '', index: true },
+  rubro: { ref: "Rubro", type: Schema.Types.ObjectId, default: '', index: true },
+  linea: { ref: "Linea", type: Schema.Types.ObjectId, default: '', index: true },
+  especie: { ref: "Especie", type: Schema.Types.ObjectId, default: '', index: true },
+  raza: { ref: "Raza", type: Schema.Types.ObjectId, default: '', index: true },
+  edad: { ref: "Edad", type: Schema.Types.ObjectId, default: '', index: true },
+  name: { type: Schema.Types.String, trim: true, default: '', index: true },
   tags: { type: Schema.Types.String, trim: true, default: '', index: true },
   //
-  d_fabricante: { type: Schema.Types.Boolean, default: false },
-  d_marca: { type: Schema.Types.Boolean, default: true },
-  d_rubro: { type: Schema.Types.Boolean, default: false },
-  d_linea: { type: Schema.Types.Boolean, default: false },
-  d_especie: { type: Schema.Types.Boolean, default: false},
-  d_edad: { type: Schema.Types.Boolean, default: false},
-  d_raza: { type: Schema.Types.Boolean, default: false},
+  d_fabricante: { type: Schema.Types.Number, default: 0 },
+  d_marca: { type: Schema.Types.Number, default: 0 },
+  d_rubro: { type: Schema.Types.Number, default: 0 },
+  d_linea: { type: Schema.Types.Number, default: 0 },
+  d_especie: { type: Schema.Types.Number, default: 0 },
+  d_edad: { type: Schema.Types.Number, default: 0 },
+  d_raza: { type: Schema.Types.Number, default: 0 },
   //
   detalles: { type: Schema.Types.String, trim: true, default: '' },
-  formula: [],
-  beneficios: [],
-  presentaciones: [{ ref: "Presentacion", type: Schema.Types.ObjectId, default: [] }],
+  //formula: [],
+  //beneficios: [],
+  extradata: [],
+  presentaciones: [{ ref: "Presentacion", type: Schema.Types.ObjectId }],
   //
   private_web: {type: Schema.Types.Boolean, default: false, index: true },
   image: { type: Schema.Types.String, trim: true, required: false },
@@ -68,7 +70,7 @@ const articuloSchema = new Schema({
 },
 { 
   toJSON: { virtuals: true },
-  strict: false,
+  strict: true,
   versionKey: false
 });
 
@@ -82,11 +84,11 @@ articuloSchema.virtual('fullname').get(function(){
   let fullName = '';
   let sep = '';
   if(this.d_fabricante){
-    fullName = this.fabricante;
+    fullName = this.fabricante.name;
     sep = ' ';
   }
   if(this.d_marca){
-    fullName += sep+this.marca;
+    fullName += sep+this.marca.name;
     sep = ' ';
   }
   if (this.name){
@@ -94,23 +96,23 @@ articuloSchema.virtual('fullname').get(function(){
     sep = ' ';
   }
   if(this.d_especie){
-    fullName += sep+this.especie;
+    fullName += sep+this.especie.name;
     sep = ' ';
   }
   if(this.d_edad){
-    fullName += sep+this.edad;
+    fullName += sep+this.edad.name;
     sep = ' ';
   }
   if(this.d_raza){
-    fullName += sep+this.raza;
+    fullName += sep+this.raza.name;
     sep = ' ';
   } 
   if(this.d_rubro){
-    fullName += sep+this.rubro;
+    fullName += sep+this.rubro.name;
     sep = ' ';
   } 
   if(this.d_linea){
-    fullName += sep+this.linea;
+    fullName += sep+this.linea.name;
     sep = ' ';
   } 
   return fullName;

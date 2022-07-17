@@ -49,14 +49,26 @@ const routes: Routes = [
     loadChildren: () => import(`./modules/temp/temp.module`)
       .then(
         module => module.TempModule
-      ) 
+      )
   },
   {
     path: 'users',
     loadChildren: () => import(`./modules/user/user.module`)
       .then(
         module => module.UserModule
-      ) 
+      )
+  },
+  {
+    path: 'admin',
+    loadChildren: () => import(`./modules/admin/admin.module`)
+      .then(
+        module => module.AdminModule
+      ),
+    canActivate: [IsLoggedGuard,AuthGuard],
+    data: {
+      roles: ['sys_admin'],
+    }
+
   },
   {
     path: 'proveedores',

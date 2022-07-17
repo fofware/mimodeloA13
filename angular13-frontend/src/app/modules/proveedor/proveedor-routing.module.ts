@@ -31,14 +31,14 @@ const routes: Routes = [
             path: '',
             component: FormComponent 
           },
-          {
-            path: 'marcas',
-            component: MarcaComponent,
-          },
-          {
-            path: 'articulos',
-            component: ArticulosComponent 
-          },
+          //{
+          //  path: 'marcas',
+          //  component: MarcaComponent,
+          //},
+          //{
+          //  path: 'articulos',
+          //  component: ArticulosComponent 
+          //},
           {
             path: 'productos',
             component: ProductosComponent 

@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Socket1Service } from './services/socket.service';
-// 
+//
 import { NgxSpinnerModule } from "ngx-spinner";
 import { SocketIoModule } from 'ngx-socket-io';
 import { ToastrModule } from 'ngx-toastr';
@@ -27,6 +27,7 @@ import { NotifyBtnComponent } from './components/notify-btn/notify-btn.component
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { PruebaModule } from './modules/prueba/prueba.module';
 import { PrivateHomeComponent } from './components/private-home/private-home.component';
+//import { ProdNameFilterPipe } from './pipes/prod-name-filter.pipe';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { PrivateHomeComponent } from './components/private-home/private-home.com
     SigninBtnComponent,
     NotifyBtnComponent,
     PrivateHomeComponent,
+//    ProdNameFilterPipe,
   ],
   imports: [
     BrowserModule,

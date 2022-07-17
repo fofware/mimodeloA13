@@ -35,14 +35,13 @@ class ProductoNameControler {
   async list(req: Request, res: Response){
     const fldsString = [
       'fullname',
-    
-      'fabricante',
-      'marca',
-      'rubro',
-      'linea',
-      'especie',
-      'edad',
-      'raza',
+      //'fabricante',
+      //'marca',
+      //'rubro',
+      //'linea',
+      //'especie',
+      //'edad',
+      //'raza',
       'unidad',
       'ean',
       'tags',
@@ -65,11 +64,11 @@ class ProductoNameControler {
     },req.query,req.params,req.body);
 
     const filter = makeFilter(fldsString, params);
-    if( params.fabricante_id && params.fabricante_id !== 'undefined' ){
-      filter['fabricante_id'] = params.fabricante_id;
+    if( params.fabricante && params.fabricante !== 'undefined' ){
+      filter['fabricante'] = params.fabricante;
     }
-    if( params.marca_id && params.marca_id !== 'undefined' ){
-      filter['marca_id'] = params.marca_id;
+    if( params.marca && params.marca !== 'undefined' ){
+      filter['marca'] = params.marca;
     }
     if( params.articulo && params.articulo !== 'undefined' ){
       filter['articulo'] = params.articulo;
@@ -89,9 +88,11 @@ class ProductoNameControler {
     if(params.pCompra){
       filter['pCompra'] = params.pCompra;
     }
+
     //const filter = makeAggregate(fldsString, params);
     //console.log(filter);
     //console.log(filter['$or'][0]);
+
     const count = await prodName.count(filter);
     
     params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;

@@ -85,6 +85,7 @@ export class MarcaComponent implements OnInit, OnDestroy {
   selected?: any[];
   newData:any[] = [];
   provData:any[] = [];
+  filtro: string = '';
 
   max = 0;
   dynamic = 0;
@@ -126,7 +127,7 @@ export class MarcaComponent implements OnInit, OnDestroy {
     private router: Router,
     ) { }
 
-    ngOnInit(): void {
+  ngOnInit(): void {
     this.fabricanteSource$ = new Observable((observer: Observer<string | undefined>) => {
       observer.next(this.fabricanteSelected);
     }).pipe(
@@ -158,7 +159,7 @@ export class MarcaComponent implements OnInit, OnDestroy {
     }).pipe(
       switchMap(( query: string ) => {
         if(query) {
-          return this.apiServ.get('/articulos',{ searchItem: query, fabricante_id: this.fabricanteSelectedOption?._id, marca_id: this.marcaSelectedOption?._id, limit: 100 },{spinner: 'false'})
+          return this.apiServ.get('/articulos',{ searchItem: query, fabricante: this.fabricanteSelectedOption?._id, marca: this.marcaSelectedOption?._id, limit: 100 },{spinner: 'false'})
             .pipe(
               map((ret:ArticuloResponse) => ret && ret.data || [])
             )
@@ -185,12 +186,13 @@ export class MarcaComponent implements OnInit, OnDestroy {
     this.apiServ.get(`/proveedor/${this.proveedorId}/productos`,{
       limit: 500
     })
-        .subscribe((retData:any) => {
-          this.provData = retData.data;
-          this.provDataSort();
-          console.log(this.provData);
-        });
+    .subscribe((retData:any) => {
+      this.provData = retData.data;
+      this.provDataSort();
+      console.log(retData);
+    });
   }
+
   provDataSort(){
     this.provData.sort((a, b) => {
       let fa = a.fullname.toLowerCase(),
@@ -219,8 +221,8 @@ export class MarcaComponent implements OnInit, OnDestroy {
       ){
         this.apiServ.get('/productoname',
         {
-          fabricante_id: this.fabricanteSelectedOption?._id,
-          marca_id: this.marcaSelectedOption?._id,
+          fabricante: this.fabricanteSelectedOption?._id,
+          marca: this.marcaSelectedOption?._id,
           articulo: this.articuloSelectedOption?._id,
           //_id: this.prodNameSelectedOption?._id,
           pesable: false,
@@ -245,7 +247,7 @@ export class MarcaComponent implements OnInit, OnDestroy {
       this.fabricanteSelectedOption = null;
       this.readNewData();
     }
-    console.log('changeFabricanteLoading',this.fabricanteLoading);
+    //console.log('changeFabricanteLoading',this.fabricanteLoading);
   }
 
   onFabricanteSelect(event: TypeaheadMatch): void {
