@@ -23,13 +23,12 @@ export interface I_Presentacion extends Document {
   margen?: Number;
   // ? Oferta
   oferta?: Boolean;
-  oferta_precio?: Number;
-  oferta_desde?: Date;
-  oferta_hasta?: Date;
+  off_value?: Number;
+  off_desde?: Date;
+  off_hasta?: Date;
   //
-//  precio?: Number;
-//  precio_desde?: Date;
-//  precio_hasta?: Date;
+  value?: Number;
+  fch_value?: Date;
   // ? compra
   compra?: Number;
   compra_fecha?: Date;
@@ -65,13 +64,12 @@ const _presentacionSchema = new Schema({
   , margen: { type: Schema.Types.Number, default: 35 }
 
   , oferta: { type: Schema.Types.Boolean, default: false }
-  , oferta_precio: { type: Schema.Types.Number, default: 0 }
-  , oferta_desde: {  type: Schema.Types.Date, default: null }
-  , oferta_hasta: { type:  Schema.Types.Date, default: null }
+  , off_value: { type: Schema.Types.Number, default: 0 }
+  , off_desde: {  type: Schema.Types.Date, default: null }
+  , off_hasta: { type:  Schema.Types.Date, default: null }
   //
-  , precio: { type: Schema.Types.Number, default: 0 }
-  , precio_desde: { type: Schema.Types.Date }
-  , precio_hasta: { type: Schema.Types.Date }
+  , value: { type: Schema.Types.Number, default: 0 }
+  , fch_value: { type: Schema.Types.Date, default: Date.now() }
   //
   , compra: { type: Schema.Types.Number, default:0 }
   , compra_fecha: { type: Schema.Types.Date }

@@ -3,6 +3,8 @@ import _presentacion from "../models/_presentaciones";
 import presentacion from "../models/presentaciones";
 import _articulo from "../models/_articulos";
 import articulos from "../models/articulos";
+import _extradata from "../models/_extradata";
+import extradata from "../models/extradata";
 import prodName, {} from '../models/productoname';
 import fabricantes, {} from "../models/fabricantes";
 import marcas, {} from "../models/marcas";
@@ -11,6 +13,8 @@ import rubros from "../models/rubros";
 import lineas from "../models/lineas";
 import razas from "../models/razas";
 import edades from "../models/edades";
+import precio from "../models/precio";
+import costo from "../models/costo";
 
 class MakeDataControler {
 
@@ -27,17 +31,21 @@ class MakeDataControler {
   config () {
     this.router.get('/make/tablas', this.tablas)
     this.router.get('/make/articulo', this.articulo );
+    this.router.get('/make/extradata',
+        this.extradata );
     this.router.get('/make/presentacion',
         this.presentacion );
     this.router.get('/make/productoname',
         this.productoname );
+    this.router.get('/make/costo',
+        this.costo );
     this.router.get('/make/precio',
         this.precio );
   }
 
   async articulo( req: Request, res: Response){
     const rpta = {};
-    rpta['next'] = 'http://fofware.com.ar:4444/make/presentacion';
+    rpta['next'] = 'http://192.168.100.150:4444/make/extradata';
 
 		try {
       const _art = await _articulo.find();
@@ -91,7 +99,7 @@ class MakeDataControler {
       ));
     }
 
-    const next = 'http://fofware.com.ar:4444/make/articulo';
+    const next = 'http://192.168.100.150:4444/make/articulo';
     const test = 'fabricante';
 
     let rslt = [];
@@ -397,9 +405,27 @@ class MakeDataControler {
   }
 
 
+  async extradata(req: Request, res: Response){
+    const rpta = {};
+    rpta['next'] = 'http://192.168.100.150:4444/make/presentacion';
+
+    try {
+      const _art = await _extradata.find();
+      rpta['src'] = _art;
+      rpta['rslt'] = [];
+      const ret = await extradata.insertMany(_art);
+      rpta['rslt'].push(ret);
+			return res.status(200).json( rpta );
+		} catch (error) {
+			console.log(error);
+			return res.status(500).json( error );
+		}
+    
+  }
+
   async presentacion(req: Request, res: Response){
     const rpta = {};
-    rpta['next'] = 'http://fofware.com.ar:4444/make/productoname';
+    rpta['next'] = 'http://192.168.100.150:4444/make/costo';
 
     try {
       const _art = await _presentacion.find();
@@ -412,7 +438,6 @@ class MakeDataControler {
 			console.log(error);
 			return res.status(500).json( error );
 		}
-    
   }
 
   async productoname(req: Request, res: Response){
@@ -474,8 +499,35 @@ class MakeDataControler {
     res.status(200).json({ret,array});
   }
 
+  async costo(req: Request, res: Response){
+    const rpta = {};
+    rpta['next'] = 'http://192.168.100.150:4444/make/precio';
+    try {
+      const _art = await _presentacion.find();
+      rpta['src'] = _art;
+      rpta['rslt'] = [];
+      const ret = await costo.insertMany(_art);
+      rpta['rslt'].push(ret);
+			return res.status(200).json( rpta );
+		} catch (error) {
+			console.log(error);
+			return res.status(500).json( error );
+		}
+  }
   async precio(req: Request, res: Response){
-    res.status(200).json('precio');
+    const rpta = {};
+    rpta['next'] = 'http://192.168.100.150:4444/make/productoname';
+    try {
+      const _art = await _presentacion.find();
+      rpta['src'] = _art;
+      rpta['rslt'] = [];
+      const ret = await precio.insertMany(_art);
+      rpta['rslt'].push(ret);
+			return res.status(200).json( rpta );
+		} catch (error) {
+			console.log(error);
+			return res.status(500).json( error );
+		}
   }
 }
 

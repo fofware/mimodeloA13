@@ -69,7 +69,7 @@ const _articuloSchema = new Schema({
   detalles: { type: Schema.Types.String, trim: true, default: '' },
   formula: [],
   beneficios: [],
-  extadata: [],
+  extradata: [],
   presentaciones: [{ ref: "Presentacion", type: Schema.Types.ObjectId, default: [] }],
   //
   private_web: {type: Schema.Types.Boolean, default: false, index: true },

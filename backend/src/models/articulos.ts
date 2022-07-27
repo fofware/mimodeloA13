@@ -22,7 +22,7 @@ export interface IArticulo extends Document {
   detalles: string;
   //formula: [];
   //beneficios: [];
-  extradata: [];
+  //extradata: [];
   presentaciones: [];
   //
   private_web: boolean;
@@ -57,7 +57,7 @@ const articuloSchema = new Schema({
   detalles: { type: Schema.Types.String, trim: true, default: '' },
   //formula: [],
   //beneficios: [],
-  extradata: [],
+  //extradata: [],
   presentaciones: [{ ref: "Presentacion", type: Schema.Types.ObjectId }],
   //
   private_web: {type: Schema.Types.Boolean, default: false, index: true },

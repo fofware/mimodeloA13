@@ -1,9 +1,9 @@
 import { Request, Response, Router } from "express";
 import presentacion from "../models/_presentaciones";
 import articulo from "../models/_articulos";
+import extradata from "../models/_extradata";
 
 import https from 'https';
-import extradata from "../models/extradata";
 
 export const httpClient = async function (options) {
   return new Promise((resolve, reject) => {
@@ -68,7 +68,7 @@ class ImportDataControler {
       const repta = [];
       const newData = [];
       //repta.push({next: 'http://fofware.com.ar:4444/make/articulo'})
-      repta.push({next: 'http://fofware.com.ar:4444/make/tablas'});
+      repta.push({next: 'http://192.168.100.150:4444/make/tablas'});
       repta.push(ret);
       repta.push(newData);
       const campos = [
@@ -111,10 +111,10 @@ class ImportDataControler {
                 , iva: pro.iva
                 , margen: pro.margen
                 , oferta: pro.oferta
-                , oferta_desde: pro.precio_desde
-                , oferta_hasta: pro.precio_hasta
-                , oferta_precio: pro.oferta ? pro.precio : null
-                , precio: pro.calc_precio
+                , off_desde: pro.precio_desde
+                , off_hasta: pro.precio_hasta
+                , off_value: pro.oferta ? pro.precio : null
+                , value: pro.calc_precio
                 , compra: pro.showCompra
                 , compra_fecha: null
                 , reposicion: pro.reposicion
@@ -159,7 +159,7 @@ class ImportDataControler {
             console.log(rpta);
           }
           for (let n = 0; n < art.formula.length; n++) {
-            const pro = art.beneficios[n];
+            const pro = art.formula[n];
             //prodList.push(pro);
             const setData = {
                 tipo: 'formula'
@@ -228,6 +228,7 @@ class ImportDataControler {
           console.log("Articulos Ok",i)
         }
       }
+      
       res.status(200).json(repta);
     } catch (error) {
       console.log(error);
