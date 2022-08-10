@@ -7,7 +7,7 @@ export interface MarcaResponse {
   count: number;
   apiTime: number;
   filter: object;
-  data: MarcaFd[];
+  rows: MarcaFd[];
   message: string;
 }
 

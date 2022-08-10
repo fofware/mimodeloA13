@@ -15,6 +15,11 @@ import razas from "../models/razas";
 import edades from "../models/edades";
 import precio from "../models/precio";
 import costo from "../models/costo";
+import _reposicion from "../models/_reposicion";
+import productoname from "../models/productoname";
+import presentaciones from "../models/presentaciones";
+import proveedorProductos from "../models/proveedorProductos";
+import reposicion from "../models/reposicion";
 
 class MakeDataControler {
 
@@ -29,18 +34,34 @@ class MakeDataControler {
 	}
 
   config () {
-    this.router.get('/make/tablas', this.tablas)
-    this.router.get('/make/articulo', this.articulo );
-    this.router.get('/make/extradata',
-        this.extradata );
-    this.router.get('/make/presentacion',
-        this.presentacion );
-    this.router.get('/make/productoname',
-        this.productoname );
-    this.router.get('/make/costo',
-        this.costo );
-    this.router.get('/make/precio',
-        this.precio );
+    this.router.get(
+      '/make/tablas', 
+      this.tablas
+      );
+    this.router.get(
+      '/make/articulo', 
+      this.articulo 
+    );
+    this.router.get(
+      '/make/extradata',
+      this.extradata 
+    );
+    this.router.get(
+      '/make/presentacion',
+      this.presentacion 
+    );
+    this.router.get(
+      '/make/productoname',
+      this.productoname 
+    );
+    this.router.get(
+      '/make/costo',
+      this.costo 
+    );
+    this.router.get(
+      '/make/precio',
+      this.precio 
+    );
   }
 
   async articulo( req: Request, res: Response){
@@ -61,6 +82,23 @@ class MakeDataControler {
 	}
 
   async tablas(req: Request, res: Response){
+    await articulos.deleteMany({});
+    await _reposicion.deleteMany({});
+    await reposicion.deleteMany({});
+    await extradata.deleteMany({});
+    await presentacion.deleteMany({});
+    await productoname.deleteMany({});
+    await fabricantes.deleteMany({});
+    await marcas.deleteMany({});
+    await rubros.deleteMany({});
+    await lineas.deleteMany({});
+    await razas.deleteMany({});
+    await edades.deleteMany({});
+    await especies.deleteMany({});
+    await precio.deleteMany({});
+    await presentaciones.deleteMany({});
+    await proveedorProductos.deleteMany({});
+
     const varios = [
       {'field': 'especieTxt', 'value': 'gato', 'newValue': 'Gato' },
       //
@@ -398,7 +436,19 @@ class MakeDataControler {
       );
       console.log(retd);
     }
-    
+    const sanitize = await _articulo.find();
+    for (let i = 0; i < sanitize.length; i++) {
+      const a:any = sanitize[i];
+      a['sText'] = [];
+      if(a.fabricanteTxt && a.fabricanteTxt !== '') a['sText'].push(a.fabricanteTxt);
+      if(a.marcaTxt && a.marcaTxt !== '') a['sText'].push(a.marcaTxt);
+      if(a.rubroTxt && a.rubroTxt !== '') a['sText'].push(a.rubroTxt);
+      if(a.lineaTxt && a.lineaTxt !== '') a['sText'].push(a.lineaTxt);
+      if(a.especieTxt && a.especieTxt !== '') a['sText'].push(a.especieTxt);
+      if(a.razaTxt && a.razaTxt !== '') a['sText'].push(a.razaTxt);
+      if(a.edadTxt && a.edadTxt !== '') a['sText'].push(a.edadTxt);
+      await _articulo.updateOne({_id: a._id}, a);
+    }
 		const name = await _articulo.distinct('name');
 		const tags = await _articulo.distinct('tags');
 		res.status(200).json({next,fabricante,marca,rubro,linea,especie,raza,edad,name,tags});
@@ -447,11 +497,25 @@ class MakeDataControler {
     const ret = [];
     for (let i = 0; i < array.length; i++) {
       const e:any = array[i];
-      let tags = (e.articulo.tags ? e.articulo.tags : '');
-      if(e.tags){
-        if(tags.length) tags = (`${tags},${e.tags}`).trim();
-        else tags = e.tags;
+      //let tags = (e.articulo.tags ? e.articulo.tags : '');
+      //if(e.tags){
+      //  if(tags.length) tags = (`${tags},${e.tags}`).trim();
+      //  else tags = e.tags;
+      //}
+      const names = [
+        'fabricante',
+        'marca',
+        'especie',
+        'raza',
+        'edad',
+        'rubro',
+        'linea'
+      ]
+      let sText = [];
+      for (let i = 0; i < names.length; i++) {
+        if(e.articulo[names[i]].name !== '') sText.push(e.articulo[names[i]].name);
       }
+
       const reg = {
         _id: e._id,
         articulo: e.articulo,
@@ -470,9 +534,10 @@ class MakeDataControler {
         rubro: e.articulo.rubro,
         //lineaTxt: e.articulo.lineaTxt,
         linea: e.articulo.linea,
-        tags,
+        tags: e.articulo.tags,
+        sText, 
         image: e.image ? e.image : e.articulo.image,
-        artName: e.articulo.fullname,
+        artName: e.articulo.fullname, 
         prodName: e.relacion?.fullname ? `${e.name} de ${e.contiene} ${e.relacion.fullname}` : `${e.name} ${e.contiene} ${e.unidad}`,
         //fullname: e.fullname,
         pesable: e.pesable,
@@ -489,7 +554,7 @@ class MakeDataControler {
         //contiene: e.contiene,
       }
       ret.push(reg);
-      const rpta = await prodName.updateOne(
+      const rpta = await prodName.updateOne( 
           { _id: reg._id },   // Query parameter
           { $set: reg }, 
           { upsert: true }    // Options
@@ -506,7 +571,7 @@ class MakeDataControler {
       const _art = await _presentacion.find();
       rpta['src'] = _art;
       rpta['rslt'] = [];
-      const ret = await costo.insertMany(_art);
+      const ret = await _reposicion.insertMany(_art);
       rpta['rslt'].push(ret);
 			return res.status(200).json( rpta );
 		} catch (error) {

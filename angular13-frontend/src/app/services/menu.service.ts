@@ -7,15 +7,15 @@ export const menudata = [
       comment: '',
       icon: 'fas fa-home fa-4x',
       menu: [
-        {
-          title: 'Perfil',
-          icon: 'far fa-user fa-3x',
-          permiso: 'owner',
-          target: '',
-          rel: 'noopener',
-          route: '/private/profile',
-          param: ''
-        },
+        //{
+        //  title: 'Perfil',
+        //  icon: 'far fa-user fa-3x',
+        //  permiso: 'owner',
+        //  target: '',
+        //  rel: 'noopener',
+        //  route: 'profile',
+        //  param: ''
+        //},
         {
           title: 'Configuración',
           icon: 'fas fa-cogs fa-3x',
@@ -118,21 +118,21 @@ export const menudata = [
       comment: 'Archivos del Sistema',
       menu: [
         {
-          title: 'Usuarios',
-          icon: 'fas fa-users fa-3x',
-          permiso: 'owner',
-          target: '',
-          rel: 'noopener',
-          route: '/private/users',
-          param: ''
-        },
-        {
-          title: 'Libreta Direcciones',
-          icon: 'far fa-address-book fa-3x', // 'fas fa-user-alt fa-3x',
+          title: 'Fabricantes',
+          icon: 'fas fa-barcode fa-3x',
           permiso: 'moderator',
           target: '',
           rel: 'noopener',
-          route: '/personas',
+          route: 'fabricantes',
+          param: ''
+        },
+        {
+          title: 'Marcas',
+          icon: 'fas fa-barcode fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: 'marcas',
           param: ''
         },
         {
@@ -141,7 +141,7 @@ export const menudata = [
           permiso: 'moderator',
           target: '',
           rel: 'noopener',
-          route: '/articuloslist',
+          route: 'articulos',
           param: ''
         },
         {
@@ -151,6 +151,24 @@ export const menudata = [
           target: '',
           rel: 'noopener',
           route: '/productlist',
+          param: ''
+        },
+        {
+          title: 'Usuarios',
+          icon: 'fas fa-users fa-3x',
+          permiso: 'owner',
+          target: '',
+          rel: 'noopener',
+          route: '/users',
+          param: ''
+        },
+        {
+          title: 'Libreta Direcciones',
+          icon: 'far fa-address-book fa-3x', // 'fas fa-user-alt fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: '/proveedores',
           param: ''
         },
         {

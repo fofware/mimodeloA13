@@ -7,7 +7,7 @@ export interface ArticuloResponse {
   count: number;
   apiTime: number;
   filter: object;
-  data: ArticuloFd[];
+  rows: ArticuloFd[];
   message: string;
 }
 

@@ -50,6 +50,9 @@ class ImportDataControler {
   }
 
   async fulldata(req: Request, res: Response){
+    await articulo.deleteMany({});
+    await presentacion.deleteMany({});
+    await extradata.deleteMany({});
     const qry = '/articulos/fulldata/list'
     const options = {
       host: 'firulais.net.ar',
@@ -72,13 +75,14 @@ class ImportDataControler {
       repta.push(ret);
       repta.push(newData);
       const campos = [
-        'fabricante',
-        'marca',
         'rubro',
         'linea',
+        'fabricante',
+        'marca',
         'especie',
-        'raza',
-        'edad'
+        'edad',
+        'name',
+        'raza'
       ];
       for (let i = 0; i < ret.data.length; i++) {
         const art = ret.data[i];
@@ -91,6 +95,9 @@ class ImportDataControler {
           for (let n = 0; n < art.productos.length; n++) {
             const pro = art.productos[n];
             if(pro.pesable !== true){
+              let sTags = pro.tags?.replace(', ',',') || '';
+              sTags = sTags.replace(' ,',',');
+              const aTags = sTags?.split(',') || [];
               prodList.push(pro);
               const pres = {
                   _id: pro._id
@@ -102,7 +109,7 @@ class ImportDataControler {
                 , unidad: pro.unidad
                 , image: pro.image
                 , images: [pro.image]
-                , tags: pro.tags
+                , tags: aTags
                 , servicio: false
                 , insumo: false
                 , pesable: pro.pesable
@@ -156,7 +163,7 @@ class ImportDataControler {
               { upsert: true }    // Options
             );
             extraData.push(rpta.upsertedId);
-            console.log(rpta);
+            console.log('extraData',rpta);
           }
           for (let n = 0; n < art.formula.length; n++) {
             const pro = art.formula[n];
@@ -182,7 +189,11 @@ class ImportDataControler {
             );
             extraData.push(rpta.upsertedId);
           }
-          
+
+          let sTags = art.tags?.replace(', ',',') || '';
+          sTags = sTags.replace(' ,',',');
+          const nTags = sTags.split(',') || [];
+  
           const newArt = {
              _id: art._id
             ,fabricanteTxt: art.fabricante
@@ -193,7 +204,7 @@ class ImportDataControler {
             ,edadTxt: art.edad
             ,razaTxt: art.raza
             ,name: art.name
-            ,tags: art.tags
+            ,tags: nTags
             //
             ,d_fabricante: art.d_fabricante
             ,d_marca: art.d_marca
@@ -228,7 +239,6 @@ class ImportDataControler {
           console.log("Articulos Ok",i)
         }
       }
-      
       res.status(200).json(repta);
     } catch (error) {
       console.log(error);

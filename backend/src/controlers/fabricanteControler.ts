@@ -53,7 +53,7 @@ class FabricanteControlers {
     let status = 0;
     let ret = {}
     try {
-      const data = await fabricantes.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
+      const rows = await fabricantes.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
       status = 200;
       ret = {
         url: req.headers.host+req.url,
@@ -64,7 +64,7 @@ class FabricanteControlers {
         count,
         apiTime: new Date().getTime() - params.iniTime,
         filter,
-        data,
+        rows,
         message: 'Ok'
       }
         

@@ -1,15 +1,16 @@
 import { Schema, model, Document } from "mongoose";
 
 export interface IArticulo extends Document {
-  fabricante: string;
-  marca: string;
   rubro: string;
   linea: string;
+  fabricante: string;
+  marca: string;
   especie: string;
   edad: string;
   raza: string;
   name: string;
-  tags: string;
+  sText: string[];
+  tags: string[];
   //
   d_fabricante: boolean;
   d_marca: boolean;
@@ -36,15 +37,17 @@ export interface IArticulo extends Document {
 };
 
 const articuloSchema = new Schema({
-  fabricante: { ref: "Fabricante", type: Schema.Types.ObjectId, default: '', index: true },
-  marca: { ref: "Marca", type: Schema.Types.ObjectId, default: '', index: true },
   rubro: { ref: "Rubro", type: Schema.Types.ObjectId, default: '', index: true },
   linea: { ref: "Linea", type: Schema.Types.ObjectId, default: '', index: true },
+  fabricante: { ref: "Fabricante", type: Schema.Types.ObjectId, default: '', index: true },
+  marca: { ref: "Marca", type: Schema.Types.ObjectId, default: '', index: true },
   especie: { ref: "Especie", type: Schema.Types.ObjectId, default: '', index: true },
   raza: { ref: "Raza", type: Schema.Types.ObjectId, default: '', index: true },
   edad: { ref: "Edad", type: Schema.Types.ObjectId, default: '', index: true },
   name: { type: Schema.Types.String, trim: true, default: '', index: true },
-  tags: { type: Schema.Types.String, trim: true, default: '', index: true },
+  sText: [{ type: Schema.Types.String, trim: true, index: true }],
+  tags: [{ type: Schema.Types.String, trim: true, index: true }],
+  toFullName:[{type: Schema.Types.String, trim: true}],
   //
   d_fabricante: { type: Schema.Types.Number, default: 0 },
   d_marca: { type: Schema.Types.Number, default: 0 },

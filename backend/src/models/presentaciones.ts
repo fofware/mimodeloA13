@@ -10,7 +10,7 @@ export interface IPresentacion extends Document {
   unidad?: String;
   image?: String;
   images?: [ String ];
-  tags?: String;
+  tags?: [String];
 }
 
 const presentacionSchema = new Schema({
@@ -23,7 +23,7 @@ const presentacionSchema = new Schema({
   , unidad: { type: Schema.Types.String, trim: true, default: "" }
   , image: { type: Schema.Types.String, trim: true, default: "" }
   , images: [{ type: Schema.Types.String, trim: true, default: "" }]
-  , tags: { type: Schema.Types.String, default: ''}
+  , tags: [{ type: Schema.Types.String, trim: true }]
 
 },{
   strict: true,

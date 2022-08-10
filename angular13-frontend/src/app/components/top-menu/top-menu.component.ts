@@ -22,12 +22,13 @@ export class TopMenuComponent implements OnInit {
     { title: 'Marcas', link: ['marca'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user' ] },
     { title: 'Articulos', link: ['articulos'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user'] },
     { title: 'Productos', link: ['producto'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user'] },
-    { title: 'Aplicaciones', link: ['private','menu'], hidden: this.isLogged, roles: ['client_admin', 'client_user','sys_admin', 'sys_user'] },
-    { title: 'Socket', link: ['socketdata'], roles: ['client_admin', 'client_user','sys_admin', 'sys_user'] },
-    { title: 'HttpData', link: ['htmldata'], roles: ['client_admin', 'client_user','sys_admin', 'sys_user'] },
-    { title: 'Usuarios', link: ['users'], roles: ['client_admin', 'client_user','sys_admin', 'sys_user'] },
-    { title: 'Proveedores', link: ['proveedores'], roles: ['proveedor_admin', 'proveedor_user','sys_admin', 'sys_user'] },
-    { title: 'Temporal', link: ['temp'], roles: ['sys_admin', 'sys_user']},
+    { title: 'Aplicaciones', link: ['admin'], hidden: this.isLogged, roles: ['sys_admin', 'sys_user'] },
+    { title: 'Aplicaciones', link: ['users'], hidden: this.isLogged, roles: ['client_admin', 'client_user'] },
+    //{ title: 'Socket', link: ['socketdata'], roles: ['sys_admin', 'sys_user'] },
+    //{ title: 'HttpData', link: ['htmldata'], roles: ['sys_admin', 'sys_user'] },
+    //{ title: 'Usuarios', link: ['users'], roles: ['sys_admin', 'sys_user'] },
+    //{ title: 'Proveedores', link: ['proveedores'], roles: ['proveedor_admin', 'proveedor_user','sys_admin', 'sys_user'] },
+    //{ title: 'Temporal', link: ['temp'], roles: ['sys_admin', 'sys_user']},
     
   ];
 

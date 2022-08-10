@@ -9,7 +9,7 @@ export interface FabricanteResponse {
   count: number;
   apiTime: number;
   filter: object;
-  data: FabricanteFd[];
+  rows: FabricanteFd[];
   message: string;
 }
 

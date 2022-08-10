@@ -61,7 +61,7 @@ class MarcaControlers {
       const count = await marcas.count(filter);
       let nextOffset = params.offset+params.limit;
       nextOffset = nextOffset > count ? false : params.offset+params.limit;
-      const data = await marcas.find(filter).populate({path:'fabricante', select: 'name -_id'}).limit(params.limit).skip(params.offset).sort(params.sort);
+      const rows = await marcas.find(filter).populate({path:'fabricante', select: 'name -_id'}).limit(params.limit).skip(params.offset).sort(params.sort);
       status = 200;
       ret = {
         url: req.headers.host+req.url,
@@ -72,7 +72,7 @@ class MarcaControlers {
         count,
         apiTime: new Date().getTime() - params.iniTime,
         filter,
-        data,
+        rows,
         message: 'Ok'
       }
       console.log(ret);        

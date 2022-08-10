@@ -34,7 +34,10 @@ class ProductoNameControler {
   }
   async list(req: Request, res: Response){
     const fldsString = [
-      'fullname',
+      //'fullname',
+      'artName',
+      'prodName',
+      'sText',
       //'fabricante',
       //'marca',
       //'rubro',
@@ -42,12 +45,11 @@ class ProductoNameControler {
       //'especie',
       //'edad',
       //'raza',
-      'unidad',
-      'ean',
-      'tags',
-    //  'art_name',
-    //  'prodName'
-    
+      //'unidad',
+      //'ean',
+      //'tags',
+      //'art_name',
+      //'prodName'
     ];
     
     const fldsBoolean = [
@@ -59,7 +61,7 @@ class ProductoNameControler {
       limit: 50,
       offset: 0,
       iniTime: new Date().getTime(),
-      sort: { fullname: 1 },
+      sort: { artName: 1, prodName: 1 },
       searchItem: ''
     },req.query,req.params,req.body);
 
@@ -74,24 +76,15 @@ class ProductoNameControler {
       filter['articulo'] = params.articulo;
     }
 
-    /*
-    if( params._id && params._id !== 'undefined' ){
-      filter['_id'] = params._id;
-    }
-    */
     if(params.pesable){
       filter['pesable'] = params.pesable === 'false' ? { $ne: true } : true;
     }
     if(params.pVenta){
-      filter['pVenta'] = params.pVenta;
+      filter['pVenta'] = params.pVenta === 'false' ? { $ne: true } : true;
     }
     if(params.pCompra){
-      filter['pCompra'] = params.pCompra;
+      filter['pCompra'] = params.pCompra === 'false' ? { $ne: true } : true;
     }
-
-    //const filter = makeAggregate(fldsString, params);
-    //console.log(filter);
-    //console.log(filter['$or'][0]);
 
     const count = await prodName.count(filter);
     
@@ -101,7 +94,7 @@ class ProductoNameControler {
     let nextOffset = params.offset+params.limit;
     nextOffset = nextOffset > count ? false : params.offset+params.limit;
     
-    const data = await prodName.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
+    const rows = await prodName.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
     const ret = {
       url: req.headers.host+req.url,
       limit: params.limit,
@@ -111,7 +104,7 @@ class ProductoNameControler {
       count,
       apiTime: new Date().getTime() - params.iniTime,
       filter,
-      data,
+      rows,
     }
     res.status(200).json(ret);
   }

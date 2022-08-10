@@ -14,7 +14,7 @@ export interface I_Articulo extends Document {
   edad: string;
   raza: string;
   name: string;
-  tags: string;
+  tags: string[];
   //
   d_fabricante: boolean;
   d_marca: boolean;
@@ -55,8 +55,9 @@ const _articuloSchema = new Schema({
   razaTxt: { type: Schema.Types.String, trim: true, default: '', index: true },
   edad: { ref: "Edad", type: Schema.Types.ObjectId, default: null },
   edadTxt: { type: Schema.Types.String, trim: true, default: '', index: true },
-  name: { type: Schema.Types.String, trim: true, default: '', index: true },      // Gatitos Carne y Leche
-  tags: { type: Schema.Types.String, trim: true, default: '', index: true },
+  name: { type: Schema.Types.String, trim: true, default: '', index: true },
+  sText: [{ type: Schema.Types.String, trim: true, index: true }],
+  tags: [],//{ type: Schema.Types.String, trim: true, default: '', index: true }],
   //
   d_fabricante: { type: Schema.Types.Boolean, default: false },
   d_marca: { type: Schema.Types.Boolean, default: true },

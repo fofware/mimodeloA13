@@ -2,7 +2,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NoPageComponent } from 'src/app/components/no-page/no-page.component';
 import { AdminComponent } from './admin.component';
+import { ArticuloComponent } from './components/articulo/articulo.component';
 import { FabricanteComponent } from './components/fabricante/fabricante.component';
+import { HomeComponent } from './components/home/home.component';
+import { MarcaComponent } from './components/marca/marca.component';
 
 const routes: Routes = [
   {
@@ -15,8 +18,24 @@ const routes: Routes = [
       // https://www.tektutorialshub.com/angular/angular-child-routes-nested-routes/
       //
       {
-        path: 'fabricantes',
+        path: '',
+        component: HomeComponent
+      },
+      {
+        path: ':id',
+        component: HomeComponent
+      },
+      {
+        path: 'archivos/fabricantes',
         component: FabricanteComponent
+      },
+      {
+        path: 'archivos/marcas',
+        component: MarcaComponent
+      },
+      {
+        path: 'archivos/articulos',
+        component: ArticuloComponent
       },
       {
         path: '**',

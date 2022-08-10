@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ArticulosPublicComponent } from './components/articulos-public/articulos-public.component';
 import { HomeComponent } from './components/home/home.component';
 import { HtmldataComponent } from './components/htmldata/htmldata.component';
 import { NoPageComponent } from './components/no-page/no-page.component';
@@ -35,6 +36,10 @@ const routes: Routes = [
   {
     path: 'home'
   , component: HomeComponent
+  },
+  {
+    path: 'articulos'
+  , component: ArticulosPublicComponent
   },
   {
     path: 'socketdata'

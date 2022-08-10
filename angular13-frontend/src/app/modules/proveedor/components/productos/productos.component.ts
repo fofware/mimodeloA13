@@ -26,7 +26,7 @@ interface prodNameResponse {
   count: number;
   apiTime: number;
   filter: object;
-  data: prodName[];
+  rows: prodName[];
   message: string;
 }
 
@@ -138,7 +138,7 @@ export class ProductosComponent implements OnInit {
         if(query) {
           return this.apiServ.get('/fabricantes',{searchItem: query, limit: 100},{spinner: 'false'})
             .pipe(
-              map((ret:FabricanteResponse) => ret && ret.data || [])
+              map((ret:FabricanteResponse) => ret && ret.rows || [])
             )
         }
         return of([]);
@@ -151,7 +151,7 @@ export class ProductosComponent implements OnInit {
         if(query) {
           return this.apiServ.get('/marcas',{searchItem: query, fabricante: this.fabricanteSelectedOption?._id, limit: 100},{spinner: 'false'})
             .pipe(
-              map((ret:MarcaResponse) => ret && ret.data || [])
+              map((ret:MarcaResponse) => ret && ret.rows || [])
             )
         }
         return of([]);
@@ -164,7 +164,7 @@ export class ProductosComponent implements OnInit {
         if(query) {
           return this.apiServ.get('/articulos',{ searchItem: query, fabricante: this.fabricanteSelectedOption?._id, marca: this.marcaSelectedOption?._id, limit: 100 },{spinner: 'false'})
             .pipe(
-              map((ret:ArticuloResponse) => ret && ret.data || [])
+              map((ret:ArticuloResponse) => ret && ret.rows || [])
             )
         }
         return of([]);
@@ -234,6 +234,7 @@ export class ProductosComponent implements OnInit {
         .subscribe(
           (retData) => {
             this.newData = retData.data;
+            console.log(retData);
             this.removeIsExists();
           }
         )

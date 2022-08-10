@@ -15,7 +15,7 @@ export class PrivateHomeComponent implements OnInit {
   comment = '';
   menu: any[] = [];
 
-   constructor(
+  constructor(
     public actRoute: ActivatedRoute,
     private menuService: MenuService
   ) {

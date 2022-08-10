@@ -52,7 +52,7 @@ const _presentacionSchema = new Schema({
   , unidad: { type: Schema.Types.String, trim: true, default: "" }
   , image: { type: Schema.Types.String, trim: true, default: "" }
   , images: [{ type: Schema.Types.String, trim: true, default: "" }]
-  , tags: { type: Schema.Types.String, default: ''}
+  , tags: [] //{ type: Schema.Types.String, default: ''}
 
   , servicio: { type: Schema.Types.Boolean, default: false, index: true }
   , insumo: { type: Schema.Types.Boolean, default: false, index: true }
