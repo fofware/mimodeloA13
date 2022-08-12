@@ -4,7 +4,10 @@
     name="searchItem" #searchInput [(ngModel)]="searchItem">
   </div>
 </nav>
-<table>
+<!--p>whidth: {{ screenWidth }}</p>
+<p>height: {{ screenHeight }}</p-->
+
+<table #myTabla id="myTable">
   <tr *ngFor="let item of data">
     <td>{{item.rubro.name}} </td>
     <td>{{item.fullname}} </td>

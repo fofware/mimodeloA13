@@ -87,7 +87,7 @@ class ArticuloControler {
 	async public( req: Request, res: Response ) {
     const fldsString = [
       //'sText',
-      //'tags',
+      'tags',
 			'fabricante.name',
 			'marca.name',
 			'rubro.name',
@@ -110,27 +110,103 @@ class ArticuloControler {
     const filter = makeFilter(fldsString, params);
     if(params.fabricante && params.fabricante !== 'undefined') filter['fabricante'] = params.fabricante;
     if(params.marca && params.marca !== 'undefined') filter['marca'] = params.marca;
-		
-		const count = await articulo.count(filter);
-    
+		let status = 0;
+		let ret = {}
+		let count = 0;
+		try {
+			const total = await articulo.aggregate([
+				{ 
+					$lookup: {
+						from: 'fabricantes',
+						localField: 'fabricante',
+						foreignField: '_id',
+						as: 'fabricante'
+					}
+				},
+				{
+					$unwind: "$fabricante"
+				},
+				{ 
+					$lookup: {
+						from: 'marcas',
+						localField: 'marca',
+						foreignField: '_id',
+						as: 'marca'
+					}
+				},
+				{
+					$unwind: "$marca"
+				},
+				{ 
+					$lookup: {
+						from: 'rubros',
+						localField: 'rubro',
+						foreignField: '_id',
+						as: 'rubro'
+					}
+				},
+				{
+					$unwind: "$rubro"
+				},
+				{ 
+					$lookup: {
+						from: 'lineas',
+						localField: 'linea',
+						foreignField: '_id',
+						as: 'linea'
+					}
+				},
+				{
+					$unwind: "$linea"
+				},
+				{ 
+					$lookup: {
+						from: 'especies',
+						localField: 'especie',
+						foreignField: '_id',
+						as: 'especie'
+					}
+				},
+				{
+					$unwind: "$especie"
+				},
+				{ 
+					$lookup: {
+						from: 'razas',
+						localField: 'raza',
+						foreignField: '_id',
+						as: 'raza'
+					}
+				},
+				{
+					$unwind: "$raza"
+				},
+				{ 
+					$lookup: {
+						from: 'edads',
+						localField: 'edad',
+						foreignField: '_id',
+						as: 'edad'
+					}
+				},
+				{
+					$unwind: "$edad"
+				},
+				{ $match: filter },
+				{ $count: 'total'}
+			])
+			count = total[0]?.total;
+		} catch (error) {
+			console.log(error);
+			return res.status(400).json(error);
+		}
+		console.log('count',count);
     params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
     params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
-
     let nextOffset = params.offset+params.limit;
     nextOffset = nextOffset > count ? false : params.offset+params.limit;
-    let status = 0;
-    let ret = {}
-    try {
-			//const rows = await articulo.find(filter)
-			//			.populate({
-			//				path: 'fabricante marca rubro linea especie edad raza', 
-			//				options: {
-			//					sort: {'fullname':1}
-			//				}
-			//			})
-			//			.skip(params.offset)
-			//			.limit(params.limit)
-			//			//.sort(params.sort)
+		
+		try {
 			const rows = await articulo.aggregate([
 				{ 
 					$lookup: {
@@ -210,97 +286,6 @@ class ArticuloControler {
 					$unwind: "$edad"
 				},
 				{ $match: filter },
-				//{
-				//	$addFields:
-				//	{
-				//		testing:{
-				//			$function: {
-				//				body: function( fabricante ){
-				//						return `Probando ${fabricante}`;
-				//				},
-				//				args:[
-				//					"$name"
-				//				],
-				//				lang: "js"
-				//			} 
-				//		}
-				//		//fullname:
-				//		//	{	$function:
-				//		//		{
-				//		//			body: function(
-				//		//				fabricante, 
-				//		//				marca, 
-				//		//				especie, 
-				//		//				raza, 
-				//		//				edad, 
-				//		//				rubro, 
-				//		//				linea,
-				//		//				name, 
-				//		//				d_fabricante, 
-				//		//				d_marca, 
-				//		//				d_especie, 
-				//		//				d_raza, 
-				//		//				d_edad, 
-				//		//				d_rubro, 
-				//		//				d_linea	){
-				//		//				let fullName = '';
-				//		//				let sep = '';
-				//		//				if(d_fabricante){
-				//		//					fullName = fabricante;
-				//		//					sep = ' ';
-				//		//				}
-				//		//				if(d_marca){
-				//		//					fullName += sep+marca;
-				//		//					sep = ' ';
-				//		//				}
-				//		//				if(name){
-				//		//					fullName += sep+name;
-				//		//					sep = ' ';
-				//		//				}
-				//		//				if(d_especie){
-				//		//					fullName += sep+especie;
-				//		//					sep = ' ';
-				//		//				}
-				//		//				if(d_edad){
-				//		//					fullName += sep+edad;
-				//		//					sep = ' ';
-				//		//				}
-				//		//				if(d_raza){
-				//		//					fullName += sep+raza;
-				//		//					sep = ' ';
-				//		//				} 
-				//		//				if(d_rubro){
-				//		//					fullName += sep+rubro;
-				//		//					sep = ' ';
-				//		//				} 
-				//		//				if(d_linea){
-				//		//					fullName += sep+linea;
-				//		//					sep = ' ';
-				//		//				} 
-				//		//				return fullName;
-				//		//			},
-				//		//			args: [
-				//		//				'$fabricante.name', 
-				//		//				'$marca.name', 
-				//		//				'$especie.name', 
-				//		//				'$raza.name', 
-				//		//				'$edad.name', 
-				//		//				'$rubro.name', 
-				//		//				'$linea.name', 
-				//		//				'$name',
-				//		//				'$d_fabricante', 
-				//		//				'$d_marca', 
-				//		//				'$d_especie', 
-				//		//				'$d_raza', 
-				//		//				'$d_edad', 
-				//		//				'$d_rubro', 
-				//		//				'$d_linea'
-				//		//			],
-				//		//			lang: 'js'
-				//		//		}
-				//		//	}
-				//	}
-				//},
 				{
 					$project:{
 						_id: 1,
@@ -340,16 +325,16 @@ class ArticuloControler {
 					reg['fullname'] = reg.fabricante;
 					sep = ' ';
 				//}
-				//if(reg.d_marca){
-					reg['fullname'] += sep+reg.marca;
-					sep = ' ';
-				//}
 				//if(reg.d_rubro){
 					reg['fullname'] += sep+reg.rubro;
 					sep = ' ';
 				//}
 				//if(reg.d_linea){
 					reg['fullname'] += sep+reg.linea;
+					sep = ' ';
+				//}
+				//if(reg.d_marca){
+					reg['fullname'] += sep+reg.marca;
 					sep = ' ';
 				//}
 				//if(reg.d_especie){

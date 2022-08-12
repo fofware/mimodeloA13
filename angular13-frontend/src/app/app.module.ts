@@ -28,6 +28,7 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
 import { PruebaModule } from './modules/prueba/prueba.module';
 import { PrivateHomeComponent } from './components/private-home/private-home.component';
 import { ArticulosPublicComponent } from './components/articulos-public/articulos-public.component';
+import { ProductosPublicComponent } from './components/productos-public/productos-public.component';
 //import { ProdNameFilterPipe } from './pipes/prod-name-filter.pipe';
 
 @NgModule({
@@ -42,6 +43,7 @@ import { ArticulosPublicComponent } from './components/articulos-public/articulo
     NotifyBtnComponent,
     PrivateHomeComponent,
     ArticulosPublicComponent,
+    ProductosPublicComponent,
 //    ProdNameFilterPipe,
   ],
   imports: [

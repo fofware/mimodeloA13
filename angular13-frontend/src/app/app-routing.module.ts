@@ -5,6 +5,7 @@ import { HomeComponent } from './components/home/home.component';
 import { HtmldataComponent } from './components/htmldata/htmldata.component';
 import { NoPageComponent } from './components/no-page/no-page.component';
 import { PrivateHomeComponent } from './components/private-home/private-home.component';
+import { ProductosPublicComponent } from './components/productos-public/productos-public.component';
 import { TestdataComponent } from './components/testdata/testdata.component';
 import { AuthGuard } from './guards/auth.guard';
 import { IsLoggedGuard } from './guards/is-logged.guard';
@@ -40,6 +41,10 @@ const routes: Routes = [
   {
     path: 'articulos'
   , component: ArticulosPublicComponent
+  },
+  {
+    path: 'productos'
+  , component: ProductosPublicComponent
   },
   {
     path: 'socketdata'

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TopMenu } from 'src/app/models/top-menu';
 import { AuthService } from 'src/app/services/auth.service';
 /*
-  links interesantes relacionados 
+  links interesantes relacionados
   https://www.htmlgoodies.com/javascript/dynamic-routing-angular/
 */
 @Component({
@@ -19,9 +19,9 @@ export class TopMenuComponent implements OnInit {
 
   public defmenu:TopMenu[] = [
     { title: '<i class="fas fa-home-lg fa-lg"></i>', link: 'home' },
-    { title: 'Marcas', link: ['marca'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user' ] },
+    //{ title: 'Marcas', link: ['marca'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user' ] },
     { title: 'Articulos', link: ['articulos'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user'] },
-    { title: 'Productos', link: ['producto'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user'] },
+    { title: 'Productos', link: ['productos'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user'] },
     { title: 'Aplicaciones', link: ['admin'], hidden: this.isLogged, roles: ['sys_admin', 'sys_user'] },
     { title: 'Aplicaciones', link: ['users'], hidden: this.isLogged, roles: ['client_admin', 'client_user'] },
     //{ title: 'Socket', link: ['socketdata'], roles: ['sys_admin', 'sys_user'] },
@@ -29,13 +29,13 @@ export class TopMenuComponent implements OnInit {
     //{ title: 'Usuarios', link: ['users'], roles: ['sys_admin', 'sys_user'] },
     //{ title: 'Proveedores', link: ['proveedores'], roles: ['proveedor_admin', 'proveedor_user','sys_admin', 'sys_user'] },
     //{ title: 'Temporal', link: ['temp'], roles: ['sys_admin', 'sys_user']},
-    
+
   ];
 
   usrMenu:any =  [] ;
 
   constructor( public route: ActivatedRoute, private authSrv: AuthService ) { }
-  
+
   ngOnInit(): void {
     this.user = this.authSrv.userValue;
     this.setMenu();

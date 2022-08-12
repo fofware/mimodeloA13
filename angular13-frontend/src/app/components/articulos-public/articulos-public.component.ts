@@ -16,13 +16,15 @@ export class ArticulosPublicComponent implements OnInit {
   offset = 0;
   nextOffset: number | boolean = 0;
   loading = false;
+  public screenWidth: any;
+  public screenHeight: any;
 
   constructor(
     private api: ApiService
   ) { }
 
   @ViewChild('searchInput', { static: true }) articulosSearchInput!: ElementRef;
-
+  @ViewChild('myTabla', { static: true }) myTableRef!: ElementRef;
   @HostListener('scroll', ['$event.target'])
   onScroll( elem:any ) {
     if(( elem.offsetHeight + elem.scrollTop ) >=  elem.scrollHeight-200) {
@@ -30,7 +32,28 @@ export class ArticulosPublicComponent implements OnInit {
     }
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event?:any) {
+    this.screenWidth = window.innerWidth;
+    this.screenHeight = window.innerHeight;
+    const navs = document.getElementsByTagName('nav');
+    let h = navs[0].offsetHeight;
+    /*
+    for (let i = 0; i < navs.length-1; i++) {
+      const el = navs[i];
+      h += el.offsetHeight;
+    }
+    */
+    console.log('sumHeight',h);
+    console.log('tablaHeight', this.screenHeight-h)
+    const el:any = document.getElementById('myTable')?.parentElement;
+    el.style.height = `${this.screenHeight-h}px`;
+  }
+
   ngOnInit(): void {
+    //this.screenWidth = window.innerWidth;
+    //this.screenHeight = window.innerHeight;
+
     fromEvent(this.articulosSearchInput.nativeElement, 'keyup')
     .pipe(
       // get value
@@ -49,6 +72,10 @@ export class ArticulosPublicComponent implements OnInit {
       this.searchData();
     })
     this.searchData();
+  }
+
+  ngAfterViewInit() {
+    this.onResize();
   }
 
   setData(){
