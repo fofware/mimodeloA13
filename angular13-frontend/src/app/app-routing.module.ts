@@ -30,6 +30,7 @@ export function readUser(): any {
     exp: 0
   };
 }
+
 const myUser = readUser();
 console.log(myUser);
 const routes: Routes = [

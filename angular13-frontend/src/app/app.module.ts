@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Socket1Service } from './services/socket.service';
+import { Socket2Service } from './services/socket.service';
 //
 import { NgxSpinnerModule } from "ngx-spinner";
 import { SocketIoModule } from 'ngx-socket-io';
@@ -29,6 +30,8 @@ import { PruebaModule } from './modules/prueba/prueba.module';
 import { PrivateHomeComponent } from './components/private-home/private-home.component';
 import { ArticulosPublicComponent } from './components/articulos-public/articulos-public.component';
 import { ProductosPublicComponent } from './components/productos-public/productos-public.component';
+import { ArticulosCardComponent } from './components/articulos-card/articulos-card.component';
+import { ProductosCardComponent } from './components/productos-card/productos-card.component';
 //import { ProdNameFilterPipe } from './pipes/prod-name-filter.pipe';
 
 @NgModule({
@@ -44,6 +47,8 @@ import { ProductosPublicComponent } from './components/productos-public/producto
     PrivateHomeComponent,
     ArticulosPublicComponent,
     ProductosPublicComponent,
+    ArticulosCardComponent,
+    ProductosCardComponent,
 //    ProdNameFilterPipe,
   ],
   imports: [
@@ -71,6 +76,12 @@ import { ProductosPublicComponent } from './components/productos-public/producto
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     Socket1Service,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    },
+    Socket2Service,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,

@@ -12,12 +12,29 @@ export class Socket1Service extends Socket {
     })
   };
   
-  leer(eventName:string, callback:Function ){
+  get(eventName:string, callback:Function ){
     super.on(eventName, callback);
   }
   async send(eventName:string, data:any){
     //console.log(eventName,'emit',data);
     await super.emit(eventName,data);
+  }
+}
+export class Socket2Service extends Socket {
+  constructor() {
+    super( { url: environment.SKT2.URL, options: environment.SKT2.OPTIONS } );
+    super.on('connect', () => {
+      console.log(this);
+    })
+  };
+  
+  get(eventName:string, callback:Function ){
+    super.on(eventName, callback);
+  }
+  async send(eventName:string, data:any){
+    //console.log(eventName,'emit',data);
+    const queviene = await super.emit(eventName,data);
+    console.log('send-rpta',queviene);
   }
 }
 

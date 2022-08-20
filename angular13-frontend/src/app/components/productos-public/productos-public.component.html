@@ -1,2 +1,13 @@
-<p>whidth: {{ screenWidth }}</p>
-<p>height: {{ screenHeight }}</p>
+<nav class="sticky-top navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <input type="search" id="busca" aria-label="Search" class="form-control mr-sm-2" placeholder="Buscar por Nombre"
+    name="searchItem" #searchInput [(ngModel)]="searchItem">
+  </div>
+</nav>
+<div class="container" id="dataContainer">
+  <div class="row row-cols-1 row-cols-lg-2 g-4">
+        <app-productos-card *ngFor="let producto of data; index as i;"
+          [producto]='producto'
+        ></app-productos-card>
+  </div>
+</div>

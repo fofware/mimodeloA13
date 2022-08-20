@@ -11,7 +11,7 @@ import { ApiService } from 'src/app/services/api.service';
 export class ArticulosPublicComponent implements OnInit {
   data:any[] = [];
   searchItem:any = '';
-  limit = 40;
+  limit = 30;
   count = 0;
   offset = 0;
   nextOffset: number | boolean = 0;
@@ -24,10 +24,20 @@ export class ArticulosPublicComponent implements OnInit {
   ) { }
 
   @ViewChild('searchInput', { static: true }) articulosSearchInput!: ElementRef;
-  @ViewChild('myTabla', { static: true }) myTableRef!: ElementRef;
+  //@ViewChild('myTabla', { static: true }) myTableRef!: ElementRef;
   @HostListener('scroll', ['$event.target'])
   onScroll( elem:any ) {
-    if(( elem.offsetHeight + elem.scrollTop ) >=  elem.scrollHeight-200) {
+    //console.log('scrollTop',elem.scrollTop)
+    //console.log('offsetHeight',elem.offsetHeight)
+    //console.log('scrollHeight',elem.scrollHeight)
+    //console.log('scrollHeight',elem.scrollHeight)
+
+    //console.log('-----------------------------')
+    if(( elem.offsetHeight + elem.scrollTop ) >=  elem.scrollHeight-800) {
+      //console.log(elem.offsetHeight)
+      //console.log(elem.scrollTop)
+      //console.log(elem.scrollHeight)
+      //console.log('entro',elem.offsetHeight + elem.scrollTop, elem.scrollHeight)
       if( this.nextOffset !== false ) this.setData();
     }
   }
@@ -44,9 +54,9 @@ export class ArticulosPublicComponent implements OnInit {
       h += el.offsetHeight;
     }
     */
-    console.log('sumHeight',h);
-    console.log('tablaHeight', this.screenHeight-h)
-    const el:any = document.getElementById('myTable')?.parentElement;
+    //console.log('sumHeight',h);
+    //console.log('tablaHeight', this.screenHeight-h)
+    const el:any = document.getElementById('dataContainer')?.parentElement;
     el.style.height = `${this.screenHeight-h}px`;
   }
 
@@ -90,19 +100,14 @@ export class ArticulosPublicComponent implements OnInit {
       //sort: {'marca':1, 'especie': 1, 'edad': 1, 'name': 1, 'raza': 1 }
     };
     console.log(params);
-    this.api.post('/articulos/public',params).subscribe((data:any) => {
+    this.api.post('/articulos/public',params, {spinner: 'false'}).subscribe((data:any) => {
       console.log(data);
+      this.loading = false;
       this.count = data.count;
       this.offset = data.offset;
       this.nextOffset = data.nextOffset;
-      //for (let i = 0; i < data.data.length; i++) {
-      //  const element = data.data[i];
-      //  this.makeFullName(data.data[i]);
-      //}
+      data.rows.map((reg:any) => { this.makeFullName(reg); })
       this.data = this.data.concat(data.rows);
-      console.log(this.data.length);
-      console.log(data.apiTime);
-      this.loading = false;
     });
   }
 
@@ -117,11 +122,11 @@ export class ArticulosPublicComponent implements OnInit {
     reg['fullname']  = '';
     let sep = '';
     if(reg.d_fabricante){
-      reg['fullname'] = reg.fabricante.name;
+      reg['fullname'] = reg.fabricante;
       sep = ' ';
     }
     if(reg.d_marca){
-      reg['fullname'] += sep+reg.marca.name;
+      reg['fullname'] += sep+reg.marca;
       sep = ' ';
     }
     if (reg.name){
@@ -129,23 +134,23 @@ export class ArticulosPublicComponent implements OnInit {
       sep = ' ';
     }
     if(reg.d_especie){
-      reg['fullname'] += sep+reg.especie.name;
+      reg['fullname'] += sep+reg.especie;
       sep = ' ';
     }
     if(reg.d_edad){
-      reg['fullname'] += sep+reg.edad.name;
+      reg['fullname'] += sep+reg.edad;
       sep = ' ';
     }
     if(reg.d_raza){
-      reg['fullname'] += sep+reg.raza.name;
+      reg['fullname'] += sep+reg.raza;
       sep = ' ';
     }
     if(reg.d_rubro){
-      reg['fullname'] += sep+reg.rubro.name;
+      reg['fullname'] += sep+reg.rubro;
       sep = ' ';
     }
     if(reg.d_linea){
-      reg['fullname'] += sep+reg.linea.name;
+      reg['fullname'] += sep+reg.linea;
       sep = ' ';
     }
     return reg['fullname'];

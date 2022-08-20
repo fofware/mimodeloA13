@@ -1,0 +1,7 @@
+:host {
+  display: block;
+  /*max-height: 824px;*/
+  width: 100%;
+  overflow-y: auto;
+  scroll-behavior: auto;
+}

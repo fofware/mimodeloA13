@@ -10,6 +10,8 @@ function createToken(user: IUser | any ) {
     apellido: user.apellido,
     nombre: user.nombre,
     roles: user.roles,
+    phone: user.phone,
+    group: user.group,
     nickname: user.nickname || `${user.nombre} ${user.apellido}`,
     image: '/assets/images/defuser.png',
   }, config.jwtSecret, {

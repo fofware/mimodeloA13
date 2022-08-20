@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Socket2Service } from 'src/app/services/socket.service';
 
 @Component({
   selector: 'app-notify-btn',
@@ -7,7 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NotifyBtnComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private socket: Socket2Service
+
+  ) { }
 
   ngOnInit(): void {
   }

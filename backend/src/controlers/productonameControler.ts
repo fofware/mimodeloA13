@@ -31,6 +31,8 @@ class ProductoNameControler {
     this.router.put('/productoname/:id',
         passport.authenticate('jwt', {session:false}),
         this.put );
+ 		this.router.post( '/productoname/public', this.public );
+
   }
   async list(req: Request, res: Response){
     const fldsString = [
@@ -75,7 +77,82 @@ class ProductoNameControler {
     if( params.articulo && params.articulo !== 'undefined' ){
       filter['articulo'] = params.articulo;
     }
+    if(params.pesable){
+      filter['pesable'] = params.pesable === 'false' ? { $ne: true } : true;
+    }
+    if(params.pVenta){
+      filter['pVenta'] = params.pVenta === 'false' ? { $ne: true } : true;
+    }
+    if(params.pCompra){
+      filter['pCompra'] = params.pCompra === 'false' ? { $ne: true } : true;
+    }
 
+    const count = await prodName.count(filter);
+    
+    params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
+    params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
+
+    let nextOffset = params.offset+params.limit;
+    nextOffset = nextOffset > count ? false : params.offset+params.limit;
+    
+    const rows = await prodName.find(filter).populate('relacion').limit(params.limit).skip(params.offset).sort(params.sort);
+    const ret = {
+      url: req.headers.host+req.url,
+      limit: params.limit,
+      offset: params.offset,
+      nextOffset,
+      sort: params.sort,
+      count,
+      apiTime: new Date().getTime() - params.iniTime,
+      filter,
+      rows,
+    }
+    res.status(200).json(ret);
+  }
+
+  async public(req: Request, res: Response){
+    const fldsString = [
+      //'fullname',
+      'artName',
+      'prodName',
+      'sText',
+      //'fabricante',
+      //'marca',
+      //'rubro',
+      //'linea',
+      //'especie',
+      //'edad',
+      //'raza',
+      //'unidad',
+      //'ean',
+      //'tags',
+      //'art_name',
+      //'prodName'
+    ];
+    
+    const fldsBoolean = [
+      'pCompra',
+      'pVenta'
+    ]
+
+    const params = Object.assign({
+      limit: 50,
+      offset: 0,
+      iniTime: new Date().getTime(),
+      sort: { artName: 1, prodName: 1 },
+      searchItem: ''
+    },req.query,req.params,req.body);
+
+    const filter = makeFilter(fldsString, params);
+    if( params.fabricante && params.fabricante !== 'undefined' ){
+      filter['fabricante'] = params.fabricante;
+    }
+    if( params.marca && params.marca !== 'undefined' ){
+      filter['marca'] = params.marca;
+    }
+    if( params.articulo && params.articulo !== 'undefined' ){
+      filter['articulo'] = params.articulo;
+    }
     if(params.pesable){
       filter['pesable'] = params.pesable === 'false' ? { $ne: true } : true;
     }

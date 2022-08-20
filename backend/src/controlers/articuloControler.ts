@@ -287,6 +287,32 @@ class ArticuloControler {
 				},
 				{ $match: filter },
 				{
+					$lookup: {
+						from: 'presentacions',
+						localField: '_id',
+						foreignField: 'articulo',
+						as: 'presentaciones'
+					}
+				},
+				{
+					$lookup: {
+						from: 'precios',
+						localField: 'presentaciones._id',
+						foreignField: '_id',
+						as: 'precios'
+					}
+				},
+				{
+					$graphLookup: {
+						 from: "presentacions",
+						 startWith: "$presentaciones._id",
+						 connectFromField: "presentaciones.relacion",
+						 connectToField: "_id",
+						 as: "presentaciones"
+					}
+			 	},
+
+			 	{
 					$project:{
 						_id: 1,
 						articulo: 1,
@@ -306,6 +332,10 @@ class ArticuloControler {
 						edad: '$edad.name',
 						rubro: '$rubro.name',
 						linea: '$linea.name',
+						presentaciones: 1,
+						presentacionesv: 1,
+						precios: 1,
+						//reportingHierarchy: 1,
 						detalles: 1,
 						images: 1,
 						videos: 1,
@@ -354,6 +384,30 @@ class ArticuloControler {
 					sep = ' ';
 				//}
 				
+				reg.presentaciones.map((pres:any, idx: number, array:any[]) => {
+					const index = reg.precios.findIndex( v => `${v._id}` === `${pres._id}`);
+					pres.precio = reg.precios[index].value;
+					pres.fullname = `${pres.name} de ${pres.contiene} ${pres.unidad}`;
+					if(pres.relacion !== null){
+						const index = array.findIndex( v => `${v._id}` === `${pres.relacion}`);
+						if(index > -1){
+							pres.fullname = `${pres.name} con ${pres.contiene} ${array[index].name} de ${array[index].contiene} ${array[index].unidad}`;
+						}
+					}
+				});
+				reg.presentaciones.sort((a, b) => {
+					let fa = a.fullname.toLowerCase(),
+							fb = b.fullname.toLowerCase();
+			
+					if (fa < fb) {
+							return -1;
+					}
+					if (fa > fb) {
+							return 1;
+					}
+					return 0;
+				});
+			
 			})
       status = 200;
       ret = {

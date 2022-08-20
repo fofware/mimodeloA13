@@ -4,14 +4,11 @@
     name="searchItem" #searchInput [(ngModel)]="searchItem">
   </div>
 </nav>
-<!--p>whidth: {{ screenWidth }}</p>
-<p>height: {{ screenHeight }}</p-->
+<div class="container" id="dataContainer">
+  <div class="row row-cols-1 row-cols-lg-2 g-4">
+        <app-articulos-card *ngFor="let articulo of data; index as i;"
+          [articulo]='articulo'
+        ></app-articulos-card>
+  </div>
+</div>
 
-<table #myTabla id="myTable">
-  <tr *ngFor="let item of data">
-    <td>{{item.rubro.name}} </td>
-    <td>{{item.fullname}} </td>
-    <td width="40px" align="right">{{item.stock}}</td>
-    <td width="80px" align="right">{{item.precio}}</td>
-  </tr>
-</table>
