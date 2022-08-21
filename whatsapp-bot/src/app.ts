@@ -1,3 +1,10 @@
+/**
+ * https://www.digitalocean.com/community/tutorials/angular-socket-io
+ * https://www.tutorialspoint.com/socket.io/socket.io_error_handling.htm
+ * https://socket.io/docs/v3/emit-cheatsheet/
+ * https://www.tutsmake.com/node-js-express-socket-io-chat-application-example/
+ * 
+ **/ 
 import express, { Application, NextFunction, Request, response, Response, Router } from 'express';
 import path from 'path';
 import fs from 'fs';

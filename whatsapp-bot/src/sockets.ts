@@ -50,13 +50,44 @@ const sendData = async (data:any, socket:any, msg:string) => {
 }
 
 export default (io:any) => {
+  const documents = {};
   io.on('connection', async (socket:any) => {
     console.log("Nueva coneccion");
-    console.log(socket);
+    let previousId;
 
+    const safeJoin = currentId => {
+      socket.leave(previousId);
+      socket.join(currentId, () => console.log(`Socket ${socket.id} joined room ${currentId}`));
+      previousId = currentId;
+    };
+
+    socket.on("getDoc", docId => {
+      safeJoin(docId);
+      socket.emit("document", documents[docId]);
+    });
+
+    socket.on("addDoc", doc => {
+      documents[doc.id] = doc;
+      safeJoin(doc.id);
+      io.emit("documents", Object.keys(documents));
+      socket.emit("document", doc);
+    });
+
+    socket.on("editDoc", doc => {
+      documents[doc.id] = doc;
+      socket.to(doc.id).emit("document", doc);
+    });
+    console.log(Object.keys(documents))
+    io.emit("documents", Object.keys(documents));
+
+    console.log(`Socket ${socket.id} has connected`);
+  
+    /*
     socket.onAny((eventName:string, ...args: any) => {
       console.log(eventName);
       console.log(args);
     });
+    */
   });
 }
+

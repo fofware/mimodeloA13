@@ -82,6 +82,18 @@ const routes: Routes = [
 
   },
   {
+    path: 'wa',
+    loadChildren: () => import(`./modules/whatsapp/whatsapp.module`)
+      .then(
+        module => module.WhatsappModule
+      ),
+    canActivate: [IsLoggedGuard,AuthGuard],
+    data: {
+      roles: ['sys_admin'],
+    }
+
+  },
+  {
     path: 'proveedores',
     loadChildren: () => import(`./modules/proveedor/proveedor.module`)
       .then(
