@@ -7,13 +7,17 @@ import { DocumentListComponent } from './components/document-list/document-list.
 import { DocumentComponent } from './components/document/document.component';
 import { FormsModule } from '@angular/forms';
 import { Socket2Service } from 'src/app/services/socket.service';
+import { WappclientComponent } from './components/wappclient/wappclient.component';
+import { WappconnectComponent } from './components/wappconnect/wappconnect.component';
 
 
 @NgModule({
   declarations: [
     WhatsappComponent,
     DocumentListComponent,
-    DocumentComponent
+    DocumentComponent,
+    WappclientComponent,
+    WappconnectComponent
   ],
   providers:[
     Socket2Service,
