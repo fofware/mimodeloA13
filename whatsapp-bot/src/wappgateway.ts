@@ -13,7 +13,7 @@ export interface phoneGateway {
 }
 
 const generateImage = (number,base64, cb = () => {}) => {
-  let qr_svg = qr.image(base64, { type: 'svg', margin: 4 });
+  let qr_svg = qr.image(base64, { type: 'svg', margin: 20 });
   qr_svg.pipe(require('fs').createWriteStream(`./mediaSend/${number}.svg`));
   /*
   router.get(`/qr/${number}`, (req, res) =>{
@@ -25,6 +25,7 @@ const generateImage = (number,base64, cb = () => {}) => {
   */
   //cb()
 }
+const documents = {};
 
 export const WAppGateway = (p:phoneGateway, router) =>{
   p.client = new Client({
@@ -38,7 +39,6 @@ export const WAppGateway = (p:phoneGateway, router) =>{
       args: ['--no-sandbox'],
     }
   });
-
   p.client.initialize();
 
 
@@ -57,6 +57,7 @@ export const WAppGateway = (p:phoneGateway, router) =>{
       name: p.name,
       session: session
     }
+
     const ret = await waathenticated.insertMany([data])
 
     console.log(`${p.name} Authenticated`);
@@ -126,6 +127,7 @@ export const WAppGateway = (p:phoneGateway, router) =>{
   
   p.client.on('qr', qr => generateImage(p.number,qr, () => {
     try {
+      console.log("qr",qr);
       qrcode.generate(qr, { small: true });
     } catch (error) {
       console.log(error)      
