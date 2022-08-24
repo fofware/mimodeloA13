@@ -1,4 +1,6 @@
-import { Socket } from "socket.io";
+import { Namespace, Socket } from "socket.io";
+import phones from "./models/phones";
+import { WAppClient, WAppRegister } from "./wappgateway";
 //import user from "./models/user";
 //import articulo from "./models/articulos";
 //import producto from "./models/producto";
@@ -53,19 +55,54 @@ export default (io:any) => {
   const documents = {};
   io.on('connection', async (socket:any) => {
     console.log("Nueva coneccion");
-    let previousId;
+    socket.emit('sendId', socket.id);
 
+    let previousId;
     const safeJoin = currentId => {
       socket.leave(previousId);
       socket.join(currentId, () => console.log(`Socket ${socket.id} joined room ${currentId}`));
       previousId = currentId;
     };
 
+    socket.on('id', params => {
+      //
+      //validar id
+      //conetar este socket con cada gateway que corresponda al id
+      //
+      const {token, phone } = params
+      const user = JSON.parse(decodeURIComponent(atob(token.split('.')[1]).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join('')));
+      
+      console.log('onId',user);
+      console.log(phone)
+      for (let index = 0; index < phone.length; index++) {
+        const p = {
+          owner: user._id,
+          email: user.email,
+          nickname: user.nickname,
+          nombre: user.nombre,
+          apellido: user.apellido,
+          number: phone[index],
+          name: user.name
+        }
+        socket.waClient = WAppClient(socket,p)
+      }
+      console.log(socket.user);
+    })
+    socket.on('setData', params => {
+      console.log( params );
+    });
     socket.on("getDoc", docId => {
       safeJoin(docId);
       socket.emit("document", documents[docId]);
     });
-
+    socket.on(`waRegister`,(params) => {
+      socket.waClient = WAppRegister(socket, params)
+    })
+    socket.on(`waConnect`,(params) => {
+      socket.waClient = WAppClient(socket, params)
+    })
     socket.on("addDoc", doc => {
       documents[doc.id] = doc;
       safeJoin(doc.id);
@@ -82,12 +119,10 @@ export default (io:any) => {
 
     console.log(`Socket ${socket.id} has connected`);
   
-    /*
     socket.onAny((eventName:string, ...args: any) => {
-      console.log(eventName);
-      console.log(args);
+      console.log(`eventName:${eventName}`,args);
     });
-    */
+    
   });
 }
 

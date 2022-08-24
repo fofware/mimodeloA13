@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { retry, pipe } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class Socket1Service extends Socket {
@@ -20,14 +21,21 @@ export class Socket1Service extends Socket {
     await super.emit(eventName,data);
   }
 }
+
 export class Socket2Service extends Socket {
   constructor() {
     super( { url: environment.SKT2.URL, options: environment.SKT2.OPTIONS } );
     super.on('connect', () => {
-      console.log(this);
+      console.log('conecto el Socket2Service');
+      const token = localStorage.getItem('token');
+      super.emit('id', { token, phone:['5493624683656'] });
     })
+    //super.ioSocket.onAny((eventName:string, ...args: any) => {
+    //  console.log(eventName);
+    //  console.log(args);
+    //});
+
   };
-  
   get(eventName:string, callback:Function ){
     super.on(eventName, callback);
   }

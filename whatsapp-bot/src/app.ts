@@ -13,8 +13,17 @@ import cors from 'cors';
 //import passport from 'passport';
 //import passportMiddelware from './middlewares/passport';
 import config from './config';
-import { WAppGateway } from './wappgateway';
+import { WAppClient, WAppGateway } from './wappgateway';
+import wappphone  from './models/phones';
 
+const initPhones = async () => {
+  const phones = await wappphone.find()
+  for (let i = 0; i < phones.length; i++) {
+    const p = phones[i];
+    console.log(p)
+    //WAppClient(p)
+  }
+}
 
 /*
 const getQr = (req, res) => {
@@ -36,21 +45,9 @@ app.use(express.urlencoded({ extended: false }));
 //passport.use(passportMiddelware);
 app.disable('etag');
 const router: Router = Router();
-const phones = [
-  { cuenta: 'necocio1', number: '5493624683656', name: 'firulais', client: null },
-  { cuenta: 'necocio1', number: '5493624380337', name: 'fabian', client: null }
-]
-
-for (let i = 0; i < phones.length; i++) {
-  const p = phones[i];
-  WAppGateway(phones[i], router)
-  router.get(`/${p.number}/qr`, (req, res) =>{
-    res.set({'Content-type': 'image/svg+xml'})
-    fs.createReadStream(`${__dirname}/../mediaSend/${p.number}.svg`).pipe(res);
-  })
-}
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/../html/index.html');
 });
-app.use(router)
+app.use(router);
+//initPhones()
 export default app;

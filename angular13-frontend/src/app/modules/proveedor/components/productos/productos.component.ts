@@ -9,7 +9,7 @@ import { TypeaheadMatch, TypeaheadOrder } from 'ngx-bootstrap/typeahead';
 import { FabricanteFd, FabricanteResponse } from 'src/app/models/fabricante';
 import { MarcaFd, MarcaResponse } from 'src/app/models/marca';
 import { ArticuloFd, ArticuloResponse } from 'src/app/models/articulo';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ProveedorProductoFd } from 'src/app/models/proveedor';
 
 const ORI_API = environment.API_URL
@@ -88,9 +88,9 @@ export class ProductosComponent implements OnInit {
   max = 0;
   dynamic = 0;
 
-  marcaCtrl = new FormControl();
+  marcaCtrl = new UntypedFormControl();
 
-  myForm = new FormGroup({
+  myForm = new UntypedFormGroup({
     marca: this.marcaCtrl
   });
   fabricanteSelected?: string;

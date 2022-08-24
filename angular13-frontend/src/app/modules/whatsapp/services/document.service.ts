@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
 import { Socket2Service } from 'src/app/services/socket.service';
 import { Document } from '../models/document.model'
 
@@ -22,7 +21,10 @@ export class DocumentService {
   editDocument(document: Document) {
     this.socket.emit('editDoc', document);
   }
-
+  
+  getSocketId(){
+    console.log(this.socket)
+  }
   private docId() {
     let text = '';
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

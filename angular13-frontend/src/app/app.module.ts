@@ -76,18 +76,12 @@ import { ProductosCardComponent } from './components/productos-card/productos-ca
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     Socket1Service,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: TokenInterceptor,
-      multi: true
-    },
     Socket2Service,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
     },
-
     {provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]

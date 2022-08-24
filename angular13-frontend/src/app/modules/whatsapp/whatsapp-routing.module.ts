@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NoPageComponent } from 'src/app/components/no-page/no-page.component';
+import { WappclientComponent } from './components/wappclient/wappclient.component';
 import { WappconnectComponent } from './components/wappconnect/wappconnect.component';
 import { WhatsappComponent } from './whatsapp.component';
 
@@ -14,6 +15,10 @@ const routes: Routes =   [
     // https://www.tektutorialshub.com/angular/angular-passing-parameters-to-route/
     // https://www.tektutorialshub.com/angular/angular-child-routes-nested-routes/
     //
+    {
+      path: 'client',
+      component: WappclientComponent
+    },
     {
       path: 'connect',
       component: WappconnectComponent
