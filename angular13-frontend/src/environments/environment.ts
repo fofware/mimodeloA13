@@ -13,7 +13,7 @@ export const environment = {
   },
   SKT2: {
     ENABLE: false,
-    URL: 'http://192.168.100.150:4445',
+    URL: 'http://datasrv.firulais.net.ar:4445',
     OPTIONS: {}
   },
 };

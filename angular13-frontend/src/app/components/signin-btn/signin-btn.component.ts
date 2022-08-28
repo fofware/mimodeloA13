@@ -13,7 +13,7 @@ export class SigninBtnComponent implements OnInit, OnDestroy {
   isLogged = false;
 
   @Output() newLoginEvent = new EventEmitter<boolean>()
-  
+
   private destroy$ = new Subject<any>();
 
   constructor(public authSrv: AuthService ) { }
@@ -26,6 +26,8 @@ export class SigninBtnComponent implements OnInit, OnDestroy {
         //this.user = this.authService.userValue;
         this.newLoginEvent.emit(res);
       });
+
+
   }
 
   ngOnDestroy(): void {
@@ -44,4 +46,5 @@ export class SigninBtnComponent implements OnInit, OnDestroy {
     this.authSrv.logout();
     this.newLoginEvent.emit(false)
   }
+
 }

@@ -4,7 +4,7 @@
     name="searchItem" #searchInput [(ngModel)]="searchItem">
   </div>
 </nav>
-<div class="container" id="dataContainer">
+<div class="container" id="productoContainer" (window:resize)="onResize()">
   <div class="row row-cols-1 row-cols-lg-2 g-4">
         <app-productos-card *ngFor="let producto of data; index as i;"
           [producto]='producto'

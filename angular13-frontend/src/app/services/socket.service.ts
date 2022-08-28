@@ -12,7 +12,7 @@ export class Socket1Service extends Socket {
       console.log(this);
     })
   };
-  
+
   get(eventName:string, callback:Function ){
     super.on(eventName, callback);
   }
@@ -27,13 +27,20 @@ export class Socket2Service extends Socket {
     super( { url: environment.SKT2.URL, options: environment.SKT2.OPTIONS } );
     super.on('connect', () => {
       console.log('conecto el Socket2Service');
-      const token = localStorage.getItem('token');
-      super.emit('id', { token, phone:['5493624683656'] });
     })
     //super.ioSocket.onAny((eventName:string, ...args: any) => {
     //  console.log(eventName);
     //  console.log(args);
     //});
+    this.ioSocket.onAny(async (eventName:string, ...args:any) => {
+      console.log('evento',eventName)
+      console.log('datos', args)
+      if(eventName === 'id'){
+        const token = localStorage.getItem('token')
+        const emite = await this.ioSocket.emit('id', token);
+    
+      }
+    })
 
   };
   get(eventName:string, callback:Function ){
@@ -46,7 +53,7 @@ export class Socket2Service extends Socket {
   }
 }
 
-// Se pueden agregar tantos como se necesite 
+// Se pueden agregar tantos como se necesite
 //@Injectable()
 //export class Socket2Service extends Socket {
 //  constructor() {
@@ -58,6 +65,6 @@ export class Socket2Service extends Socket {
 //  async send(eventName:string, data:any){
 //    //console.log(eventName,'emit',data);
 //    await super.emit(eventName,data);
-//    
+//
 //  }
 //}

@@ -8,7 +8,7 @@ export interface WappPhone extends Document {
 
 const WappPhoneSchema = new Schema({
   owner: { type: Schema.Types.String, trim: true, index: true },
-  number: { type: Schema.Types.String, trim: true, index: true },
+  number: { type: Schema.Types.String, trim: true, index: true, unique: true },
   cuenta: { type: Schema.Types.String, trim: true, index: true },
   name: { type: Schema.Types.String, trim: true, index: true }
 },

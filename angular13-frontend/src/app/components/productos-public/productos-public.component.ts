@@ -10,7 +10,6 @@ import { ApiService } from 'src/app/services/api.service';
 export class ProductosPublicComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<any>();
-
   data:any[] = [];
   searchItem:any = '';
   limit = 30;
@@ -39,20 +38,20 @@ export class ProductosPublicComponent implements OnInit, OnDestroy {
   onResize(event?:any) {
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
+
     const navs = document.getElementsByTagName('nav');
-    let h = navs[0].offsetHeight;
+    let h = navs[0].offsetHeight+1;
     const el:any = document.getElementById('productoContainer')?.parentElement;
     el.style.height = `${this.screenHeight-h}px`;
   }
 
   ngOnInit(): void {
-    //this.screenWidth = window.innerWidth;
-    //this.screenHeight = window.innerHeight;
+    this.screenWidth = window.innerWidth;
+    this.screenHeight = window.innerHeight;
 
     fromEvent(this.articulosSearchInput.nativeElement, 'keyup')
     .pipe(
       takeUntil(this.destroy$),
-
       // get value
       map((event: any) => {
         return event.target.value;

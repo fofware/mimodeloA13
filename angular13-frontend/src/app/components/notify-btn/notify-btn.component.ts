@@ -9,7 +9,7 @@ import { Socket2Service } from 'src/app/services/socket.service';
 export class NotifyBtnComponent implements OnInit {
 
   constructor(
-    public WAsocket: Socket2Service
+    //public WAsocket: Socket2Service
 
   ) { }
 

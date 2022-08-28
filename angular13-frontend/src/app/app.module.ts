@@ -32,6 +32,7 @@ import { ArticulosPublicComponent } from './components/articulos-public/articulo
 import { ProductosPublicComponent } from './components/productos-public/productos-public.component';
 import { ArticulosCardComponent } from './components/articulos-card/articulos-card.component';
 import { ProductosCardComponent } from './components/productos-card/productos-card.component';
+import { SignupComponent } from './components/signup/signup.component';
 //import { ProdNameFilterPipe } from './pipes/prod-name-filter.pipe';
 
 @NgModule({
@@ -49,6 +50,7 @@ import { ProductosCardComponent } from './components/productos-card/productos-ca
     ProductosPublicComponent,
     ArticulosCardComponent,
     ProductosCardComponent,
+    SignupComponent,
 //    ProdNameFilterPipe,
   ],
   imports: [

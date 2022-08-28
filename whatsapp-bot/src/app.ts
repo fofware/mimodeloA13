@@ -13,24 +13,8 @@ import cors from 'cors';
 //import passport from 'passport';
 //import passportMiddelware from './middlewares/passport';
 import config from './config';
-import { WAppClient, WAppGateway } from './wappgateway';
-import wappphone  from './models/phones';
+import { initAllWapp } from './wappgateway';
 
-const initPhones = async () => {
-  const phones = await wappphone.find()
-  for (let i = 0; i < phones.length; i++) {
-    const p = phones[i];
-    console.log(p)
-    //WAppClient(p)
-  }
-}
-
-/*
-const getQr = (req, res) => {
-  res.writeHead(200, { 'content-type': 'image/svg+xml' });
-  fs.createReadStream(`${__dirname}/../mediaSend/qr-code.svg`).pipe(res.send);
-}
-*/
 
 //import { articuloCtrl } from './controlers/articuloControler';
 //import { productoCtrl } from './controlers/productoControler';
@@ -44,10 +28,8 @@ app.use(express.urlencoded({ extended: false }));
 //app.use(passport.initialize());
 //passport.use(passportMiddelware);
 app.disable('etag');
-const router: Router = Router();
+initAllWapp(app)
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/../html/index.html');
 });
-app.use(router);
-//initPhones()
 export default app;

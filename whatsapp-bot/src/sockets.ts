@@ -1,6 +1,6 @@
 import { Namespace, Socket } from "socket.io";
 import phones from "./models/phones";
-import { WAppClient, WAppRegister } from "./wappgateway";
+import { gateways, newGateway, storedGateway } from "./wappgateway";
 //import user from "./models/user";
 //import articulo from "./models/articulos";
 //import producto from "./models/producto";
@@ -53,42 +53,85 @@ const sendData = async (data:any, socket:any, msg:string) => {
 
 export default (io:any) => {
   const documents = {};
+
   io.on('connection', async (socket:any) => {
     console.log("Nueva coneccion");
-    socket.emit('sendId', socket.id);
-
+    socket.emit('id');
     let previousId;
     const safeJoin = currentId => {
       socket.leave(previousId);
       socket.join(currentId, () => console.log(`Socket ${socket.id} joined room ${currentId}`));
       previousId = currentId;
     };
-
-    socket.on('id', params => {
-      //
-      //validar id
-      //conetar este socket con cada gateway que corresponda al id
-      //
-      const {token, phone } = params
-      const user = JSON.parse(decodeURIComponent(atob(token.split('.')[1]).split('').map(function(c) {
+    const decodeToken = (token) => {
+      return JSON.parse(decodeURIComponent(atob(token.split('.')[1]).split('').map(function(c) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
       }).join('')));
-      
-      console.log('onId',user);
-      console.log(phone)
-      for (let index = 0; index < phone.length; index++) {
-        const p = {
-          owner: user._id,
-          email: user.email,
-          nickname: user.nickname,
-          nombre: user.nombre,
-          apellido: user.apellido,
-          number: phone[index],
-          name: user.name
+    }
+    const setSkt = (socket,user,phone) => {
+      // esto hay que remover cuando el token este arreglado
+      user.cuenta = !user.cuenta ? 'firulais': user.cuenta;
+      socket.data.user = user._id;
+      socket.data.parent = user.parent;
+      socket.data.cuenta = user.cuenta,
+      socket.data.number = phone;
+      socket.data.email = user.email;
+      socket.data.nickname = user.nickname;
+      socket.data.nombre = user.nombre;
+      socket.data.apellido = user.apellido;
+      socket.data.rooms = [`${user.cuenta}-owner`,`${user.cuenta}-default`]
+      socket.data.name = user.name;
+      socket.user = user.nickname;
+      //if(user.parent === null || user.parent === ''){
+        socket.join(`${user.cuenta}-owner`)
+      console.log(`hizo el join${user.cuenta}-owner`)
+
+      //}
+    }
+
+    socket.on('getPicUrl', async numero => {
+      const keys = Object.keys(gateways);
+      const pic = await gateways[keys[0]].client.getProfilePicUrl(`${numero}@c.us`);
+      socket.emit('picUrl', pic);
+    })
+
+    socket.on('registranumero', async (token, numero) => {
+      setSkt(socket,decodeToken(token),numero);
+//
+      const registered:any = await newGateway(socket);
+      if (typeof(registered) !== 'string'){
+        gateways[numero] = {
+          client: storedGateway( socket ),
         }
-        socket.waClient = WAppClient(socket,p)
       }
-      console.log(socket.user);
+      registered.destroy()
+    });
+    socket.on('id', async (token, phone) => {
+      setSkt(socket,decodeToken(token),phone);
+
+//      for (let index = 0; index < phone.length; index++) {
+//        p.number =  phone[index];
+//        if(!gateways[phone[index]]) {
+//
+//          const registered:any = await newGateway(p,socket);
+//
+//          if (typeof(registered) !== 'string'){
+//            gateways[p.number] = {
+//              client: await storedGateway( p ),
+//              rooms : []
+//            }
+//          }
+//          registered.destroy()
+//        } else {
+//          console.log('vapor cargado')
+//          gateways[phone[index]]['sockets'].push(socket);
+//          console.log(gateways)
+//        }
+//        const chats = await gateways[p.number].client.getChats();
+//        console.log(chats);
+//        socket.emit('chats',JSON.stringify(chats));
+//      }
+//      console.log(socket.user);
     })
     socket.on('setData', params => {
       console.log( params );
@@ -97,12 +140,6 @@ export default (io:any) => {
       safeJoin(docId);
       socket.emit("document", documents[docId]);
     });
-    socket.on(`waRegister`,(params) => {
-      socket.waClient = WAppRegister(socket, params)
-    })
-    socket.on(`waConnect`,(params) => {
-      socket.waClient = WAppClient(socket, params)
-    })
     socket.on("addDoc", doc => {
       documents[doc.id] = doc;
       safeJoin(doc.id);

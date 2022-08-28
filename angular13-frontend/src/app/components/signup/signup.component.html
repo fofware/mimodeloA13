@@ -1,0 +1,80 @@
+<div class="container">
+  <div class="d-flex justify-content-center align-items-center">
+    <div class="col-6">
+      <form [formGroup]="formParent" class="form-parent">
+        <div class="mb-3 form-field">
+          <label for="exampleFormControlInput1" class="form-label"
+            >Tu nombe</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            id="exampleFormControlInput1"
+            placeholder="name@example.com"
+            formControlName="name"
+          />
+        </div>
+        <div class="form-grid" formArrayName="skills">
+          <div
+            class="form-field"
+            *ngFor="
+              let skill of getCtrl('skills', formParent).controls;
+              index as s
+            "
+          >
+            <div class="form-block" [formGroupName]="s">
+              <div class="mb-3 form-field">
+                <label for="exampleFormControlInput1" class="form-label"
+                  >Email address</label
+                >
+                <input
+                  type="email"
+                  class="form-control"
+                  id="exampleFormControlInput1"
+                  placeholder="name@example.com"
+                  formControlName="email"
+                />
+              </div>
+              <div class="mb-3 form-field">
+                <label for="exampleFormControlInput1" class="form-label"
+                  >Nro Celular</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="celular"
+                  placeholder="5493624683356"
+                  formControlName="celular"
+                />
+              </div>
+              <div class="mb-3 form-field">
+                <label for="exampleFormControlInput1" class="form-label"
+                  >Clave</label
+                >
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  placeholder="Escriba una clave"
+                  formControlName="password"
+                />
+              </div>
+              <div class="mb-3 form-field">
+                <label for="exampleFormControlInput1" class="form-label"
+                  >Vuelva a escribir la clave</label
+                >
+                <input
+                  type="password"
+                  class="form-control"
+                  id="repassword"
+                  placeholder="Escriba nuevamente la clave"
+                  formControlName="repassword"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

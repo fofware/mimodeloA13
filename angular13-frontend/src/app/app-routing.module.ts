@@ -6,6 +6,7 @@ import { HtmldataComponent } from './components/htmldata/htmldata.component';
 import { NoPageComponent } from './components/no-page/no-page.component';
 import { PrivateHomeComponent } from './components/private-home/private-home.component';
 import { ProductosPublicComponent } from './components/productos-public/productos-public.component';
+import { SignupComponent } from './components/signup/signup.component';
 import { TestdataComponent } from './components/testdata/testdata.component';
 import { AuthGuard } from './guards/auth.guard';
 import { IsLoggedGuard } from './guards/is-logged.guard';
@@ -38,6 +39,10 @@ const routes: Routes = [
   {
     path: 'home'
   , component: HomeComponent
+  },
+  {
+    path: 'signup'
+  , component: SignupComponent
   },
   {
     path: 'articulos'

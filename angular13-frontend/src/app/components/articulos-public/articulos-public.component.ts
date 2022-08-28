@@ -47,22 +47,12 @@ export class ArticulosPublicComponent implements OnInit {
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
     const navs = document.getElementsByTagName('nav');
-    let h = navs[0].offsetHeight;
-    /*
-    for (let i = 0; i < navs.length-1; i++) {
-      const el = navs[i];
-      h += el.offsetHeight;
-    }
-    */
-    //console.log('sumHeight',h);
-    //console.log('tablaHeight', this.screenHeight-h)
-    const el:any = document.getElementById('dataContainer')?.parentElement;
+    let h = navs[0].offsetHeight+1;
+    const el:any = document.getElementById('articuloContainer')?.parentElement;
     el.style.height = `${this.screenHeight-h}px`;
   }
 
   ngOnInit(): void {
-    //this.screenWidth = window.innerWidth;
-    //this.screenHeight = window.innerHeight;
 
     fromEvent(this.articulosSearchInput.nativeElement, 'keyup')
     .pipe(

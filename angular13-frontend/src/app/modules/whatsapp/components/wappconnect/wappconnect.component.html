@@ -1,4 +1,9 @@
 <p>wappconnect works!</p>
   <div class="d-flex justify-content-center align-items-center" style="width: 100%;height: 100%">
-    <qrcode [qrdata]="qrstr" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+    <img src="{{picUrl}}"><img>
+    <input type="text" [(ngModel)]="numero" (keyup)="checkNumber()">
+    <button (click)="registrar()">Registrar</button>
+    <div [hidden]="isqr">
+      <qrcode  [qrdata]="qrstr" [width]="500" [errorCorrectionLevel]="'M'"></qrcode>
+    </div>
   </div>

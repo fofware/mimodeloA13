@@ -1,6 +1,11 @@
+.arriba {
+  z-index: 20000;
+}
 .dropdown-toggle::after {
   border-top: 0;
+  z-index: 2000;
 }
 .logform {
   width: 300px;
+  z-index: 2000;
 }

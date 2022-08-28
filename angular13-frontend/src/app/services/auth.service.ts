@@ -91,6 +91,19 @@ export class AuthService {
     return rpta.exists
   }
 
+/*
+async checkEmail(){
+    this.alertService.clear();
+    console.log(this.form.value.email)
+    const exists = await this.authService.emailExists(this.form.value.email);
+    console.log(this.form);
+    if(exists){
+      this.alertService.error('Email ya está registrado');
+
+    }
+  }
+*/
+
   async emailFind(email:string): Promise<[string]> {
     console.log(email);
     const rpta:any = this.httpClient.get(`${this.URL}/emailcheck/${email}`).subscribe((res) => {
