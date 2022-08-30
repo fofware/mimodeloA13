@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ApiService } from './api.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -20,23 +21,24 @@ export class AuthService {
   private loggedUsr = new BehaviorSubject<object>(this.noTken);
   constructor(
     private httpClient: HttpClient,
-    private router: Router
-  ) { 
+    private router: Router,
+    private api: ApiService
+  ) {
     this.decodeToken(this.getToken())
   }
-  
+
   get isLogged(): Observable<boolean>{
     return this.logged.asObservable();
   }
-  
+
   public get isLoggedValue(): boolean {
     return this.logged.value;
   }
-  
+
   public get userValue(): any {
     return this.loggedUsr.value;
   }
-  
+
   public get user(): Observable<any> {
     return this.loggedUsr.asObservable();
   }
@@ -104,15 +106,25 @@ async checkEmail(){
   }
 */
 
-  async emailFind(email:string): Promise<[string]> {
-    console.log(email);
-    const rpta:any = this.httpClient.get(`${this.URL}/emailcheck/${email}`).subscribe((res) => {
-      return res;
-    });
-    console.log(rpta);
-    return rpta
-  }
+  emailFind(email:string): Observable<boolean> {
+    return this.httpClient
+      .get(`${this.URL}/emailcheck/${email}`)
+      .pipe(map( (x:any) => {
+        if (x.exists) return true;
+        else return  false;
+      }))
 
+  }
+  mailExist(email:string){
+    return new Promise(async (resolve, reject) => {
+      this.api
+      .get(`/emailcheck/${email}`,{},{spinner: 'false'}).subscribe( (data:any) => {
+        console.log(data)
+        if (data.exists) resolve(data)
+        else resolve(null)
+      })
+    })
+  }
   logout(): void {
     localStorage.removeItem('token');
     this.logged.next(false)

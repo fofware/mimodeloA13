@@ -136,7 +136,7 @@ export const storedGateway = async ( p:any ) => {
       //gateways[client.info.wid.user].sockets.forEach( stk => stk.emit('message_ack',{msg,ack}))
       io.to(p.rooms).emit('message_ack',{msg,ack})
       const ret = await whatsapp.insertMany([msg])
-      const ackTxt = ['','se envio','recibió','leyó']
+      const ackTxt = ['','se envio','recibió','leyó','Dio play al audio']
       console.log(`${client.info.pushname} ${client.info.wid.user} message_ack ${ack} ${msg.to} ${ackTxt[ack]}`);
     })
 

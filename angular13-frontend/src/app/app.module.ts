@@ -33,6 +33,9 @@ import { ProductosPublicComponent } from './components/productos-public/producto
 import { ArticulosCardComponent } from './components/articulos-card/articulos-card.component';
 import { ProductosCardComponent } from './components/productos-card/productos-card.component';
 import { SignupComponent } from './components/signup/signup.component';
+import { FormhijosComponent } from './components/formhijos/formhijos.component';
+import { EmailcheckDirective } from './validators/emailcheck.directive';
+import { TestValidatorDirective } from './validators/test-validator.directive';
 //import { ProdNameFilterPipe } from './pipes/prod-name-filter.pipe';
 
 @NgModule({
@@ -51,7 +54,11 @@ import { SignupComponent } from './components/signup/signup.component';
     ArticulosCardComponent,
     ProductosCardComponent,
     SignupComponent,
+    FormhijosComponent,
+    EmailcheckDirective,
+    TestValidatorDirective,
 //    ProdNameFilterPipe,
+
   ],
   imports: [
     BrowserModule,
