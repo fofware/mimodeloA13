@@ -3,6 +3,8 @@ import User, { IUser } from "../models/user";
 import { ExtractJwt } from "passport-jwt";
 import jwt from 'jsonwebtoken';
 import config from '../config';
+import { httpClient } from "../common/httpClient-promise";
+const request = require('request-promise');
 
 function createToken(user: IUser | any ) {
   return jwt.sign({ _id: user._id, 
@@ -20,6 +22,7 @@ function createToken(user: IUser | any ) {
 };
 
 export const signUp = async (req: Request, res: Response): Promise<Response> => {
+  /*
   if (!req.body.email || !req.body.password)
     return res.status(400).json({ msg: 'Por favor. Envíe su e-Mail y contraseña' });
   const user = await User.findOne({ email: req.body.email });
@@ -29,8 +32,50 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
   if (req.body.password !== req.body.confirmPassword)
     return res.status(400).json({msg: 'Las contraseñas no coinciden'})
   delete req.body.confirmPassword;
-  const newUser = new User(req.body);
+  */
+  const userIp = req.socket.remoteAddress;
+  const recaptchaToken = req.body.captcha;
+  const secretKey = '6LcZvsMhAAAAAP0yYaPkmtNZFZdpB2zzGzTTYwpb'
+  
 
+  const options = {
+    host: 'firulais.net.ar',
+    path: `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}&remoteip=${userIp}`,
+    method: 'GET',
+    port: 443,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json; charset=UTF-8'
+    }
+  }
+
+  const captchaRpta = JSON.parse(await request.get(
+    {
+        url: `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}&remoteip=${userIp}`,
+    }));
+    //.then((response) => {
+    //  console.log(response)
+    //// If response false return error message
+    //if (response.success === false) {
+    //    return res.status(200).json({success: false, error: 'Recaptcha token validation failed'});
+    //}
+    //// otherwise continue handling/saving form data
+    //    return response
+    //})
+  console.log('-------------------')
+  console.log(captchaRpta);
+  if ( captchaRpta.score < .7 )
+    return res.status(401).json({ title: 'Hmmm....', text: 'Parece no ser humano...' })
+  console.log(req.body);
+  const user = {
+    email: req.body.email,
+    nombre: req.body.nombre,
+    apellido: req.body.apellido,
+    roles: ['client_admin'],
+    phone: req.body.phone,
+    password: req.body.password
+  }
+  const newUser = new User(user);
   await newUser.save();
   delete newUser.password;
   const token = createToken(newUser);

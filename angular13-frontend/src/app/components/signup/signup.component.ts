@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
-//import { existingEmailNumberValidator } from 'src/app/validators/email-exists.validator';
 import { AgeValidator, emailAllreadyExist, eMailValidation, PasswordValidation } from 'src/app/validators/email-exists.validator';
 import { TestValidator } from 'src/app/validators/test-validator.directive';
+import { ReCaptchaV3Service } from 'ng-recaptcha';
+import { Router } from '@angular/router';
+import { Subject, takeUntil, timeout } from 'rxjs';
 
 @Component({
   selector: 'app-signup',
@@ -19,64 +21,77 @@ export class SignupComponent implements OnInit {
   regexmail =  '^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$';
   regexmail1 = `^[a-z0-9\.]+@([a-z0-9\.]+)+[a-z0-9]{2,4}$`
   formParent = this.fb.group({
-    //name: ['', 
-    //  [
-    //    Validators.required,
-    //    Validators.minLength(3)
-    //  ]],
-//    email: ['',[Validators.pattern(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`)]],
+    nombre: ['',
+      [
+        Validators.required,
+        Validators.minLength(3)
+      ]],
+    apellido: [''],
     email: ['',
-      //[
-      //  Validators.required,
-      //  Validators.pattern(this.regexmail1),
-      //  
-      //],
       {
         validators:[
           Validators.required,
-          Validators.pattern(this.regexmail1) 
+          Validators.pattern(this.regexmail1)
         ],
         asyncValidators: [this.alterEgoValidator.validate.bind(this.alterEgoValidator)],
         updateOn: 'blur'
       }
-      //[
-      //  eMailValidation.other(this.authService)
-      //]
     ],
-    //email: ['',
-    //  {
-    //    validators:
-    //    [
-    //      Validators.pattern(`^[a-z0-9\.]+@([a-z0-9\.]+)+[a-z0-9]{2,4}$`),
-    //    ],
-    //    updateOn: 'blur'
-    //  },
-    //  [
-    //    eMailValidation.other(this.authService)
-    //  ]
-    //],
-    //celular: ['',[null,Validators.compose([null,Validators.minLength(10), Validators.maxLength(10), Validators.pattern('^[0-9]+')])]],
-    //celular: ['',[Validators.minLength(10), Validators.maxLength(10), Validators.pattern('^[0-9]+')]],
-    //edad: ['',[AgeValidator]],
+    phone: ['',[Validators.minLength(10), Validators.maxLength(10), Validators.pattern(`^[0-9]+$`)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
-    repassword: ['', [Validators.required, eMailValidation.MatchPassword('password')]]
-  })
-  constructor(private fb: FormBuilder, private authService: AuthService, private alterEgoValidator: TestValidator) { }
+    repassword: ['', [Validators.required, eMailValidation.MatchPassword('password')]],
+    captcha: ['', []]
+  });
+  private destroy$ = new Subject<any>();
 
+  constructor(
+    private fb: FormBuilder, 
+    private recaptchaV3Service: ReCaptchaV3Service, 
+    private authService: AuthService, 
+    private alterEgoValidator: TestValidator,
+    private router: Router
+  ) { }
+  captchaResolved = false;
   ngOnInit(): void {
   }
+
+  ngOndestroy(){
+    this.destroy$.next({});
+    this.destroy$.complete();
+  }
+  /*
   ngAfterViewInit():void{
     //this.SetDefault();
   }
+
   checkEmail(){
     const values = this.formParent.value;
     console.log(values)
     //if(values.email)
     //  this.authService.emailFind(values.email).pipe(map())
   }
+  */
   enviar(){
-    console.log("Envia", this.formParent.value);
-    
+    this.recaptchaV3Service
+      .execute('registerCustomer')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((token: string) => {
+        console.log(`Token [${token}] generated`);
+        this.formParent.patchValue({'captcha': token}) 
+        console.log("Envia", this.formParent.value);
+        this.authService.signUp(this.formParent.value).subscribe(data => {
+          console.log(data)
+          const user = {
+            email: this.formParent.value.email,
+            password: this.formParent.value.password
+          }
+          this.authService.signIn(user).subscribe(res => {
+            //setTimeout(function(){
+              this.router.navigate(['/user/profile']);
+            //}, 2000);
+          })
+        })
+    });
   }
 
   isInvalid(fieldname:string){
@@ -84,14 +99,15 @@ export class SignupComponent implements OnInit {
     return campo?.invalid && campo?.touched;
   }
 
-
+  /*
   SetDefault(){
     const contact = {
       name: '',
       email: '',
       celular: '',
       password: '',
-      repassword: ''
+      repassword: '',
+      //captcha: null
     }
     this.formParent.setValue(contact);
   }
@@ -99,8 +115,11 @@ export class SignupComponent implements OnInit {
   resetForm():void{
     this.formParent.reset();
   }
-}
-function existingEmailNumberValidato(authService: any): any | string {
-  throw new Error('Function not implemented.');
+  
+  checkCaptcha(captchaResponse : any) {
+    console.log(captchaResponse)
+    this.captchaResolved = (captchaResponse && captchaResponse.length > 0) ? true : false
+  }
+  */
 }
 

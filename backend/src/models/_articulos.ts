@@ -96,7 +96,7 @@ _articuloSchema.virtual('fullname').get(function(){
   let fullName = '';
   let sep = '';
   if(this.d_fabricante){
-    fullName = this.fabricante;
+    fullName = sep+this.fabricante;
     sep = ' ';
   }
   if(this.d_marca){

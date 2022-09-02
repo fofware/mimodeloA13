@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -16,7 +17,7 @@ export class SigninBtnComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<any>();
 
-  constructor(public authSrv: AuthService ) { }
+  constructor(public authSrv: AuthService, private router: Router ) { }
 
   ngOnInit(): void {
     this.authSrv.isLogged
@@ -45,6 +46,10 @@ export class SigninBtnComponent implements OnInit, OnDestroy {
   logout(){
     this.authSrv.logout();
     this.newLoginEvent.emit(false)
+  }
+
+  profile(){
+    this.router.navigate(['/user/profile']);
   }
 
 }

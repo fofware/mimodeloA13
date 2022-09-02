@@ -73,7 +73,7 @@ export class AuthService {
       );
   }
 
-  signUp( user: string ): Observable<object>  {
+  signUp( user: object ): Observable<object>  {
     return this.httpClient.post(this.URL + '/signup', user);
   }
 

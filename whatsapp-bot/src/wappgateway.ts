@@ -18,38 +18,62 @@ export interface phoneGateway {
 export const gateways = {}
 
 export const initAllWapp = async (app) =>{
-  console.log('conectando gateway')
+
   const array = await wappphone.find();
   //console.log(array);
   const io = app.get('sio');
   const router: Router = Router();
+  const totalini = new Date();
+//  for (let index = 0; index < array.length; index++) {
+//    const ini = new Date()
+//    const p:any = array[index];
+//    console.log(`conectando gateway${p.number}`)
+//    gateways[p.number] = {
+//      client: await storedGateway(p),
+//    }
+//    const end = new Date()
+//    const dif = end.getTime()-ini.getTime();
+//    console.log(dif)
+//    //if ( typeof(gateways[p.number].client) !== 'string') 
+//    //  setRoutes( router, p.number)
+//    //const chats = await gateways[p.number].client.getChats();
+//    //const messages = await gateways[p.number].client.searchMessages();
+///*
+//    for (let i = 0; i < chats.length; i++) {
+//      const e = chats[i];
+//      e['messages'] = await e.fetchMessages({limit: 3000});
+//      e['contacto'] = await e.getContact();
+//      e['picUrl'] = await e['contacto'].getProfilePicUrl();
+//    }
+//*/
+//    //io.to(p.rooms).emit('chats',chats);
+//    //const contactos = await gateways[p.number].client.getContacts()
+//    //for (let i = 0; i < contactos.length; i++) {
+//    //  const c = contactos[i];
+//    //  //c['chat'] = await c.getChat();
+//    //  //c['chat']['messages'] = await c['chat'].fetchMessages({limit: 2000})
+//    //  //c['picUrl'] = await c.getProfilePicUrl();
+//    //  //c['about'] = await c.getAbout();
+//    //}
+//    //io.to(p.rooms).emit('contactos',contactos);
+//    
+//    console.log(`${p.number} gateway listo`)
+//  }
+  const asyncFunctions = []
   for (let index = 0; index < array.length; index++) {
     const p:any = array[index];
-    gateways[p.number] = {
-      client: await storedGateway(p),
-    }
-    if ( typeof(gateways[p.number].client) !== 'string') 
-      setRoutes( router, p.number)
-    const chats = await gateways[p.number].client.getChats();
-    //const messages = await gateways[p.number].client.searchMessages();
-    for (let i = 0; i < chats.length; i++) {
-      const e = chats[i];
-      e['messages'] = await e.fetchMessages({limit: 3000});
-      e['contacto'] = await e.getContact();
-      e['picUrl'] = await e['contacto'].getProfilePicUrl();
-    }
-    io.to(p.rooms).emit('chats',chats);
-    const contactos = await gateways[p.number].client.getContacts()
-    //for (let i = 0; i < contactos.length; i++) {
-    //  const c = contactos[i];
-    //  //c['chat'] = await c.getChat();
-    //  //c['chat']['messages'] = await c['chat'].fetchMessages({limit: 2000})
-    //  //c['picUrl'] = await c.getProfilePicUrl();
-    //  //c['about'] = await c.getAbout();
-    //}
-    io.to(p.rooms).emit('contactos',contactos);
-    console.log(gateways)
+//      client: await storedGateway(p),
+    asyncFunctions.push(storedGateway(p))
   }
+  const results:Client[] = await Promise.all(asyncFunctions)
+  for (let i = 0; i < results.length; i++) {
+    const c = results[i];
+    console.log(c.info)
+  }
+  //console.log(results)
+  const totalend = new Date();
+  const totaldif = totalend.getTime()-totalini.getTime();
+  console.log(totaldif)
   app.use(router)
 }
 let io;
@@ -127,29 +151,67 @@ export const storedGateway = async ( p:any ) => {
     client.on('message', async msg => {
       //gateways[client.info.wid.user].sockets.forEach( stk => stk.emit('message',msg))
       io.to(p.rooms).emit('message',msg)
-      const ret = await whatsapp.insertMany([msg])
-      console.log(`${client.info.pushname} ${client.info.wid.user} MESSAGE RECEIVED`,msg);
+      msg['on'] = 'message';
+      msg['serialized'] = msg.id._serialized; 
+      msg['myid'] = msg.id.id;
+      try {
+        const ret = await whatsapp.insertMany([msg])
+      } catch (error) {
+        console.log(error)        
+      }
+      console.log('---------------------------------')
+      console.log(`${client.info.pushname} ${client.info.wid.user} MESSAGE RECEIVED`);
+      showTime(msg);
       procesaMsg(client,msg)
     })
 
     client.on('message_ack', async (msg, ack) => {
       //gateways[client.info.wid.user].sockets.forEach( stk => stk.emit('message_ack',{msg,ack}))
       io.to(p.rooms).emit('message_ack',{msg,ack})
-      const ret = await whatsapp.insertMany([msg])
+      msg['on'] = 'message_ack';
+      msg['serialized'] = msg.id._serialized; 
+      msg['myid'] = msg.id.id;
+      try {
+        const ret = await whatsapp.insertMany([msg])
+      } catch (error) {
+        console.log(error)        
+      }
       const ackTxt = ['','se envio','recibió','leyó','Dio play al audio']
+      console.log('---------------------------------')
       console.log(`${client.info.pushname} ${client.info.wid.user} message_ack ${ack} ${msg.to} ${ackTxt[ack]}`);
+      showTime(msg);
     })
 
-    client.on('message_create', async (message) => {
-      io.to(p.rooms).emit('message_create',message)
-      const ret = await whatsapp.insertMany([message])
-      console.log(`${client.info.pushname} ${client.info.wid.user} message_create`,message.id);
+    client.on('message_create', async (msg) => {
+      io.to(p.rooms).emit('message_create',msg)
+      msg['on'] = 'message_create';
+      msg['serialized'] = msg.id._serialized; 
+      msg['myid'] = msg.id.id;
+      try {
+        const ret = await whatsapp.insertMany([msg])
+      } catch (error) {
+        console.log(error)        
+      }
+      console.log('---------------------------------')
+      console.log(`${client.info.pushname} ${client.info.wid.user} message_create`);
+      showTime(msg);
     });
 
-    client.on('message_revoke_everyone', (message, revoked_msg) => {
+    client.on('message_revoke_everyone', async (msg, revoked_msg) => {
       //gateways[client.info.wid.user].sockets.forEach( stk => stk.emit('message_revoke_everyone',{message,revoked_msg}))
-      io.to(p.rooms).emit('message_revoke_everyone',{message,revoked_msg})
-      console.log(`${client.info.pushname} ${client.info.wid.user} message_revoke_everyone`,message);
+      msg['on'] = 'message_revoke_everyone';
+      msg['serialized'] = msg.id._serialized; 
+      msg['myid'] = msg.id.id;
+      msg['revoked_msg'] = revoked_msg;
+      try {
+        const ret = await whatsapp.insertMany([msg])
+      } catch (error) {
+        console.log(error)        
+      }
+      io.to(p.rooms).emit('message_revoke_everyone',{msg,revoked_msg})
+      console.log('---------------------------------')
+      console.log(`${client.info.pushname} ${client.info.wid.user} message_revoke_everyone`);
+      showTime(msg);
     })
 
     client.on('qr', async qr => {
@@ -168,6 +230,18 @@ export const storedGateway = async ( p:any ) => {
       resolve(client)
     })
   })
+}
+
+const showTime = (msg) => {
+  console.log(`(${msg.id._serialized})`)
+  console.log(`${msg.id.id} (${msg.ack}) - ${msg.orderId}`);
+  const tn = new Date();
+  const at = tn.toISOString()
+  const am = tn.getTime();
+  const t = new Date();
+  t.setTime(msg.timestamp*1000);
+  const ts = t.toISOString();
+  console.log(msg.timestamp, am, ts, at);
 }
 
 export const newGateway = async ( skt ) => {
@@ -198,6 +272,7 @@ export const newGateway = async ( skt ) => {
       console.log(`Authenticated`);
     });
 
+    /*
     client.on('change_battery', (batteryInfo) => {
       skt.to(skt.data.rooms).emit('change_battery',batteryInfo)
       console.log(`${client.info.pushname} ${client.info.wid.user} BatteryInfo ${batteryInfo}`);
@@ -255,7 +330,7 @@ export const newGateway = async ( skt ) => {
     client.on('message_revoke_everyone', (message, revoked_msg) => {
       skt.to(skt.data.rooms).emit('message_revoke_everyone',{message,revoked_msg});
     })
-
+    */
     client.on('qr', async qr => {
       const numero = skt.data.number;
       skt.to(skt.data.rooms).emit('qr',{qr,numero})
@@ -272,6 +347,28 @@ export const newGateway = async ( skt ) => {
     })
   })
 }
+const updateMsg = (msg) => {
+
+}
+const saveMsg = async (msg) => {
+  const filter = {}
+  try {
+    let ret = await whatsapp.findOneAndUpdate(filter, msg, {
+      new: true,
+      upsert: true,
+      rawResult: true // Return the raw result from the MongoDB driver
+    });
+
+    ret.value instanceof whatsapp; // true
+    // The below property will be `false` if MongoDB upserted a new
+    // document, and `true` if MongoDB updated an existing object.
+    ret.lastErrorObject.updatedExisting; // false
+  } catch (error) {
+    console.log(error);
+  }
+
+}
+
 
 const setRoutes = (router, number) => {
   /**
@@ -289,8 +386,16 @@ const setRoutes = (router, number) => {
   })
 
   router.get(`/${number}/chats`, async (req, res) =>{
-    const contacts = await client.getChats();
-    res.status(200).json(contacts);
+    const chats = await client.getChats();
+    //const messages = await gateways[p.number].client.searchMessages();
+    for (let i = 0; i < chats.length; i++) {
+      const e = chats[i];
+      e['messages'] = await e.fetchMessages({limit: 3000});
+      //e['contacto'] = await e.getContact();
+      //e['picUrl'] = await e['contacto'].getProfilePicUrl();
+    }
+
+    res.status(200).json(chats);
   })
 
   router.get(`/${number}/chat/:serialized`, async (req, res) =>{
@@ -419,6 +524,11 @@ const setRoutes = (router, number) => {
     const { query, options } = req.body;
     const value = await client.searchMessages(query,options);
     res.status(200).json(value);
+  })
+  router.get(`/${number}/messages`, async (req, res) =>{
+    const messages = await whatsapp.find()
+ 
+    res.status(200).json(messages);
   })
 
   // No está probada

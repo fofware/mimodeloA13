@@ -28,8 +28,8 @@ proveedorProductoSchema.virtual('fullname').get(function(){
   //if(this.v_prodname) fullname = this.v_prodname[0].fullname;
   let presentacion = `(ProveedorProducto Error) Missing populate({path: 'presentacion', select: 'fullname -_id'})`;
   let articulo = `(ProveedorProducto Error) Missing populate({path: 'articulo', populate: { path: 'fabricante marca rubro linea especie edad raza' }})`
-  if(this.presentacion?.fullname) presentacion = this.presentacion.fullname;
-  if(this.articulo?.fullname) articulo = this.articulo.fullname; 
+  if(this.presentacion['fullname']) presentacion = this.presentacion['fullname'];
+  if(this.articulo['fullname']) articulo = this.articulo['fullname']; 
   return `${articulo} ${presentacion}`;
 });
 

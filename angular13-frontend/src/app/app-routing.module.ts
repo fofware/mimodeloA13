@@ -68,7 +68,7 @@ const routes: Routes = [
       )
   },
   {
-    path: 'users',
+    path: 'user',
     loadChildren: () => import(`./modules/user/user.module`)
       .then(
         module => module.UserModule

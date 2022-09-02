@@ -85,8 +85,8 @@ productoSchema.on('index', error => {
 });
 
 productoSchema.virtual('fullname').get(function(){
-  if(this.parent && this.parent.fullname && !this.pesable){
-    return `${this.name} ${this.contiene} ${this.parent.fullname}` 
+  if(this.parent && this.parent['fullname'] && !this.pesable){
+    return `${this.name} ${this.contiene} ${this.parent['fullname']}` 
   }
   return `${this.name} ${this.contiene} ${this.unidad}`;
 });

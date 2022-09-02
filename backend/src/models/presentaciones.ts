@@ -39,12 +39,12 @@ presentacionSchema.on('index', error => {
 
 presentacionSchema.virtual('fullname').get(function(){
   let fullName = '';
-  if(this.relacion && this.relacion.fullname && !this.pesable){
-    fullName = `${this.name} ${this.contiene} ${this.relacion.fullname}` 
+  if(this.relacion && this.relacion['fullname'] && !this['pesable']){
+    fullName = `${this.name} ${this.contiene} ${this.relacion['fullname']}` 
   } else {
     fullName =  `${this.name} ${this.contiene} ${this.unidad}`;
   }
-  if(this.articulo.fullname) fullName = `${this.articulo.fullname} ${fullName}`;
+  if(this.articulo['fullname']) fullName = `${this.articulo['fullname']} ${fullName}`;
   return fullName;
 });
 

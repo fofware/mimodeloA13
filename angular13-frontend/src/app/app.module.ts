@@ -36,6 +36,8 @@ import { SignupComponent } from './components/signup/signup.component';
 import { FormhijosComponent } from './components/formhijos/formhijos.component';
 import { EmailcheckDirective } from './validators/emailcheck.directive';
 import { TestValidatorDirective } from './validators/test-validator.directive';
+import { RecaptchaV3Module, RECAPTCHA_V3_SITE_KEY } from 'ng-recaptcha';
+import { environment } from 'src/environments/environment';
 //import { ProdNameFilterPipe } from './pipes/prod-name-filter.pipe';
 
 @NgModule({
@@ -80,6 +82,7 @@ import { TestValidatorDirective } from './validators/test-validator.directive';
     TooltipModule.forRoot(),
     TypeaheadModule.forRoot(),
     PruebaModule,
+    RecaptchaV3Module
 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -90,6 +93,10 @@ import { TestValidatorDirective } from './validators/test-validator.directive';
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
+    },
+    {
+      provide: RECAPTCHA_V3_SITE_KEY,
+      useValue: environment.recaptcha.siteKey
     },
     {provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true}
   ],

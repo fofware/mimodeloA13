@@ -87,11 +87,11 @@ articuloSchema.virtual('fullname').get(function(){
   let fullName = '';
   let sep = '';
   if(this.d_fabricante){
-    fullName = this.fabricante.name;
+    fullName = this.fabricante['name'];
     sep = ' ';
   }
   if(this.d_marca){
-    fullName += sep+this.marca.name;
+    fullName += sep+this.marca['name'];
     sep = ' ';
   }
   if (this.name){
@@ -99,23 +99,23 @@ articuloSchema.virtual('fullname').get(function(){
     sep = ' ';
   }
   if(this.d_especie){
-    fullName += sep+this.especie.name;
+    fullName += sep+this.especie['name'];
     sep = ' ';
   }
   if(this.d_edad){
-    fullName += sep+this.edad.name;
+    fullName += sep+this.edad['name'];
     sep = ' ';
   }
   if(this.d_raza){
-    fullName += sep+this.raza.name;
+    fullName += sep+this.raza['name'];
     sep = ' ';
   } 
   if(this.d_rubro){
-    fullName += sep+this.rubro.name;
+    fullName += sep+this.rubro['name'];
     sep = ' ';
   } 
   if(this.d_linea){
-    fullName += sep+this.linea.name;
+    fullName += sep+this.linea['name'];
     sep = ' ';
   } 
   return fullName;

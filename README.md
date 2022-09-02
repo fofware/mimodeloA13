@@ -85,7 +85,8 @@
   * https://lenguajejs.com/npm/introduccion/instalacion-node-con-nvm/
 
 ### typescript
-  * https://www.digitalocean.com/community/tutorials/typescript-new-project
+  * https://www.digitalocean.com/community/tutorials/typescript-new-
+  * https://dev.to/afifsohaili/dealing-with-promises-in-an-array-with-async-await-5d7g
 
 ### boostrap
   * https://getbootstrap.com/docs/5.0/components/breadcrumb/
@@ -94,3 +95,8 @@
 
 ### fontawesome
   * https://www.npmjs.com/package/@fortawesome/angular-fontawesome
+### reCAPTCHA
+  * https://www.google.com/recaptcha/about/
+  * https://dev.to/rodrigokamada/adding-the-google-recaptcha-v3-to-an-angular-application-kge
+  * https://www.npmjs.com/package/ng-recaptcha3/v/1.2.7
+  * https://www.youtube.com/watch?v=zK0IN-5GsVU

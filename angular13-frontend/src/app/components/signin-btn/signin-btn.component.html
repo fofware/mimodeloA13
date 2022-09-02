@@ -27,7 +27,7 @@
   </div>
   <ng-template #viewLogged>
     <div ngbDropdownMenu aria-labelledby="dropdownForm1">
-      <button type="button" ngbDropdownItem>Profile</button>
+      <button type="button" ngbDropdownItem (click)="$event.stopPropagation();myDrop.close;profile()">Profile</button>
       <div class="dropdown-divider"></div>
       <button type="button" (click)="$event.stopPropagation();myDrop.close;logout()" ngbDropdownItem>Logout</button>
     </div>
