@@ -100,3 +100,6 @@
   * https://dev.to/rodrigokamada/adding-the-google-recaptcha-v3-to-an-angular-application-kge
   * https://www.npmjs.com/package/ng-recaptcha3/v/1.2.7
   * https://www.youtube.com/watch?v=zK0IN-5GsVU
+### QR code
+  * https://cincodias.elpais.com/cincodias/2021/02/10/lifestyle/1612984834_968318.html
+  * https://culturacolectiva.com/tecnologia/whatsapp-como-anadir-contactos-con-codigo-qr/

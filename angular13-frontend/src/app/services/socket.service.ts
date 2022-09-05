@@ -6,11 +6,14 @@ import { AuthService } from './auth.service';
 
 @Injectable()
 export class Socket1Service extends Socket {
-  constructor() {
+  constructor(private authService: AuthService) {
     super( { url: environment.SKT1.URL, options: environment.SKT1.OPTIONS } );
-    super.on('connect', () => {
-      console.log(this);
-    })
+    const options = authService.getToken();
+    if(options){
+      super.on('connect', () => {
+        console.log(this);
+      })
+    }
   };
 
   get(eventName:string, callback:Function ){
@@ -24,25 +27,23 @@ export class Socket1Service extends Socket {
 
 export class Socket2Service extends Socket {
   constructor() {
-    super( { url: environment.SKT2.URL, options: environment.SKT2.OPTIONS } );
+    super( { url: environment.SKT2.URL, options: { query:{
+      rooms: 'firulais-owner',
+      phone: '5493624380337',
+      token: localStorage.getItem('token'),
+    } } } );
     super.on('connect', () => {
-      console.log('conecto el Socket2Service');
+      this.ioSocket.onAny(async (eventName:string, ...args:any) => {
+        console.log('evento',eventName)
+        console.log('datos', args)
+        if(eventName === 'id'){
+          const token = localStorage.getItem('token')
+          const emite = await this.ioSocket.emit('id', token);
+        }
+     })
     })
-    //super.ioSocket.onAny((eventName:string, ...args: any) => {
-    //  console.log(eventName);
-    //  console.log(args);
-    //});
-    this.ioSocket.onAny(async (eventName:string, ...args:any) => {
-      console.log('evento',eventName)
-      console.log('datos', args)
-      if(eventName === 'id'){
-        const token = localStorage.getItem('token')
-        const emite = await this.ioSocket.emit('id', token);
-    
-      }
-    })
+  }
 
-  };
   get(eventName:string, callback:Function ){
     super.on(eventName, callback);
   }

@@ -37,6 +37,7 @@ export class SigninBtnComponent implements OnInit, OnDestroy {
   }
 
   login(myDrop:any):void {
+    console.log(this.user)
     this.authSrv.signIn(this.user).subscribe(res => {
       const token:any = res;
       myDrop.close();

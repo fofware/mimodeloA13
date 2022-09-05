@@ -54,8 +54,24 @@ const sendData = async (data:any, socket:any, msg:string) => {
 export default (io:any) => {
   const documents = {};
 
-  io.on('connection', async (socket:any) => {
+  io.on('connection', async (socket) => {
     console.log("Nueva coneccion");
+    if(socket.handshake.query.tocken){
+    } else {
+      socket.join('no-authorized');
+      socket.emit('no-authorized','no-authorized')
+    }
+    //console.log('query',socket.handshake.query)
+    const decodeToken = (token) => {
+      if (!token) return {}
+      return JSON.parse(decodeURIComponent(atob(token.split('.')[1]).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join('')));
+    }
+    const user = decodeToken(socket.handshake.query.token)
+    const nameRoom = socket.handshake.query.rooms;
+    socket.join(nameRoom);
+    console.log(user);
     socket.emit('id');
     let previousId;
     const safeJoin = currentId => {
@@ -63,11 +79,6 @@ export default (io:any) => {
       socket.join(currentId, () => console.log(`Socket ${socket.id} joined room ${currentId}`));
       previousId = currentId;
     };
-    const decodeToken = (token) => {
-      return JSON.parse(decodeURIComponent(atob(token.split('.')[1]).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join('')));
-    }
     const setSkt = (socket,user,phone) => {
       // esto hay que remover cuando el token este arreglado
       user.cuenta = !user.cuenta ? 'firulais': user.cuenta;
@@ -83,8 +94,8 @@ export default (io:any) => {
       socket.data.name = user.name;
       socket.user = user.nickname;
       //if(user.parent === null || user.parent === ''){
-        socket.join(`${user.cuenta}-owner`)
-      console.log(`hizo el join${user.cuenta}-owner`)
+      //  socket.join(`${user.cuenta}-owner`)
+      // console.log(`hizo el join${user.cuenta}-owner`)
 
       //}
     }
@@ -109,29 +120,6 @@ export default (io:any) => {
     socket.on('id', async (token, phone) => {
       setSkt(socket,decodeToken(token),phone);
 
-//      for (let index = 0; index < phone.length; index++) {
-//        p.number =  phone[index];
-//        if(!gateways[phone[index]]) {
-//
-//          const registered:any = await newGateway(p,socket);
-//
-//          if (typeof(registered) !== 'string'){
-//            gateways[p.number] = {
-//              client: await storedGateway( p ),
-//              rooms : []
-//            }
-//          }
-//          registered.destroy()
-//        } else {
-//          console.log('vapor cargado')
-//          gateways[phone[index]]['sockets'].push(socket);
-//          console.log(gateways)
-//        }
-//        const chats = await gateways[p.number].client.getChats();
-//        console.log(chats);
-//        socket.emit('chats',JSON.stringify(chats));
-//      }
-//      console.log(socket.user);
     })
     socket.on('setData', params => {
       console.log( params );

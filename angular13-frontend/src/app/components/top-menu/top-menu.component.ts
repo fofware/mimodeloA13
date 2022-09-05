@@ -23,7 +23,7 @@ export class TopMenuComponent implements OnInit {
     { title: 'Articulos', link: ['articulos'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user'] },
     { title: 'Productos', link: ['productos'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user'] },
     { title: 'Aplicaciones', link: ['admin'], hidden: this.isLogged, roles: ['sys_admin', 'sys_user'] },
-    { title: 'Aplicaciones', link: ['users'], hidden: this.isLogged, roles: ['client_admin', 'client_user'] },
+    { title: 'Aplicaciones', link: ['user'], hidden: this.isLogged, roles: ['client_admin', 'client_user'] },
     //{ title: 'Socket', link: ['socketdata'], roles: ['sys_admin', 'sys_user'] },
     //{ title: 'HttpData', link: ['htmldata'], roles: ['sys_admin', 'sys_user'] },
     //{ title: 'Usuarios', link: ['users'], roles: ['sys_admin', 'sys_user'] },

@@ -3,11 +3,19 @@ import { Schema, model, Document } from "mongoose";
 export interface WappMessage extends Document {
   from: string;
   to: string;
+  myId: string;
+  fromMe: boolean;
+  ack: number;
+  timestamp: number;
 };
 
 const MessageSchema = new Schema({
-  from: { type: Schema.Types.String, trim: true, index: true },
-  to: { type: Schema.Types.String, trim: true, index: true },
+  from: { type: Schema.Types.String, index: true },
+  to: { type: Schema.Types.String, index: true },
+  myId: {type: Schema.Types.String, index: true},
+  fromMe: {type: Schema.Types.Boolean, index: true},
+  ack: {type: Schema.Types.Number, index: true},
+  timestamp: {type: Schema.Types.Number, index: true},
 },
 { 
   strict: false,

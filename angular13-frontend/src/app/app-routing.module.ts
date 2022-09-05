@@ -72,7 +72,11 @@ const routes: Routes = [
     loadChildren: () => import(`./modules/user/user.module`)
       .then(
         module => module.UserModule
-      )
+      ),
+    canActivate:[IsLoggedGuard,AuthGuard],
+    data: {
+      roles: ['sys_admin','client_admin'],
+    }
   },
   {
     path: 'admin',

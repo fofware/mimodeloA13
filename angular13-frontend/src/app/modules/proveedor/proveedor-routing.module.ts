@@ -11,7 +11,7 @@ import { ProveedorComponent } from './proveedor.component';
 
 const routes: Routes = [
   {
-    path: '', 
+    path: '',
     component: ProveedorComponent,
     children: [
       //
@@ -29,7 +29,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            component: FormComponent 
+            component: FormComponent
           },
           //{
           //  path: 'marcas',
@@ -37,11 +37,11 @@ const routes: Routes = [
           //},
           //{
           //  path: 'articulos',
-          //  component: ArticulosComponent 
+          //  component: ArticulosComponent
           //},
           {
             path: 'productos',
-            component: ProductosComponent 
+            component: ProductosComponent
           },
           {
             path: '**',
@@ -51,13 +51,13 @@ const routes: Routes = [
       },
       {
         path: '', redirectTo: 'list',
-        //pathMatch: 'full' 
+        pathMatch: 'full'
       },
       {
         path: '**',
         component: NoPageComponent
       }
-    
+
     ]
   },
 ];

@@ -37,17 +37,17 @@ export class SignupComponent implements OnInit {
         updateOn: 'blur'
       }
     ],
-    phone: ['',[Validators.minLength(10), Validators.maxLength(10), Validators.pattern(`^[0-9]+$`)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     repassword: ['', [Validators.required, eMailValidation.MatchPassword('password')]],
+    phone: ['',[Validators.minLength(10), Validators.maxLength(10), Validators.pattern(`^[0-9]+$`)]],
     captcha: ['', []]
   });
   private destroy$ = new Subject<any>();
 
   constructor(
-    private fb: FormBuilder, 
-    private recaptchaV3Service: ReCaptchaV3Service, 
-    private authService: AuthService, 
+    private fb: FormBuilder,
+    private recaptchaV3Service: ReCaptchaV3Service,
+    private authService: AuthService,
     private alterEgoValidator: TestValidator,
     private router: Router
   ) { }
@@ -77,13 +77,16 @@ export class SignupComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((token: string) => {
         console.log(`Token [${token}] generated`);
-        this.formParent.patchValue({'captcha': token}) 
+        this.formParent.patchValue({'captcha': token})
         console.log("Envia", this.formParent.value);
         this.authService.signUp(this.formParent.value).subscribe(data => {
           console.log(data)
           const user = {
             email: this.formParent.value.email,
-            password: this.formParent.value.password
+            password: this.formParent.value.password,
+            nombre: this.formParent.value.nombre,
+            apellido: this.formParent.value.apellido,
+            phone: this.formParent.value.phone
           }
           this.authService.signIn(user).subscribe(res => {
             //setTimeout(function(){
@@ -115,7 +118,7 @@ export class SignupComponent implements OnInit {
   resetForm():void{
     this.formParent.reset();
   }
-  
+
   checkCaptcha(captchaResponse : any) {
     console.log(captchaResponse)
     this.captchaResolved = (captchaResponse && captchaResponse.length > 0) ? true : false

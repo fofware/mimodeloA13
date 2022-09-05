@@ -1,12 +1,10 @@
-/**
- * https://cincodias.elpais.com/cincodias/2021/02/10/lifestyle/1612984834_968318.html
- * https://culturacolectiva.com/tecnologia/whatsapp-como-anadir-contactos-con-codigo-qr/
- */
+
 import { Buttons, Client, LegacySessionAuth, List, LocalAuth, Location } from 'whatsapp-web.js';
 import whatsapp from './models/whatsapp';
 import wappphone  from './models/phones';
 import { Router } from 'express';
 import app from './app';
+/*
 export interface phoneGateway {
   cuenta: string;
   number: string;
@@ -14,63 +12,27 @@ export interface phoneGateway {
   client?: any;
   socket?: any;
 }
+*/
 
 export const gateways = {}
 
 export const initAllWapp = async (app) =>{
 
   const array = await wappphone.find();
-  //console.log(array);
   const io = app.get('sio');
   const router: Router = Router();
   const totalini = new Date();
-//  for (let index = 0; index < array.length; index++) {
-//    const ini = new Date()
-//    const p:any = array[index];
-//    console.log(`conectando gateway${p.number}`)
-//    gateways[p.number] = {
-//      client: await storedGateway(p),
-//    }
-//    const end = new Date()
-//    const dif = end.getTime()-ini.getTime();
-//    console.log(dif)
-//    //if ( typeof(gateways[p.number].client) !== 'string') 
-//    //  setRoutes( router, p.number)
-//    //const chats = await gateways[p.number].client.getChats();
-//    //const messages = await gateways[p.number].client.searchMessages();
-///*
-//    for (let i = 0; i < chats.length; i++) {
-//      const e = chats[i];
-//      e['messages'] = await e.fetchMessages({limit: 3000});
-//      e['contacto'] = await e.getContact();
-//      e['picUrl'] = await e['contacto'].getProfilePicUrl();
-//    }
-//*/
-//    //io.to(p.rooms).emit('chats',chats);
-//    //const contactos = await gateways[p.number].client.getContacts()
-//    //for (let i = 0; i < contactos.length; i++) {
-//    //  const c = contactos[i];
-//    //  //c['chat'] = await c.getChat();
-//    //  //c['chat']['messages'] = await c['chat'].fetchMessages({limit: 2000})
-//    //  //c['picUrl'] = await c.getProfilePicUrl();
-//    //  //c['about'] = await c.getAbout();
-//    //}
-//    //io.to(p.rooms).emit('contactos',contactos);
-//    
-//    console.log(`${p.number} gateway listo`)
-//  }
   const asyncFunctions = []
   for (let index = 0; index < array.length; index++) {
     const p:any = array[index];
-//      client: await storedGateway(p),
     asyncFunctions.push(storedGateway(p))
   }
   const results:Client[] = await Promise.all(asyncFunctions)
+  results.map( client => { setRoutes(router,client) })
   for (let i = 0; i < results.length; i++) {
     const c = results[i];
     console.log(c.info)
   }
-  //console.log(results)
   const totalend = new Date();
   const totaldif = totalend.getTime()-totalini.getTime();
   console.log(totaldif)
@@ -79,23 +41,28 @@ export const initAllWapp = async (app) =>{
 let io;
 export const storedGateway = async ( p:any ) => {
   return new Promise(async (resolve, reject) => {
-    //console.log(p);
     io = app.get('sio')
     const sockets = await io.fetchSockets();
+    console.log(`****** Inspecciona Sokets ******`)
     for( const skt of sockets){
-      //skt.join('firulais-owner')
-      console.log(skt.data.rooms)
+      console.log(`** skt.id ${skt.id}`);
+      if(skt?.data){
+        console.log(skt.data.email)
+
+      }
+
+      console.log(`** skt.data.rooms ${skt.data.rooms}`)
       console.log(skt.id);
       console.log(skt.rooms)
-      console.log(skt.data.email)
     }
     const client = new Client({
       authStrategy: new LocalAuth(
         {
           dataPath: './sessions/',
-          clientId: `${p.cuenta}_${p.number}`
-        }
+          clientId: `${p.cuenta}_${p.number}`,
+        },
       ),
+      qrMaxRetries: 10,
       puppeteer: {
         args: ['--no-sandbox'],
       }
@@ -151,14 +118,11 @@ export const storedGateway = async ( p:any ) => {
     client.on('message', async msg => {
       //gateways[client.info.wid.user].sockets.forEach( stk => stk.emit('message',msg))
       io.to(p.rooms).emit('message',msg)
-      msg['on'] = 'message';
+      msg['on'] = `message ${client.info.wid.user}`;
       msg['serialized'] = msg.id._serialized; 
-      msg['myid'] = msg.id.id;
-      try {
-        const ret = await whatsapp.insertMany([msg])
-      } catch (error) {
-        console.log(error)        
-      }
+
+      const ret = await saveMsg(msg)
+
       console.log('---------------------------------')
       console.log(`${client.info.pushname} ${client.info.wid.user} MESSAGE RECEIVED`);
       showTime(msg);
@@ -168,14 +132,12 @@ export const storedGateway = async ( p:any ) => {
     client.on('message_ack', async (msg, ack) => {
       //gateways[client.info.wid.user].sockets.forEach( stk => stk.emit('message_ack',{msg,ack}))
       io.to(p.rooms).emit('message_ack',{msg,ack})
-      msg['on'] = 'message_ack';
+
+      msg['on'] = `message_ack ${client.info.wid.user}`;
       msg['serialized'] = msg.id._serialized; 
-      msg['myid'] = msg.id.id;
-      try {
-        const ret = await whatsapp.insertMany([msg])
-      } catch (error) {
-        console.log(error)        
-      }
+
+      const ret = await saveMsg(msg)
+
       const ackTxt = ['','se envio','recibió','leyó','Dio play al audio']
       console.log('---------------------------------')
       console.log(`${client.info.pushname} ${client.info.wid.user} message_ack ${ack} ${msg.to} ${ackTxt[ack]}`);
@@ -184,14 +146,12 @@ export const storedGateway = async ( p:any ) => {
 
     client.on('message_create', async (msg) => {
       io.to(p.rooms).emit('message_create',msg)
-      msg['on'] = 'message_create';
+
+      msg['on'] = `message_create ${client.info.wid.user}`;
       msg['serialized'] = msg.id._serialized; 
-      msg['myid'] = msg.id.id;
-      try {
-        const ret = await whatsapp.insertMany([msg])
-      } catch (error) {
-        console.log(error)        
-      }
+
+      const ret = await saveMsg(msg)
+
       console.log('---------------------------------')
       console.log(`${client.info.pushname} ${client.info.wid.user} message_create`);
       showTime(msg);
@@ -201,13 +161,10 @@ export const storedGateway = async ( p:any ) => {
       //gateways[client.info.wid.user].sockets.forEach( stk => stk.emit('message_revoke_everyone',{message,revoked_msg}))
       msg['on'] = 'message_revoke_everyone';
       msg['serialized'] = msg.id._serialized; 
-      msg['myid'] = msg.id.id;
       msg['revoked_msg'] = revoked_msg;
-      try {
-        const ret = await whatsapp.insertMany([msg])
-      } catch (error) {
-        console.log(error)        
-      }
+
+      const ret = await saveMsg(msg)
+
       io.to(p.rooms).emit('message_revoke_everyone',{msg,revoked_msg})
       console.log('---------------------------------')
       console.log(`${client.info.pushname} ${client.info.wid.user} message_revoke_everyone`);
@@ -218,7 +175,7 @@ export const storedGateway = async ( p:any ) => {
       const numero = p.number;
       //const picUrl = await client.getProfilePicUrl(`${numero}@c.us`)
       io.to(p.rooms).emit('qr',{qr,numero})
-      console.log(`${client.info.pushname} ${client.info.wid.user} qr=>`,qr);
+//      console.log(`${client.info.pushname} ${client.info.wid.user} qr=>`,qr);
       console.log("qr",qr);
       //reject('Error necesita leer el qr')
     })
@@ -230,6 +187,52 @@ export const storedGateway = async ( p:any ) => {
       resolve(client)
     })
   })
+}
+
+const saveMsg = async (m) => {
+
+  m['myid'] = m.id.id;
+  m['fromMe'] = m.id.fromMe;
+  try {
+    let ret = await whatsapp.findOneAndUpdate(
+      { myId: m.myId, fromMe: m.fromMe, timestamp: m.timestamp, from: m.from, to: m.to}, 
+      m, 
+      {
+
+        new: true,
+        upsert: true,
+        rawResult: true // Return the raw result from the MongoDB driver
+      }
+    );
+    ret.value instanceof whatsapp; // true
+    // The below property will be `false` if MongoDB upserted a new
+    // document, and `true` if MongoDB updated an existing object.
+    ret.lastErrorObject.updatedExisting; // false
+    return ret;
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
+const saveMsg1 = async (msg) => {
+  const filter = {}
+  try {
+    let ret = await whatsapp.findOneAndUpdate(filter, msg, {
+      new: true,
+      upsert: true,
+      rawResult: true // Return the raw result from the MongoDB driver
+    });
+
+    ret.value instanceof whatsapp; // true
+    // The below property will be `false` if MongoDB upserted a new
+    // document, and `true` if MongoDB updated an existing object.
+    ret.lastErrorObject.updatedExisting; // false
+    return ret;
+  } catch (error) {
+    console.log(error);
+  }
+
 }
 
 const showTime = (msg) => {
@@ -246,7 +249,7 @@ const showTime = (msg) => {
 
 export const newGateway = async ( skt ) => {
   return new Promise((resolve, reject) => {
-    
+    const tmpSessionName = "asdfasdfasdfasdfasdf";
     const client = new Client({
       authStrategy: new LocalAuth(
         {
@@ -347,133 +350,147 @@ export const newGateway = async ( skt ) => {
     })
   })
 }
-const updateMsg = (msg) => {
 
-}
-const saveMsg = async (msg) => {
-  const filter = {}
-  try {
-    let ret = await whatsapp.findOneAndUpdate(filter, msg, {
-      new: true,
-      upsert: true,
-      rawResult: true // Return the raw result from the MongoDB driver
-    });
-
-    ret.value instanceof whatsapp; // true
-    // The below property will be `false` if MongoDB upserted a new
-    // document, and `true` if MongoDB updated an existing object.
-    ret.lastErrorObject.updatedExisting; // false
-  } catch (error) {
-    console.log(error);
-  }
-
-}
-
-
-const setRoutes = (router, number) => {
+const setRoutes = (router, client:Client) => {
   /**
    * Routes
    */
-  const client = gateways[number].client
-  router.get(`/${number}/blockedcontactos`, async (req, res) =>{
+  const num  = client.info.wid.user || client.info.me.user;
+  router.get(`/${num}/blockedcontactos`, async (req, res) =>{
     const contacts = await client.getBlockedContacts();
     res.status(200).json(contacts);
   })
 
-  router.get(`/${number}/blockedcontactos`, async (req, res) =>{
+  router.get(`/${num}/blockedcontactos`, async (req, res) =>{
     const contacts = await client.getBlockedContacts();
     res.status(200).json(contacts);
   })
 
-  router.get(`/${number}/chats`, async (req, res) =>{
+  router.get(`/${num}/chats/:limit`, async (req, res) =>{
+    const {limit} = req.params
     const chats = await client.getChats();
     //const messages = await gateways[p.number].client.searchMessages();
+    const tosave = [];
     for (let i = 0; i < chats.length; i++) {
       const e = chats[i];
-      e['messages'] = await e.fetchMessages({limit: 3000});
+      e['messages'] = await e.fetchMessages({'limit': limit});
+      e['messages'].map( async (m:any) =>{
+        tosave.push( saveMsg(m) );
+      })
+
       //e['contacto'] = await e.getContact();
       //e['picUrl'] = await e['contacto'].getProfilePicUrl();
     }
-
-    res.status(200).json(chats);
+    const results = await Promise.all(tosave)
+    const ret = {
+      modifiedCount: 0,
+      upsertedCount: 0,
+      total: results.length
+    }
+    
+    results.map(r => {
+      if(r.lastErrorObject.updatedExisting) ret.modifiedCount++;
+      else ret.upsertedCount++
+    } )
+    
+    console.log(results);
+    res.status(200).json(ret);
   })
 
-  router.get(`/${number}/chat/:serialized`, async (req, res) =>{
+  router.get(`/${num}/chat/:serialized`, async (req, res) =>{
     const {serialized} = req.params
     const value = await client.getChatById(serialized);
     res.status(200).json(value);
   })
 
-  router.get(`/${number}/chat/:serialized/labels`, async (req, res) =>{
+  router.get(`/${num}/chat/:serialized/labels`, async (req, res) =>{
     const {serialized} = req.params
     const value = await client.getChatLabels(serialized);
     res.status(200).json(value);
   })
 
-  router.get(`/${number}/chatsbylabel/:id`, async (req, res) =>{
+  router.get(`/${num}/chatsbylabel/:id`, async (req, res) =>{
     const {id} = req.params
     const value = await client.getChatLabels(id);
     res.status(200).json(value);
   })
 
-  router.get(`/${number}/commongroups/:serialized`, async (req, res) =>{
+  router.get(`/${num}/commongroups/:serialized`, async (req, res) =>{
     const {serialized} = req.params
     const value = await client.getCommonGroups(serialized);
     res.status(200).json(value);
   })
   
-  router.get(`/${number}/contactos`, async (req, res) =>{
+  router.get(`/${num}/contactos`, async (req, res) =>{
     const contacts = await client.getContacts()
+    const datArray = []
+    contacts.map( async c => {
+      datArray.push(c.getAbout())
+      datArray.push(c.getChat())
+      datArray.push(c.getProfilePicUrl())
+      datArray.push(c.getFormattedNumber())
+      datArray.push(c.getCommonGroups())
+    })
+    const results = await Promise.all(datArray)
+    let i = 0;
+    contacts.map(c => {
+      c['about'] = results[0+i];
+      c['chat'] = results[1+i];
+      c['picUrl'] = results[2+i];
+      c['fNumber'] = results[3+i];
+      c['cGroups'] = results[4+i];
+      i+=5;
+    })
     res.status(200).json(contacts);
   });
 
-  router.get(`/${number}/contact/:serialized`, async (req, res) =>{
+  router.get(`/${num}/contact/:serialized`, async (req, res) =>{
     const {serialized} = req.params
     const value = await client.getContactById(serialized);
     res.status(200).json(value);
   })
 
-  router.get(`/${number}/countrycode/:number`, async (req, res) =>{
+  router.get(`/${num}/countrycode/:number`, async (req, res) =>{
     const {number} = req.params
     const value = await client.getCountryCode(number);
     res.status(200).json(value);
   })
 
-  router.get(`/${number}/formattednumber/:number`, async (req, res) =>{
+  router.get(`/${num}/formattednumber/:number`, async (req, res) =>{
     const {number} = req.params
     const value = await client.getFormattedNumber(number);
     res.status(200).json(value);
   })
 
-  router.get(`/${number}/invitedinfo/:code`, async (req, res) =>{
+  router.get(`/${num}/invitedinfo/:code`, async (req, res) =>{
     const {code} = req.params
     const value = await client.getInviteInfo(code);
     res.status(200).json(value);
   })
 
-  router.get(`/${number}/labels`, async (req, res) =>{
+  router.get(`/${num}/labels`, async (req, res) =>{
     const value = await client.getLabels();
     res.status(200).json(value);
   })
 
-  router.get(`/${number}/numberid/:number`, async (req, res) =>{
+  router.get(`/${num}/numberid/:number`, async (req, res) =>{
     const {number} = req.params
     const value = await client.getNumberId(number);
     res.status(200).json(value);
   })
 
-  router.get(`/${number}/profilepicurl/:serialized`, async (req, res) =>{
+  router.get(`/${num}/profilepicurl/:serialized`, async (req, res) =>{
     const {serialized} = req.params
     const value = await client.getProfilePicUrl(serialized);
     res.status(200).json(value);
   })
 
-  router.get(`/${number}/state`, async (req, res) =>{
+  router.get(`/${num}/state`, async (req, res) =>{
     const value = await client.getState();
     res.status(200).json(value);
   })
 
-  router.get(`/${number}/wwebversion`, async (req, res) =>{
+  router.get(`/${num}/wwebversion`, async (req, res) =>{
     const value = await client.getWWebVersion();
     res.status(200).json(value);
   })
@@ -484,35 +501,35 @@ const setRoutes = (router, number) => {
   //  res.status(200).json(`${p.number} fue inicializado`);
   //})
 
-  router.get(`/${number}/isregistereduser/:id`, async (req, res) =>{
+  router.get(`/${num}/isregistereduser/:id`, async (req, res) =>{
     const { id } = req.params;
     const value = await client.isRegisteredUser(`${id}@c.us`);
     res.status(200).json(value);
   })
   
-  router.get(`/${number}/logout`, async (req, res) =>{
+  router.get(`/${num}/logout`, async (req, res) =>{
     const value = await client.logout();
-    res.status(200).json(`${number} fue deslogueado`);
+    res.status(200).json(`${num} fue deslogueado`);
   })
   // No está probada
-  router.get(`/${number}/markchatunread/:id`, async (req, res) =>{
+  router.get(`/${num}/markchatunread/:id`, async (req, res) =>{
     const { id } = req.params;
     const value = await client.markChatUnread(id);
     res.status(200).json(value);
   })
 
   // No está probada
-  router.get(`/${number}/mutechat/:chatid/:unmutedate`, async (req, res) =>{
+  router.get(`/${num}/mutechat/:chatid/:unmutedate`, async (req, res) =>{
     const { chatid, unmutedate } = req.params;
     const value = await client.muteChat(chatid,unmutedate);
     res.status(200).json(value);
   })
   
   // No está probada
-  router.get(`/${number}/pinchat`, async (req, res) =>{
-    const value = await client.pinChat();
-    res.status(200).json(value);
-  })
+  //router.get(`/${num}/pinchat`, async (req, res) =>{
+  //  const value = await client.pinChat();
+  //  res.status(200).json(value);
+  //})
   // No usar esto no entiendo que hace pero debo rearrancar el programa para que vuelva a funcionar
   //router.get(`/${p.number}/resetstate`, async (req, res) =>{
   //  const value = await p.client.resetState();
@@ -520,30 +537,30 @@ const setRoutes = (router, number) => {
   //})
   
   // No está probada
-  router.post(`/${number}/searchmessages`, async (req, res) =>{
+  router.post(`/${num}/searchmessages`, async (req, res) =>{
     const { query, options } = req.body;
     const value = await client.searchMessages(query,options);
     res.status(200).json(value);
   })
-  router.get(`/${number}/messages`, async (req, res) =>{
-    const messages = await whatsapp.find()
+  router.get(`/${num}/messages`, async (req, res) =>{
+    const messages = await whatsapp.find({$or:[{from: `${num}@c.us`},{to: `${num}@c.us`}]}).sort({ timestamp: -1}).limit(200)
  
     res.status(200).json(messages);
   })
 
   // No está probada
-  router.post(`/${number}/sendmessage`, async (req, res) =>{
+  router.post(`/${num}/sendmessage`, async (req, res) =>{
     const { chatId, content, options } = req.query;
     const value = await client.sendMessage(chatId, content, options);
     res.status(200).json(value);
   })
   
-  router.get(`/${number}/available`, async (req, res) =>{
+  router.get(`/${num}/available`, async (req, res) =>{
     const value = await client.sendPresenceAvailable();
     res.status(200).json('sendPresenceAvailable');
   })
 
-  router.get(`/${number}/unavailable`, async (req, res) =>{
+  router.get(`/${num}/unavailable`, async (req, res) =>{
     const value = await client.sendPresenceUnavailable();
     res.status(200).json('sendPresenceUnavailable');
   })

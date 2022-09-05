@@ -7,6 +7,7 @@ import { Socket2Service } from 'src/app/services/socket.service';
 export class WappService {
   data = this.socket.fromEvent<any>('qr');
   picUrl = this.socket.fromEvent<any>('picUrl');
+  currentMessage = this.socket.fromEvent<any>("message");
 
   constructor(private socket: Socket2Service) { }
 

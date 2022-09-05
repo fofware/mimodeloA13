@@ -1,26 +1,34 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { NoPageComponent } from 'src/app/components/no-page/no-page.component';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { HomeComponent } from './components/home/home.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { UserComponent } from './user.component';
 
 const routes: Routes = [
   {
-    path: '', 
-    component: HomeComponent,
-    canActivate: [AuthGuard],
-    data: {
-      user: {
-        name:'Visitante',
-        roles: ['visitante'],
+    path: '',
+    component: UserComponent,
+    children: [
+      {
+        path: 'home',
+        component: HomeComponent
       },
-      userRoles: [] // Multiple Allowed User
-    }
+      {
+        path: 'profile',
+        component: ProfileComponent
+      },
+      {
+        path: '', redirectTo: 'home',
+        pathMatch: 'full'
+      },
+      {
+        path: '**',
+        component: NoPageComponent
+      }
 
-  },
-  {
-    path: 'profile',
-    component: ProfileComponent
+    ]
   }
 ];
 

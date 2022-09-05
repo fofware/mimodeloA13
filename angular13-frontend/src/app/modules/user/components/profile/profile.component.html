@@ -1,1 +1,84 @@
-<p>profile works!</p>
+<div class="container">
+      <div class="card">
+        <h3 class="card-header">Registrarse</h3>
+        <div class="card-body">
+
+          <form class="need-validation" [formGroup]="formProfile">
+            <div class="mb-3 form-field">
+              <label class="form-label">Nombres</label>
+              <input type="text" class="form-control" placeholder="Ej: Juan" formControlName="nombre"
+                [ngClass]="{'is-invalid': isInvalid('nombre')}" />
+              <div class="invalid-feedback">
+              <!--
+                para debug
+                {{formProfile.get('name')?.errors | json}}
+              -->
+                <ul>
+                  <li *ngIf="formProfile.get('nombre')?.errors?.['required']">El campo no puede quedar vacio</li>
+                  <li *ngIf="formProfile.get('nombre')?.errors?.['minlength']">La longitud mínima es de
+                    {{formProfile.get('nombre')?.errors?.['minlength'].requiredLength}} caracteres solo tiene
+                    {{formProfile.get('nombre')?.errors?.['minlength'].actualLength}}</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mb-3 form-field">
+              <label class="form-label">Apellido</label>
+              <input type="text" class="form-control" placeholder="Ej: Perez" formControlName="apellido"
+                [ngClass]="{'is-invalid': isInvalid('name')}" />
+              <div class="invalid-feedback">
+              <!--
+                para debug
+                {{formProfile.get('name')?.errors | json}}
+              -->
+                <ul>
+                  <li *ngIf="formProfile.get('name')?.errors?.['required']">El campo no puede quedar vacio</li>
+                  <li *ngIf="formProfile.get('name')?.errors?.['minlength']">La longitud mínima es de
+                    {{formProfile.get('name')?.errors?.['minlength'].requiredLength}} caracteres solo tiene
+                    {{formProfile.get('name')?.errors?.['minlength'].actualLength}}</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mb-3 form-field">
+              <label class="form-label">Nro Celular</label>
+              <input type="text" class="form-control" placeholder="Ej: 5493624683356" formControlName="phone"
+                [ngClass]="{ 'is-invalid': isInvalid('phone') }" />
+              <div class="invalid-feedback">
+                <!--
+              para debug
+            {{formProfile.get('phone')?.errors | json}}
+            {{formProfile.get('phone')?.errors | json}}
+            -->
+                <ul>
+                  <li *ngIf="formProfile.get('phone')?.errors?.['minlength']">Deben ser
+                    {{formProfile.get('phone')?.errors?.['minlength'].requiredLength}} números y tiene
+                    {{formProfile.get('phone')?.errors?.['minlength'].actualLength}}</li>
+                  <li *ngIf="formProfile.get('phone')?.errors?.['maxlength']">Deben ser
+                    {{formProfile.get('phone')?.errors?.['maxlength'].requiredLength}} números y tiene
+                    {{formProfile.get('phone')?.errors?.['maxlength'].actualLength}}</li>
+                  <li *ngIf="formProfile.get('phone')?.errors?.['pattern']">Deben ser sólo números y tiene
+                    {{formProfile.get('phone')?.errors?.['pattern'].actualValue}}</li>
+
+                </ul>
+              </div>
+            </div>
+          </form>
+          <div class="">
+            <button type="submit" [hidden]="formProfile.invalid" class="btn btn-primary btn-lg float-end"
+              (click)="enviar()">Registrarse</button>
+          </div>
+        </div>
+      </div>
+</div>
+<pre>
+  dirty {{formProfile.dirty | json}}
+</pre>
+<pre>
+  touched {{formProfile.touched | json}}
+</pre>
+
+<pre>
+  status {{formProfile.status | json}}
+</pre>
+<pre>
+  value {{formProfile.value | json}}
+</pre>
