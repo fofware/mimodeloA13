@@ -38,6 +38,8 @@ import { EmailcheckDirective } from './validators/emailcheck.directive';
 import { TestValidatorDirective } from './validators/test-validator.directive';
 import { RecaptchaV3Module, RECAPTCHA_V3_SITE_KEY } from 'ng-recaptcha';
 import { environment } from 'src/environments/environment';
+import { UserDashboardModule } from './modules/user-dashboard/user-dashboard.module';
+import { TestModule } from './modules/test/test.module';
 //import { ProdNameFilterPipe } from './pipes/prod-name-filter.pipe';
 
 @NgModule({
@@ -72,6 +74,7 @@ import { environment } from 'src/environments/environment';
     NgxSpinnerModule,
     SocketIoModule,
     HttpClientModule,
+    UserDashboardModule,
     ToastrModule.forRoot({
       timeOut: 10000,
       positionClass: 'toast-top-right',
@@ -82,7 +85,8 @@ import { environment } from 'src/environments/environment';
     TooltipModule.forRoot(),
     TypeaheadModule.forRoot(),
     PruebaModule,
-    RecaptchaV3Module
+    RecaptchaV3Module,
+    TestModule
 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

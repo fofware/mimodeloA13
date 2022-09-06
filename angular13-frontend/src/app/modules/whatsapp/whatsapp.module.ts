@@ -18,6 +18,8 @@ import { WhatsappChatsComponent } from './components/whatsapp-chats/whatsapp-cha
 import { WhatsappMsgsComponent } from './components/whatsapp-msgs/whatsapp-msgs.component';
 import { WappmsgsListComponent } from './components/wappmsgs-list/wappmsgs-list.component';
 import { WappchatsListComponent } from './components/wappchats-list/wappchats-list.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { WhatsappHomeComponent } from './components/whatsapp-home/whatsapp-home.component';
 
 
 @NgModule({
@@ -31,7 +33,8 @@ import { WappchatsListComponent } from './components/wappchats-list/wappchats-li
     WhatsappChatsComponent,
     WhatsappMsgsComponent,
     WappmsgsListComponent,
-    WappchatsListComponent
+    WappchatsListComponent,
+    WhatsappHomeComponent
   ],
   providers:[
   //  Socket2Service,
@@ -45,7 +48,8 @@ import { WappchatsListComponent } from './components/wappchats-list/wappchats-li
     FormsModule,
     CommonModule,
     WhatsappRoutingModule,
-    QRCodeModule
+    QRCodeModule,
+    NgbModule
 
   ]
 })

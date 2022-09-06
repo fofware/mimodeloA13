@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { NoPageComponent } from 'src/app/components/no-page/no-page.component';
 import { WappclientComponent } from './components/wappclient/wappclient.component';
 import { WappconnectComponent } from './components/wappconnect/wappconnect.component';
+import { WhatsappHomeComponent } from './components/whatsapp-home/whatsapp-home.component';
 import { WhatsappWebComponent } from './components/whatsapp-web/whatsapp-web.component';
 import { WhatsappComponent } from './whatsapp.component';
 
@@ -16,6 +17,14 @@ const routes: Routes =   [
     // https://www.tektutorialshub.com/angular/angular-passing-parameters-to-route/
     // https://www.tektutorialshub.com/angular/angular-child-routes-nested-routes/
     //
+    //{
+    //  path:'home'
+    //  cpmponent:
+    //}
+    {
+      path: '',
+      component: WhatsappHomeComponent
+    },
     {
       path: 'client',
       component: WappclientComponent
@@ -23,11 +32,11 @@ const routes: Routes =   [
     {
       path: 'connect',
       component: WappconnectComponent
-    },    
+    },
     {
       path: 'web',
       component: WhatsappWebComponent
-    },    
+    },
     {
       path: '**',
       component: NoPageComponent

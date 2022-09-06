@@ -17,6 +17,7 @@ export interface IUser extends Document {
   provincia: string;
   zipcode: string;
   pais: string;
+  group: string;
   roles: [];                /*
                                 Se debe setear automáticamente al crear la cuenta, 
                                 "SYSADMIN" para la cuenta principal  se debe crear al inicializar el sistema obteniendo el usuario y contraseña de enviroment
@@ -52,6 +53,7 @@ const userSchema = new Schema({
   , zipcode: { type: Schema.Types.String, trim: true }
   , pais: { type: Schema.Types.String, trim: true }
   , roles: []
+  , group: { type: Schema.Types.String, trim: true }
 },{
   timestamps: false,
   versionKey: false

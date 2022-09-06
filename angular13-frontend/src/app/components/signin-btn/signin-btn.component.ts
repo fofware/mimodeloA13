@@ -40,7 +40,10 @@ export class SigninBtnComponent implements OnInit, OnDestroy {
     console.log(this.user)
     this.authSrv.signIn(this.user).subscribe(res => {
       const token:any = res;
+      const user = this.authSrv.userValue;
+      console.log(user);
       myDrop.close();
+      this.router.navigate([`/${user.group}`])
     })
   }
 

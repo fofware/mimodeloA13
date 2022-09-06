@@ -50,6 +50,10 @@ export class AuthService {
         }).join('')));
       const d = new Date().getTime()/1000;
       if (jwtToken.exp >= d){
+        const rol = jwtToken.roles[0];
+        const type = rol.split('_');
+        jwtToken['type'] = type[0];
+        jwtToken['subType'] = type[1];
         this.loggedUsr.next(jwtToken);
         this.logged.next(true)
         return jwtToken;

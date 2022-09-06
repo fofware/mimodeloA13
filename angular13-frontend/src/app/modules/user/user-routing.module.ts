@@ -12,17 +12,17 @@ const routes: Routes = [
     component: UserComponent,
     children: [
       {
-        path: 'home',
+        path: '',
         component: HomeComponent
       },
       {
         path: 'profile',
         component: ProfileComponent
       },
-      {
-        path: '', redirectTo: 'home',
-        pathMatch: 'full'
-      },
+      //{
+      //  path: '', redirectTo: '',
+      //  pathMatch: 'full'
+      //},
       {
         path: '**',
         component: NoPageComponent

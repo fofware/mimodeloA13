@@ -28,18 +28,13 @@ export class Socket1Service extends Socket {
 export class Socket2Service extends Socket {
   constructor() {
     super( { url: environment.SKT2.URL, options: { query:{
-      rooms: 'firulais-owner',
-      phone: '5493624380337',
       token: localStorage.getItem('token'),
+
     } } } );
     super.on('connect', () => {
       this.ioSocket.onAny(async (eventName:string, ...args:any) => {
         console.log('evento',eventName)
         console.log('datos', args)
-        if(eventName === 'id'){
-          const token = localStorage.getItem('token')
-          const emite = await this.ioSocket.emit('id', token);
-        }
      })
     })
   }

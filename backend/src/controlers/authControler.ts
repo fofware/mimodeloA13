@@ -3,7 +3,6 @@ import User, { IUser } from "../models/user";
 import { ExtractJwt } from "passport-jwt";
 import jwt from 'jsonwebtoken';
 import config from '../config';
-import { httpClient } from "../common/httpClient-promise";
 const request = require('request-promise');
 
 function createToken(user: IUser | any ) {
@@ -72,6 +71,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     nombre: req.body.nombre,
     apellido: req.body.apellido,
     roles: ['client_admin'],
+    group: 'user',
     phone: req.body.phone,
     password: req.body.password
   }

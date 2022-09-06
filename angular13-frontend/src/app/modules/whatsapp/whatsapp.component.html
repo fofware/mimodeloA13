@@ -1,2 +1,23 @@
-<p>whatsapp works!</p>
-<router-outlet></router-outlet>
+<div class="container-fluid bg-light">
+  <nav class="navbar navbar-expand-sm">
+    <div class="container-fluid">
+      <!--div class="d-flex">
+        <button
+          class="navbar-toggler align-self-center"
+          type="button"
+          (click)='isMenuCollapsed = !isMenuCollapsed'
+          >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div-->
+      <!--div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse"-->
+        <ul ngbNav [activeId]="route.fragment | async" class="navbar-nav">
+          <li [ngbNavItem]="menu.link" *ngFor="let menu of usrMenu">
+            <a ngbNavLink *ngIf="(menu.link && !menu.fragment)" [hidden]='menu.hidden || false' [routerLink]="menu.link" routerLinkActive="active" [innerHTML]="menu.title" (click)="isMenuCollapsed=true"></a>
+            <a ngbNavLink *ngIf="(menu.link && menu.fragment)" [hidden]='menu.hidden || false' [routerLink]="menu.link" [fragment]="menu.fragment" routerLinkActive="active" [innerHTML]="menu.title"></a>
+          </li>
+        </ul>
+      </div>
+    <!--/div-->
+  </nav>
+</div><router-outlet></router-outlet>

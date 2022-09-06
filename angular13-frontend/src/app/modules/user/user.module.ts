@@ -6,20 +6,24 @@ import { HomeComponent } from './components/home/home.component';
 import { UserComponent } from './user.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TestModule } from '../test/test.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
   declarations: [
     HomeComponent,
     UserComponent,
-    ProfileComponent,
+    ProfileComponent
 
   ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    UserRoutingModule
+    UserRoutingModule,
+    TestModule,
+    NgbModule
   ]
 })
 export class UserModule { }

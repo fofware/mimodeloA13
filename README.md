@@ -67,6 +67,7 @@
   * https://www.bezkoder.com/angular-13-form-validation/
   * https://stackoverflow.com/questions/68628029/implement-async-validator-on-angular-formcontrol
   * https://upmostly.com/angular/async-validators-in-angular
+  * https://www.youtube.com/watch?v=TJ9IPJ-Qgao
   
 ### js
   * https://www.digitalocean.com/community/tutorials/js-array-find-method

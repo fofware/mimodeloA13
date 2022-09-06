@@ -4,15 +4,6 @@ import whatsapp from './models/whatsapp';
 import wappphone  from './models/phones';
 import { Router } from 'express';
 import app from './app';
-/*
-export interface phoneGateway {
-  cuenta: string;
-  number: string;
-  name: string;
-  client?: any;
-  socket?: any;
-}
-*/
 
 export const gateways = {}
 
@@ -42,27 +33,16 @@ let io;
 export const storedGateway = async ( p:any ) => {
   return new Promise(async (resolve, reject) => {
     io = app.get('sio')
-    const sockets = await io.fetchSockets();
-    console.log(`****** Inspecciona Sokets ******`)
-    for( const skt of sockets){
-      console.log(`** skt.id ${skt.id}`);
-      if(skt?.data){
-        console.log(skt.data.email)
-
-      }
-
-      console.log(`** skt.data.rooms ${skt.data.rooms}`)
-      console.log(skt.id);
-      console.log(skt.rooms)
-    }
+    let id = p.user
+    if (p.phone) id = `${p.user}_${p.phone}`
     const client = new Client({
       authStrategy: new LocalAuth(
         {
           dataPath: './sessions/',
-          clientId: `${p.cuenta}_${p.number}`,
+          clientId: id,
         },
       ),
-      qrMaxRetries: 10,
+      qrMaxRetries: 5,
       puppeteer: {
         args: ['--no-sandbox'],
       }
@@ -71,7 +51,6 @@ export const storedGateway = async ( p:any ) => {
 
     client.on('auth_failure', err =>  {
       io.to(p.rooms).emit('auth_failure',err)
-      //console.log(`${client.info.pushname} ${client.info.wid.user} Authentication Error`);
       console.error(err);
       reject(err)
     });
@@ -91,7 +70,9 @@ export const storedGateway = async ( p:any ) => {
     });
 
     client.on('disconnected', (state) => {
-      io.to(p.rooms).emit('disconnected',state)
+      io.to(p.rooms).emit('disconnected',`${client.info.pushname} ${client.info.wid.user} disconnected ${state}`)
+//      fs.rmSync(`./sessions/session-${socket.data.user}_${phone}`, { recursive: true, force: true });
+      
       console.log(`${client.info.pushname} ${client.info.wid.user} disconnected ${state}`);
     });
 
@@ -172,11 +153,11 @@ export const storedGateway = async ( p:any ) => {
     })
 
     client.on('qr', async qr => {
-      const numero = p.number;
       //const picUrl = await client.getProfilePicUrl(`${numero}@c.us`)
-      io.to(p.rooms).emit('qr',{qr,numero})
+      io.to(p.rooms).emit('qr',{qr})
 //      console.log(`${client.info.pushname} ${client.info.wid.user} qr=>`,qr);
       console.log("qr",qr);
+      resolve(client)
       //reject('Error necesita leer el qr')
     })
 

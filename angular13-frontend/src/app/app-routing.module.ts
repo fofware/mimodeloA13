@@ -33,7 +33,6 @@ export function readUser(): any {
 }
 
 const myUser = readUser();
-console.log(myUser);
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   {
@@ -98,9 +97,8 @@ const routes: Routes = [
       ),
     canActivate: [IsLoggedGuard,AuthGuard],
     data: {
-      roles: ['sys_admin'],
+      roles: ['sys_admin','client_admin'],
     }
-
   },
   {
     path: 'proveedores',
@@ -112,7 +110,6 @@ const routes: Routes = [
     data: {
       roles: ['sys_admin'],
     }
-
   },
   {
     path: 'private/menu',
