@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-whatsapp-chats',
@@ -6,7 +6,6 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./whatsapp-chats.component.css']
 })
 export class WhatsappChatsComponent implements OnInit {
-
   constructor() { }
 
   ngOnInit(): void {

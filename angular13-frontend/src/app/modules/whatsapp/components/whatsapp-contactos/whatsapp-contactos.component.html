@@ -1,0 +1,13 @@
+<nav class="sticky-top navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <input type="search" id="busca" aria-label="Search" class="form-control mr-sm-2" placeholder="Buscar por Nombre"
+    name="searchItem" #searchInput [(ngModel)]="searchItem">
+  </div>
+</nav>
+<div class="container" id="articuloContainer">
+  <div class="row row-cols-1 row-cols-lg-2 g-4">
+        <app-whatsapp-contacts-card *ngFor="let contact of contactsList; index as i;"
+          [contact]='contact'
+        ></app-whatsapp-contacts-card>
+  </div>
+</div>

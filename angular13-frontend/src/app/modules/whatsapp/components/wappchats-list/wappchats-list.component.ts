@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-wappchats-list',
@@ -6,6 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./wappchats-list.component.css']
 })
 export class WappchatsListComponent implements OnInit {
+  @Input() chat:any;
+  
 
   constructor() { }
 

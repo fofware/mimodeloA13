@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { NoPageComponent } from 'src/app/components/no-page/no-page.component';
 import { WappclientComponent } from './components/wappclient/wappclient.component';
 import { WappconnectComponent } from './components/wappconnect/wappconnect.component';
+import { WhatsappContactosComponent } from './components/whatsapp-contactos/whatsapp-contactos.component';
 import { WhatsappHomeComponent } from './components/whatsapp-home/whatsapp-home.component';
 import { WhatsappWebComponent } from './components/whatsapp-web/whatsapp-web.component';
 import { WhatsappComponent } from './whatsapp.component';
@@ -36,6 +37,10 @@ const routes: Routes =   [
     {
       path: 'web',
       component: WhatsappWebComponent
+    },
+    {
+      path: 'contactos',
+      component: WhatsappContactosComponent
     },
     {
       path: '**',

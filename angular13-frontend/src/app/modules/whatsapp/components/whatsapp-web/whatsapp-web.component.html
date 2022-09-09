@@ -1,12 +1,12 @@
 <div class="container-fluid">
-  <div class="col-4">
-    <app-wappchats-list>
-
-    </app-wappchats-list>
-  </div>
-  <div class="col-8">
-    <app-wappmsgs-list>
-
-    </app-wappmsgs-list>
+  <div class="row">
+      <app-wappchats-list class="col-4"
+        *ngFor="let item of chats; index as i"
+        [chat]="item"
+      >
+      </app-wappchats-list>
+      <app-wappmsgs-list class="col-8">
+  
+      </app-wappmsgs-list>
   </div>
 </div>

@@ -1,57 +1,9 @@
 import { Namespace, Socket } from "socket.io";
 import phones from "./models/phones";
+import { Client } from 'whatsapp-web.js';
 import fs from 'fs';
 
-import { gateways, newGateway, storedGateway } from "./wappgateway";
-//import user from "./models/user";
-//import articulo from "./models/articulos";
-//import producto from "./models/producto";
-//import { productoGetData } from "./controlers/productoControler";
-
-//const add = async (data:any, socket:any, dbData:any, msg:any) => {
-//  let respta = [];
-//  console.log("add_inicia");
-//  for (let i = 0; i < data.length; i++) {
-//    const e = data[i];
-//    const filter = { 
-//      _id: e._id,
-//    };
-//
-//    let ret = await dbData.findOneAndUpdate(filter, e, {
-//      new: true,
-//      upsert: true,
-//      rawResult: true // Return the raw result from the MongoDB driver
-//    });
-//
-//    ret.value instanceof user; // true
-//    // The below property will be `false` if MongoDB upserted a new
-//    // document, and `true` if MongoDB updated an existing object.
-//    ret.lastErrorObject.updatedExisting; // false
-//    //console.log('precios',ret);
-//    respta.push(ret)
-//    if( ( i % 5 ) === 4){
-//      await socket.emit(`server:${msg}`,respta);
-//      respta = []    
-//    }
-//  }
-//
-//  console.log("add_responde")
-//  console.log(dbData);
-//  await socket.emit(`server:${msg}`,respta);
-//}
-
-const sendData = async (data:any, socket:any, msg:string) => {
-  let respta = [];
-  for (let i = 0; i < data.length; i++) {
-    const e = data[i];
-    respta.push(e);
-    if( ( i % 10 ) === 9 ){
-      await socket.emit(`server:${msg}`,respta);
-      respta = [];
-    }
-  }
-  await socket.emit(`server:${msg}`,respta);
-}
+import { newGateway, storedGateway } from "./wappgateway";
 
 export default (io:any) => {
   const documents = {};
@@ -62,7 +14,7 @@ export default (io:any) => {
     }).join('')));
   }
 
-  const setSkt = (socket,user) => {
+  const setSkt = (socket:Socket,user) => {
     socket.data.user = user._id;
     socket.data.parent = user.parent;
     socket.data.email = user.email;
@@ -71,66 +23,92 @@ export default (io:any) => {
     socket.data.apellido = user.apellido;
     socket.data.rooms = [`${user._id}`]
     socket.data.name = user.name;
-    socket.user = user.nickname;
+    socket.data.sktId = socket.id;
     socket.join(`${user._id}`)
   }
 
-  io.on('connection', async (socket) => {
+  io.on('connection', async (socket:Socket) => {
     console.log("Nueva coneccion");
     if(socket.handshake.query.token){
-      const user = decodeToken(socket.handshake.query.token)
-      setSkt(socket,user)
-      console.log("socket.data");
-      console.log(socket.data);
+      const user = decodeToken(socket.handshake.query.token);
+      setSkt(socket,user);
+
     } else {
       socket.join('no-authorized');
       socket.emit('no-authorized','no-authorized')
       return
     }
 
-    //console.log('query',socket.handshake.query)
 
-    /*
-    socket.on('getPicUrl', async numero => {
-      const keys = Object.keys(gateways);
-      const pic = await gateways[keys[0]].client.getProfilePicUrl(`${numero}@c.us`);
-      socket.emit('picUrl', pic);
-    })
-    */
-    
     socket.on('registranumero', async (token) => {
       console.log('************ Registra Celular ************')
-      console.log(socket.data);
-      const registered:any = await storedGateway(socket.data);
-      if (typeof(registered) !== 'string'){
-        const phone = registered.info.wid.user;
-        socket.data.phone = phone;
-        console.log(socket.data)
-        console.log(fs.readdirSync('./'))
-        fs.rmSync(`./sessions/session-${socket.data.user}_${phone}`, { recursive: true, force: true });
-        fs.renameSync(`./sessions/session-${socket.data.user}`,`./sessions/session-${socket.data.user}_${phone}`)
-        fs.rmSync(`./sessions/session-${socket.data.user}`, { recursive: true, force: true });
-        await phones.findOneAndUpdate({user: socket.data.user, phone: socket.data.phone},
-          socket.data,
-          {
-            new: true,
-            upsert: true,
-            rawResult: true // Return the raw result from the MongoDB driver
+      //console.log(socket.data);
+      const registered:Client = await newGateway(socket);
+      if (registered){
+        const phoneExist = await phones.findOne({phone: registered.info.wid.user})
+        //console.log(phoneExist)
+        
+        if (phoneExist){
+          socket.emit('error', `El número ${registered.info.wid.user} ya está registrado en el sistema`)
+          registered.destroy();
+        } else {
+          const dataPath = registered['authStrategy']?.dataPath;
+          socket.data.phone = registered.info.wid.user;
+          const oldDir = `/session-${socket.data.user}`;
+          const newDir = `/session-${socket.data.user}_${socket.data.phone}`;
+          fs.renameSync(`${dataPath}${oldDir}`,`${dataPath}${newDir}`);
+          socket.data.activo = true;
+          const filter = {
+            phone: socket.data.phone,
+            user: socket.data.user
           }
-        );
+          const data = {
+            phone: socket.data.phone,
+            user: socket.data.user,
+            rooms: socket.data.rooms,
+            activo: true
+          }
+          let ret = await phones.findOneAndUpdate({ number: socket.data.phone, user: socket.data.user },   // Query parameter
+            socket.data, 
+            {
+              new: true,
+              upsert: true,
+              rawResult: true // Return the raw result from the MongoDB driver
+            });
+
+          ret.value instanceof phones; // true
+          // The below property will be `false` if MongoDB upserted a new
+          // document, and `true` if MongoDB updated an existing object.
+          ret.lastErrorObject.updatedExisting; // false
+          console.log(ret);
+          console.log(`Debe borrar: ${dataPath}${oldDir}`)
+          fs.rmSync(`${dataPath}${oldDir}`, { recursive: true, force: true });
+          await registered.destroy();
+          await storedGateway(socket.data);
+        }
+
       }
     });
-    /*
-    socket.on('id', async (token, phone) => {
-      setSkt(socket,decodeToken(token),phone);
 
+    socket.on('authorizenumero', async (token) => {
+      console.log('************ Registra Celular ************')
+      console.log(socket.data);
+      socket.data.registranumero = true;
+      const registered:any = await storedGateway(socket.data);
+            
+    });
+    socket.on('getChats', async () => {
+      console.log(socket.data);
     })
-    */
+    /**
+     * esto es para un chat de demo
+     */
 
     let previousId;
-    const safeJoin = currentId => {
+    const safeJoin = async currentId => {
       socket.leave(previousId);
-      socket.join(currentId, () => console.log(`Socket ${socket.id} joined room ${currentId}`));
+      await socket.join(currentId);
+      console.log(`Socket ${socket.id} joined room ${currentId}`);
       previousId = currentId;
     };
     socket.on('setData', params => {

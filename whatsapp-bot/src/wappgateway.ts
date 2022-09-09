@@ -1,15 +1,17 @@
 
-import { Buttons, Client, LegacySessionAuth, List, LocalAuth, Location } from 'whatsapp-web.js';
+import { Buttons, Client, List, LocalAuth, Location } from 'whatsapp-web.js';
 import whatsapp from './models/whatsapp';
 import wappphone  from './models/phones';
 import { Router } from 'express';
 import app from './app';
+import { Socket } from 'socket.io';
+import fs from 'fs';
 
 export const gateways = {}
 
 export const initAllWapp = async (app) =>{
 
-  const array = await wappphone.find();
+  const array = await wappphone.find({activo: true});
   const io = app.get('sio');
   const router: Router = Router();
   const totalini = new Date();
@@ -19,11 +21,11 @@ export const initAllWapp = async (app) =>{
     asyncFunctions.push(storedGateway(p))
   }
   const results:Client[] = await Promise.all(asyncFunctions)
-  results.map( client => { setRoutes(router,client) })
-  for (let i = 0; i < results.length; i++) {
-    const c = results[i];
-    console.log(c.info)
-  }
+  //results.map( client => { setRoutes(router,client) })
+  //for (let i = 0; i < results.length; i++) {
+  //  const c = results[i];
+  //  //console.log(c.info)
+  //}
   const totalend = new Date();
   const totaldif = totalend.getTime()-totalini.getTime();
   console.log(totaldif)
@@ -34,7 +36,11 @@ export const storedGateway = async ( p:any ) => {
   return new Promise(async (resolve, reject) => {
     io = app.get('sio')
     let id = p.user
-    if (p.phone) id = `${p.user}_${p.phone}`
+    let qrSend = 0;
+    const retries = 10;
+    if (p.phone){
+      id = `${p.user}_${p.phone}`
+    }    
     const client = new Client({
       authStrategy: new LocalAuth(
         {
@@ -42,13 +48,16 @@ export const storedGateway = async ( p:any ) => {
           clientId: id,
         },
       ),
-      qrMaxRetries: 5,
+      qrMaxRetries: retries,
       puppeteer: {
         args: ['--no-sandbox'],
       }
     });
     client.initialize();
-
+    client['user'] = p.user;
+    client['retriessend'] = 0
+    if(p.phone) client['toPhone'] = p.phone;
+    else client['toPhone'] = 'Desconocido';
     client.on('auth_failure', err =>  {
       io.to(p.rooms).emit('auth_failure',err)
       console.error(err);
@@ -69,11 +78,14 @@ export const storedGateway = async ( p:any ) => {
       console.log(`${client.info.pushname} ${client.info.wid.user} cambio de estado ${state}`);
     });
 
-    client.on('disconnected', (state) => {
+    client.on('disconnected', async (state) => {
+      console.log(client)
       io.to(p.rooms).emit('disconnected',`${client.info.pushname} ${client.info.wid.user} disconnected ${state}`)
-//      fs.rmSync(`./sessions/session-${socket.data.user}_${phone}`, { recursive: true, force: true });
-      
-      console.log(`${client.info.pushname} ${client.info.wid.user} disconnected ${state}`);
+      const borrar = `${client['user']}_${client.info.wid.user}`
+      fs.rmSync(`./sessions/session-${borrar}`, { recursive: true, force: true });
+      await wappphone.findOneAndUpdate({user: client['user'], phone: client.info.wid.user}, {activo: false})
+      console.log('---------------------------------')
+      console.log(`${client.info.pushname} ${client.info.wid.user} Desconecto`);
     });
 
     client.on('group_join', (value) => {
@@ -154,7 +166,10 @@ export const storedGateway = async ( p:any ) => {
 
     client.on('qr', async qr => {
       //const picUrl = await client.getProfilePicUrl(`${numero}@c.us`)
-      io.to(p.rooms).emit('qr',{qr})
+      qrSend++;
+      const qrMaxRetries = client['options']?.qrMaxRetries
+      console.log(qrMaxRetries);
+      io.to(p.rooms).emit('qr',{qr, qrSend, qrMaxRetries, numero: client['toPhone']})
 //      console.log(`${client.info.pushname} ${client.info.wid.user} qr=>`,qr);
       console.log("qr",qr);
       resolve(client)
@@ -163,8 +178,43 @@ export const storedGateway = async ( p:any ) => {
 
     client.on('ready', async (ready) => {
       //gateways[client.info.wid.user].sockets.forEach( stk => stk.emit('ready',`${client.info.pushname} ${client.info.wid.user} conected & ready`))
+
+      /*
+      const skts:Socket[] = await io.in(p.rooms[0]).fetchSockets()
+      console.log(skts, skts.length);
+      skts.map(async skt => {
+        try {
+          if(skt.data?.registranumero){
+            skt.data.phone = client.info.wid.user;
+            skt.data.activo = true;
+            skt.data.registranumero = null;
+            delete(skt.data.registranumero);
+            const oldDir = `${skt.data.user}`
+            const newDir = `${skt.data.user}_${skt.data.phone}`
+            fs.renameSync(`./sessions/session-${oldDir}`,`./sessions/session-${newDir}`)
+            fs.rmSync(`./sessions/session-${oldDir}`, { recursive: true, force: true });
+          }
+          const filter = {
+            user: skt.data.user,
+            phone: skt.data.phone
+          }
+  
+          await wappphone.findOneAndUpdate({user: skt.data.user, phone: skt.data.phone},
+            skt.data,
+            {
+              new: true,
+              upsert: true,
+              rawResult: true // Return the raw result from the MongoDB driver
+            }
+          );
+        } catch (error) {
+          console.log(error)          
+        }
+      })
+      */
       io.to(p.rooms).emit('ready',`${client.info.pushname} ${client.info.wid.user} conected & ready`)
       console.log(`${client.info.pushname} ${client.info.wid.user} conected & ready`);
+      setRoutes(client);
       resolve(client)
     })
   })
@@ -196,25 +246,6 @@ const saveMsg = async (m) => {
 
 }
 
-const saveMsg1 = async (msg) => {
-  const filter = {}
-  try {
-    let ret = await whatsapp.findOneAndUpdate(filter, msg, {
-      new: true,
-      upsert: true,
-      rawResult: true // Return the raw result from the MongoDB driver
-    });
-
-    ret.value instanceof whatsapp; // true
-    // The below property will be `false` if MongoDB upserted a new
-    // document, and `true` if MongoDB updated an existing object.
-    ret.lastErrorObject.updatedExisting; // false
-    return ret;
-  } catch (error) {
-    console.log(error);
-  }
-
-}
 
 const showTime = (msg) => {
   console.log(`(${msg.id._serialized})`)
@@ -228,114 +259,71 @@ const showTime = (msg) => {
   console.log(msg.timestamp, am, ts, at);
 }
 
-export const newGateway = async ( skt ) => {
+export const newGateway = async ( skt:Socket ): Promise< Client | null > => {
   return new Promise((resolve, reject) => {
-    const tmpSessionName = "asdfasdfasdfasdfasdf";
-    const client = new Client({
+    console.log('newGateway')
+    skt.emit('menssage', 'newGateWay')
+    let id = skt.data.user
+    const retries = 10;
+    let qrSend = 0
+    const client:Client = new Client({
       authStrategy: new LocalAuth(
         {
           dataPath: './sessions/',
-          clientId: `${skt.data.cuenta}_${skt.data.number}`
-        }
+          clientId: id,
+        },
       ),
+      qrMaxRetries: retries,
       puppeteer: {
         args: ['--no-sandbox'],
       }
     });
 
+    skt.emit('menssage', 'newGateWay initialize')
     client.initialize();
 
     client.on('auth_failure', err =>  {
-      skt.to(skt.data.rooms).emit('auth_failure',err)
+      skt.emit('auth_failure',err)
       console.error(err);
       reject(err)
     });
 
     client.on('authenticated', async (session) => {
-      skt.to(skt.data.rooms).emit('authenticated','Authenticated')
+      skt.emit('authenticated','Authenticated')
       console.log(`Authenticated`);
+
     });
 
-    /*
-    client.on('change_battery', (batteryInfo) => {
-      skt.to(skt.data.rooms).emit('change_battery',batteryInfo)
-      console.log(`${client.info.pushname} ${client.info.wid.user} BatteryInfo ${batteryInfo}`);
-    });
-
-    client.on('change_state', (state) => {
-      skt.to(skt.data.rooms).emit('change_state',state)
-      console.log(`${client.info.pushname} ${client.info.wid.user} cambio de estado ${state}`);
-    });
-
-    client.on('disconnected', (state) => {
-      skt.to(skt.data.rooms).emit('disconnected',state);
-      console.log(`${client.info.pushname} ${client.info.wid.user} disconnected ${state}`);
-    });
-
-    client.on('group_join', (value) => {
-      skt.to(skt.data.rooms).emit('group_join',value)
-      console.log(`${client.info.pushname} ${client.info.wid.user} group_join ${value}`);
-    });
-
-    client.on('group_leave', (value) => {
-      skt.to(skt.data.rooms).emit('group_leave',value)
-      console.log(`${client.info.pushname} ${client.info.wid.user} group_leave ${value}`);
-    });
-
-    client.on('incoming_call', (value) => {
-      skt.to(skt.data.rooms).emit('incoming_call',value);
-      console.log(`${client.info.pushname} ${client.info.wid.user} incoming_call ${value}`);
-    });
-
-    client.on('media_uploaded', (value) => {
-      skt.to(skt.data.rooms).emit('media_uploaded',value);
-      console.log(`${client.info.pushname} ${client.info.wid.user} media_uploaded ${value}`);
-    });
-
-    client.on('message', async msg => {
-      io.to(skt.data.rooms).emit('message',msg);
-      const ret = await whatsapp.insertMany([msg])
-      console.log(`${client.info.pushname} ${client.info.wid.user} MESSAGE RECEIVED`,msg);
-      procesaMsg(client,msg)
-    })
-
-    client.on('message_ack', async (msg, ack) => {
-      skt.to(skt.data.rooms).emit('message_ack',{msg,ack});
-      const ret = await whatsapp.insertMany([msg])
-      const ackTxt = ['','se envio','recibió','leyó']
-      console.log(`${client.info.pushname} ${client.info.wid.user} message_ack ${ack} ${msg.to} ${ackTxt[ack]}`);
-    })
-
-    client.on('message_create', async (message) => {
-      skt.to(skt.data.rooms).emit('message_create',message);
-      const ret = await whatsapp.insertMany([message])
-    });
-
-    client.on('message_revoke_everyone', (message, revoked_msg) => {
-      skt.to(skt.data.rooms).emit('message_revoke_everyone',{message,revoked_msg});
-    })
-    */
     client.on('qr', async qr => {
-      const numero = skt.data.number;
-      skt.to(skt.data.rooms).emit('qr',{qr,numero})
+      const qrMaxRetries = client['options']?.qrMaxRetries
+      qrSend++;
+      console.log(qr, qrSend, qrMaxRetries)
+      skt.emit('qr',{qr, qrSend, qrMaxRetries})
+      if (qrSend > qrMaxRetries){
+        skt.emit('error', "QR no escaneado")
+        client.destroy();
+        resolve (null)
+      } 
     })
 
     client.on('ready', async (ready) => {
       skt.to(skt.data.rooms).emit('ready',`${client.info.pushname} ${client.info.wid.user} conected & ready`)
-			const rpta = await wappphone.updateOne({ number: skt.data.number },   // Query parameter
+			/*
+      const rpta = await wappphone.updateOne({ number: skt.data.number },   // Query parameter
 				{ $set: skt.data }, 
 				{ upsert: true }    // Options
 			);
-
+      */
       resolve(client)
     })
   })
 }
 
-const setRoutes = (router, client:Client) => {
+const setRoutes = (client:Client) => {
   /**
    * Routes
    */
+  const router: Router = Router();
   const num  = client.info.wid.user || client.info.me.user;
   router.get(`/${num}/blockedcontactos`, async (req, res) =>{
     const contacts = await client.getBlockedContacts();
@@ -347,14 +335,28 @@ const setRoutes = (router, client:Client) => {
     res.status(200).json(contacts);
   })
 
+  router.get(`/${num}/chats`, async (req, res) =>{
+    const limit = 10;
+    const chats = await client.getChats();
+    const tosave = [];
+    for (let i = 0; i < chats.length; i++) {
+      const e = chats[i];
+      e['messages'] = await e.fetchMessages( {limit} );
+      //e['contacto'] = await e.getContact();
+      //e['picUrl'] = await e['contacto'].getProfilePicUrl();
+    }
+    res.status(200).json(chats);
+  });
+
   router.get(`/${num}/chats/:limit`, async (req, res) =>{
     const {limit} = req.params
+    const myLimit = parseInt(limit)
     const chats = await client.getChats();
     //const messages = await gateways[p.number].client.searchMessages();
     const tosave = [];
     for (let i = 0; i < chats.length; i++) {
       const e = chats[i];
-      e['messages'] = await e.fetchMessages({'limit': limit});
+      e['messages'] = await e.fetchMessages( {'limit': myLimit} );
       e['messages'].map( async (m:any) =>{
         tosave.push( saveMsg(m) );
       })
@@ -363,6 +365,7 @@ const setRoutes = (router, client:Client) => {
       //e['picUrl'] = await e['contacto'].getProfilePicUrl();
     }
     const results = await Promise.all(tosave)
+
     const ret = {
       modifiedCount: 0,
       upsertedCount: 0,
@@ -402,7 +405,7 @@ const setRoutes = (router, client:Client) => {
     res.status(200).json(value);
   })
   
-  router.get(`/${num}/contactos`, async (req, res) =>{
+  router.get(`/${num}/contacts`, async (req, res) =>{
     const contacts = await client.getContacts()
     const datArray = []
     contacts.map( async c => {
@@ -500,12 +503,13 @@ const setRoutes = (router, client:Client) => {
   })
 
   // No está probada
+  /*
   router.get(`/${num}/mutechat/:chatid/:unmutedate`, async (req, res) =>{
     const { chatid, unmutedate } = req.params;
     const value = await client.muteChat(chatid,unmutedate);
     res.status(200).json(value);
   })
-  
+  */
   // No está probada
   //router.get(`/${num}/pinchat`, async (req, res) =>{
   //  const value = await client.pinChat();
@@ -530,12 +534,13 @@ const setRoutes = (router, client:Client) => {
   })
 
   // No está probada
-  router.post(`/${num}/sendmessage`, async (req, res) =>{
+  /*
+  router.get(`/${num}/sendmessage`, async (req, res) =>{
     const { chatId, content, options } = req.query;
     const value = await client.sendMessage(chatId, content, options);
     res.status(200).json(value);
   })
-  
+  */
   router.get(`/${num}/available`, async (req, res) =>{
     const value = await client.sendPresenceAvailable();
     res.status(200).json('sendPresenceAvailable');
@@ -545,6 +550,7 @@ const setRoutes = (router, client:Client) => {
     const value = await client.sendPresenceUnavailable();
     res.status(200).json('sendPresenceUnavailable');
   })
+  app.use(router);
 }
 
 

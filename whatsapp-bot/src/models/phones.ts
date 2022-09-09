@@ -4,6 +4,7 @@ export interface WappPhone extends Document {
   user: string;
   phone: string;
   email: string;
+  activo: boolean,
   rooms: []
 };
 
@@ -11,10 +12,12 @@ const WappPhoneSchema = new Schema({
   user: { type: Schema.Types.String, trim: true, index: true },
   phone: { type: Schema.Types.String, trim: true, index: true },
   email: { type: Schema.Types.String, trim: true, index: true },
+  activo: { type: Schema.Types.Boolean, index: true, default: false },
   rooms: []
 },
 { 
   strict: false,
+  timestamps: true,
   versionKey: false
 });
 

@@ -1,6 +1,5 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { WhatsappRoutingModule } from './whatsapp-routing.module';
 import { WhatsappComponent } from './whatsapp.component';
 import { DocumentListComponent } from './components/document-list/document-list.component';
@@ -20,6 +19,8 @@ import { WappmsgsListComponent } from './components/wappmsgs-list/wappmsgs-list.
 import { WappchatsListComponent } from './components/wappchats-list/wappchats-list.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { WhatsappHomeComponent } from './components/whatsapp-home/whatsapp-home.component';
+import { WhatsappContactosComponent } from './components/whatsapp-contactos/whatsapp-contactos.component';
+import { WhatsappContactsCardComponent } from './components/whatsapp-contacts-card/whatsapp-contacts-card.component';
 
 
 @NgModule({
@@ -34,7 +35,9 @@ import { WhatsappHomeComponent } from './components/whatsapp-home/whatsapp-home.
     WhatsappMsgsComponent,
     WappmsgsListComponent,
     WappchatsListComponent,
-    WhatsappHomeComponent
+    WhatsappHomeComponent,
+    WhatsappContactosComponent,
+    WhatsappContactsCardComponent
   ],
   providers:[
   //  Socket2Service,
@@ -51,6 +54,10 @@ import { WhatsappHomeComponent } from './components/whatsapp-home/whatsapp-home.
     QRCodeModule,
     NgbModule
 
-  ]
+  ],
+  //schemas:[
+  //  CUSTOM_ELEMENTS_SCHEMA,
+  //  NO_ERRORS_SCHEMA
+  //]
 })
 export class WhatsappModule { }
