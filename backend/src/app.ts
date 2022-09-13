@@ -28,6 +28,10 @@ const app = express();
 if(config.public)
   app.use(express.static(path.join(__dirname,config.public)));
 app.use(morgan('common'));
+const corsOptions = {
+  origin: '*',
+//  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -43,7 +47,6 @@ app.use(presentacionCtrl.router);
 app.use(ipnCtrl.router);
 app.use(WebHooksCtrl.router);
 app.use(SucursalesCtrl.router);
-app.use(devCtrl.router);
 app.use(devCtrl.router);
 app.use(makeCtrl.router);
 app.use(importCtrl.router);

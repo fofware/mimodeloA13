@@ -1,11 +1,12 @@
 
-import { Buttons, Client, List, LocalAuth, Location } from 'whatsapp-web.js';
+import { Buttons, Client, List, LocalAuth, Location, Message } from 'whatsapp-web.js';
 import whatsapp from './models/whatsapp';
 import wappphone  from './models/phones';
 import { Router } from 'express';
 import app from './app';
 import { Socket } from 'socket.io';
 import fs from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 
 export const gateways = {}
 
@@ -32,20 +33,18 @@ export const initAllWapp = async (app) =>{
   app.use(router)
 }
 let io;
-export const storedGateway = async ( p:any ) => {
+export const storedGateway = async ( p:any ): Promise <Client> => {
   return new Promise(async (resolve, reject) => {
     io = app.get('sio')
     let id = p.user
     let qrSend = 0;
     const retries = 10;
-    if (p.phone){
-      id = `${p.user}_${p.phone}`
-    }    
+
     const client = new Client({
       authStrategy: new LocalAuth(
         {
           dataPath: './sessions/',
-          clientId: id,
+          clientId: p.sessionId,
         },
       ),
       qrMaxRetries: retries,
@@ -56,8 +55,6 @@ export const storedGateway = async ( p:any ) => {
     client.initialize();
     client['user'] = p.user;
     client['retriessend'] = 0
-    if(p.phone) client['toPhone'] = p.phone;
-    else client['toPhone'] = 'Desconocido';
     client.on('auth_failure', err =>  {
       io.to(p.rooms).emit('auth_failure',err)
       console.error(err);
@@ -69,17 +66,18 @@ export const storedGateway = async ( p:any ) => {
     });
 
     client.on('change_battery', (batteryInfo) => {
-      io.to(p.rooms).emit('change_battery',batteryInfo)
+      io.to(p.rooms).emit('change_battery',{phone: client.info.wid.user, batteryInfo})
       console.log(`${client.info.pushname} ${client.info.wid.user} BatteryInfo ${batteryInfo}`);
     });
 
     client.on('change_state', (state) => {
-      io.to(p.rooms).emit('change_state',state)
+      io.to(p.rooms).emit('change_state',{phone: client.info.wid.user, state})
       console.log(`${client.info.pushname} ${client.info.wid.user} cambio de estado ${state}`);
     });
 
     client.on('disconnected', async (state) => {
       console.log(client)
+      io.to(p.rooms).emit('change_state',{phone: client.info.wid.user, state})
       io.to(p.rooms).emit('disconnected',`${client.info.pushname} ${client.info.wid.user} disconnected ${state}`)
       const borrar = `${client['user']}_${client.info.wid.user}`
       fs.rmSync(`./sessions/session-${borrar}`, { recursive: true, force: true });
@@ -110,9 +108,9 @@ export const storedGateway = async ( p:any ) => {
 
     client.on('message', async msg => {
       //gateways[client.info.wid.user].sockets.forEach( stk => stk.emit('message',msg))
-      io.to(p.rooms).emit('message',msg)
       msg['on'] = `message ${client.info.wid.user}`;
       msg['serialized'] = msg.id._serialized; 
+      io.to(p.rooms).emit('message',msg)
 
       const ret = await saveMsg(msg)
 
@@ -123,11 +121,10 @@ export const storedGateway = async ( p:any ) => {
     })
 
     client.on('message_ack', async (msg, ack) => {
-      //gateways[client.info.wid.user].sockets.forEach( stk => stk.emit('message_ack',{msg,ack}))
-      io.to(p.rooms).emit('message_ack',{msg,ack})
 
       msg['on'] = `message_ack ${client.info.wid.user}`;
       msg['serialized'] = msg.id._serialized; 
+      io.to(p.rooms).emit('message_ack',{msg,ack})
 
       const ret = await saveMsg(msg)
 
@@ -138,10 +135,10 @@ export const storedGateway = async ( p:any ) => {
     })
 
     client.on('message_create', async (msg) => {
-      io.to(p.rooms).emit('message_create',msg)
 
       msg['on'] = `message_create ${client.info.wid.user}`;
       msg['serialized'] = msg.id._serialized; 
+      io.to(p.rooms).emit('message_create',msg)
 
       const ret = await saveMsg(msg)
 
@@ -177,50 +174,32 @@ export const storedGateway = async ( p:any ) => {
     })
 
     client.on('ready', async (ready) => {
-      //gateways[client.info.wid.user].sockets.forEach( stk => stk.emit('ready',`${client.info.pushname} ${client.info.wid.user} conected & ready`))
-
-      /*
-      const skts:Socket[] = await io.in(p.rooms[0]).fetchSockets()
-      console.log(skts, skts.length);
-      skts.map(async skt => {
-        try {
-          if(skt.data?.registranumero){
-            skt.data.phone = client.info.wid.user;
-            skt.data.activo = true;
-            skt.data.registranumero = null;
-            delete(skt.data.registranumero);
-            const oldDir = `${skt.data.user}`
-            const newDir = `${skt.data.user}_${skt.data.phone}`
-            fs.renameSync(`./sessions/session-${oldDir}`,`./sessions/session-${newDir}`)
-            fs.rmSync(`./sessions/session-${oldDir}`, { recursive: true, force: true });
-          }
-          const filter = {
-            user: skt.data.user,
-            phone: skt.data.phone
-          }
-  
-          await wappphone.findOneAndUpdate({user: skt.data.user, phone: skt.data.phone},
-            skt.data,
-            {
-              new: true,
-              upsert: true,
-              rawResult: true // Return the raw result from the MongoDB driver
-            }
-          );
-        } catch (error) {
-          console.log(error)          
-        }
-      })
-      */
       io.to(p.rooms).emit('ready',`${client.info.pushname} ${client.info.wid.user} conected & ready`)
-      console.log(`${client.info.pushname} ${client.info.wid.user} conected & ready`);
+      console.log(`${client.info.pushname} ${client.info.wid.user} connected & ready ${ready}`);
+
+      //const chats = await client.getChats();
+      ////const messages = await gateways[p.number].client.searchMessages();
+      //const tosave = [];
+      //for (let i = 0; i < chats.length; i++) {
+      //  const e = chats[i];
+      //  e['messages'] = await e.fetchMessages( {'limit': 15000 } );
+      //  e['messages'].map( async (m:any) =>{
+      //    tosave.push( saveMsg(m) );
+      //  })
+      //  //e['contacto'] = await e.getContact();
+      //  //e['picUrl'] = await e['contacto'].getProfilePicUrl();
+      //}
+      //Promise.all(tosave).then( (data) => {
+      //  console.timeLog('gabró los mensajes')
+      //})
+  
       setRoutes(client);
       resolve(client)
     })
   })
 }
 
-const saveMsg = async (m) => {
+export const saveMsg = async (m) => {
 
   m['myid'] = m.id.id;
   m['fromMe'] = m.id.fromMe;
@@ -263,14 +242,15 @@ export const newGateway = async ( skt:Socket ): Promise< Client | null > => {
   return new Promise((resolve, reject) => {
     console.log('newGateway')
     skt.emit('menssage', 'newGateWay')
-    let id = skt.data.user
+    skt.data.sessionId = uuidv4();
     const retries = 10;
     let qrSend = 0
+
     const client:Client = new Client({
       authStrategy: new LocalAuth(
         {
           dataPath: './sessions/',
-          clientId: id,
+          clientId: skt.data.sessionId,
         },
       ),
       qrMaxRetries: retries,
@@ -307,9 +287,10 @@ export const newGateway = async ( skt:Socket ): Promise< Client | null > => {
     })
 
     client.on('ready', async (ready) => {
+
       skt.to(skt.data.rooms).emit('ready',`${client.info.pushname} ${client.info.wid.user} conected & ready`)
 			/*
-      const rpta = await wappphone.updateOne({ number: skt.data.number },   // Query parameter
+      const rpta = await wappphone.updateOne({ number: skt.data.phone },   // Query parameter
 				{ $set: skt.data }, 
 				{ upsert: true }    // Options
 			);
@@ -339,37 +320,54 @@ const setRoutes = (client:Client) => {
     const limit = 10;
     const chats = await client.getChats();
     const tosave = [];
-    for (let i = 0; i < chats.length; i++) {
-      const e = chats[i];
-      e['messages'] = await e.fetchMessages( {limit} );
-      //e['contacto'] = await e.getContact();
-      //e['picUrl'] = await e['contacto'].getProfilePicUrl();
-    }
+    //for (let i = 0; i < chats.length; i++) {
+    //  const e = chats[i];
+    //  e['messages'] = await e.fetchMessages( {limit} );
+    //  //e['contacto'] = await e.getContact();
+    //  //e['picUrl'] = await e['contacto'].getProfilePicUrl();
+    //}
     res.status(200).json(chats);
   });
 
   router.get(`/${num}/chats/:limit`, async (req, res) =>{
     const {limit} = req.params
     const myLimit = parseInt(limit)
+    const ini = new Date().getTime()
     const chats = await client.getChats();
-    //const messages = await gateways[p.number].client.searchMessages();
+
     const tosave = [];
+    const leermsgs = [];
     for (let i = 0; i < chats.length; i++) {
       const e = chats[i];
-      e['messages'] = await e.fetchMessages( {'limit': myLimit} );
-      e['messages'].map( async (m:any) =>{
-        tosave.push( saveMsg(m) );
-      })
-
+      leermsgs.push(e.fetchMessages( {'limit': myLimit} ))
+      //e['messages'] = await e.fetchMessages( {'limit': myLimit} );
+      //e['messages'].map( async (m:any) =>{
+      //  tosave.push( saveMsg(m) );
+      //})
       //e['contacto'] = await e.getContact();
       //e['picUrl'] = await e['contacto'].getProfilePicUrl();
     }
-    const results = await Promise.all(tosave)
 
+    const rsleer = await Promise.all(leermsgs);
+    const tmsgs = new Date().getTime() - ini;
+    console.log("leyo los msg", tmsgs)
+    let cuenta = 0;
+    rsleer.map(msgs => {
+      msgs.map( msg  => {
+        tosave.push(saveMsg(msg));
+      });
+    });
+    
+    const results = await Promise.all(tosave)
+    const stime = new Date().getTime() - ini
     const ret = {
       modifiedCount: 0,
       upsertedCount: 0,
-      total: results.length
+      total: results.length,
+      chats: chats.length,
+      msgs: tosave.length,
+      tmsgs,
+      stime
     }
     
     results.map(r => {
@@ -377,7 +375,7 @@ const setRoutes = (client:Client) => {
       else ret.upsertedCount++
     } )
     
-    console.log(results);
+    //console.log(results);
     res.status(200).json(ret);
   })
 
@@ -554,7 +552,7 @@ const setRoutes = (client:Client) => {
 }
 
 
-const procesaMsg = async (client, msg) => {
+const procesaMsg = async (client, msg:Message) => {
   if (msg.body === '!ping reply') {
       // Send a new message as a reply to the current one
       msg.reply('pong');
@@ -573,35 +571,35 @@ const procesaMsg = async (client, msg) => {
       chat.sendSeen();
       client.sendMessage(number, message);
 
-  } else if (msg.body.startsWith('!subject ')) {
-      // Change the group subject
-      let chat = await msg.getChat();
-      if (chat.isGroup) {
-          let newSubject = msg.body.slice(9);
-          chat.setSubject(newSubject);
-      } else {
-          msg.reply('This command can only be used in a group!');
-      }
+//  } else if (msg.body.startsWith('!subject ')) {
+//      // Change the group subject
+//      let chat = await msg.getChat();
+//      if (chat.isGroup) {
+//          let newSubject = msg.body.slice(9);
+//          chat.setSubject(newSubject);
+//      } else {
+//          msg.reply('This command can only be used in a group!');
+//      }
   } else if (msg.body.startsWith('!echo ')) {
       // Replies with the same message
       msg.reply(msg.body.slice(6));
-  } else if (msg.body.startsWith('!desc ')) {
-      // Change the group description
-      let chat = await msg.getChat();
-      if (chat.isGroup) {
-          let newDescription = msg.body.slice(6);
-          chat.setDescription(newDescription);
-      } else {
-          msg.reply('This command can only be used in a group!');
-      }
-  } else if (msg.body === '!leave') {
-      // Leave the group
-      let chat = await msg.getChat();
-      if (chat.isGroup) {
-          chat.leave();
-      } else {
-          msg.reply('This command can only be used in a group!');
-      }
+//  } else if (msg.body.startsWith('!desc ')) {
+//      // Change the group description
+//      let chat = await msg.getChat();
+//      if (chat.isGroup) {
+//          let newDescription = msg.body.slice(6);
+//          chat.setDescription(newDescription);
+//      } else {
+//          msg.reply('This command can only be used in a group!');
+//      }
+//  } else if (msg.body === '!leave') {
+//      // Leave the group
+//      let chat = await msg.getChat();
+//      if (chat.isGroup) {
+//          chat.leave();
+//      } else {
+//          msg.reply('This command can only be used in a group!');
+//      }
   } else if (msg.body.startsWith('!join ')) {
       const inviteCode = msg.body.split(' ')[1];
       try {
@@ -610,20 +608,20 @@ const procesaMsg = async (client, msg) => {
       } catch (e) {
           msg.reply('That invite code seems to be invalid.');
       }
-  } else if (msg.body === '!groupinfo') {
-      let chat = await msg.getChat();
-      if (chat.isGroup) {
-          msg.reply(`
-              *Group Details*
-              Name: ${chat.name}
-              Description: ${chat.description}
-              Created At: ${chat.createdAt.toString()}
-              Created By: ${chat.owner.user}
-              Participant count: ${chat.participants.length}
-          `);
-      } else {
-          msg.reply('This command can only be used in a group!');
-      }
+  //} else if (msg.body === '!groupinfo') {
+  //    let chat = await msg.getChat();
+  //    if (chat.isGroup) {
+  //        msg.reply(`
+  //            *Group Details*
+  //            Name: ${chat.name}
+  //            Description: ${chat.description}
+  //            Created At: ${chat.createdAt.toString()}
+  //            Created By: ${chat.owner.user}
+  //            Participant count: ${chat.participants.length}
+  //        `);
+  //    } else {
+  //        msg.reply('This command can only be used in a group!');
+  //    }
   } else if (msg.body === '!chats') {
       const chats = await client.getChats();
       client.sendMessage(msg.from, `The bot has ${chats.length} chats open.`);
@@ -716,7 +714,10 @@ const procesaMsg = async (client, msg) => {
           client.interface.openChatWindowAt(quotedMsg.id._serialized);
       }
   } else if (msg.body === '!buttons') {
-      let button = new Buttons('Button body',[{body:'bt1'},{body:'bt2'},{body:'bt3'}],'title','footer');
+      const botones =  [{id:'customId',body:'button1'},{body:'button2'},{body:'button3'},{body:'button4'}] 
+//      let button = new Buttons('Button body',[{id: '1', body:'bt1'},{id: '2', body:'bt2'},{id: '3', body:'bt3'}],'title','footer');
+      let button = new Buttons('Button body',botones,'title','footer');
+      console.log(button)
       client.sendMessage(msg.from, button);
   } else if (msg.body === '!list') {
       let sections = [{title:'sectionTitle',rows:[{title:'ListItem1', description: 'desc'},{title:'ListItem2'}]}];

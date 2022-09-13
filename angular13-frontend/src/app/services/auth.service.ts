@@ -4,9 +4,40 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ApiService } from './api.service';
+
+export interface authUser {
+  _id?: string;
+  email?: string;
+  nickname: string;
+  image: string;
+  apellido?: string;
+  nombre?: string;
+  grupo?: string;
+  type?: string;
+  subType?: string;
+  roles: string[];
+  iat: number;
+  exp: number;
+}
+
+export const decodeToken = (token:string | null ): authUser => {
+  if(!token) return {
+    nickname: 'Anónimo',
+    image: '/assets/images/defuser.png',
+    roles: ['visitante'],
+    iat: 0,
+    exp: 0
+  }
+  return JSON.parse(decodeURIComponent(atob(token.split('.')[1]).split('').map(function(c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join('')));
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthService {
 
   private URL = environment.AUTH_URL;

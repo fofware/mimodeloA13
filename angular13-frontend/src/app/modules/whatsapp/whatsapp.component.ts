@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { TopMenu } from 'src/app/models/top-menu';
 import { AuthService } from 'src/app/services/auth.service';
 import { WappService } from './services/wapp.service';
@@ -13,9 +14,10 @@ export class WhatsappComponent implements OnInit, OnDestroy {
   public isMenuCollapsed = true;
   public isLogged = false;
   user:any = {};
-
+  selectedPhone:any;
+  estado:any;
   public defmenu:TopMenu[] = [
-    { title: '<i class="fab fa-whatsapp fa-lg"></i>', link: ['/wa/'] },
+    //{ title: '<i class="fab fa-whatsapp fa-lg"></i>', link: ['/wa/'] },
     //{ title: 'Marcas', link: ['marca'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user' ] },
     { title: 'Conectar', link: ['connect'], roles: ['client_admin','sys_admin'] },
     { title: 'Contactos', link: ['contactos'], roles: ['client_admin', 'sys_admin'] },
@@ -31,18 +33,44 @@ export class WhatsappComponent implements OnInit, OnDestroy {
   ];
 
   usrMenu:any =  [] ;
+  private _status!: Subscription;
+  private destroy$ = new Subject<any>();
 
-  constructor( public route: ActivatedRoute, private authSrv: AuthService, private wappSrv: WappService ) { }
+  constructor( public route: ActivatedRoute, private authSrv: AuthService, private wappSrv: WappService ) {
+    this.user = this.authSrv.userValue;
+    this._status = this.wappSrv.state
+      .pipe( takeUntil(this.destroy$) )
+      .subscribe((res:any) => {
+        console.log('_status',res)
+        this.estado = res.state
+      })
+    this.wappSrv.phoneStatus
+      .pipe( takeUntil(this.destroy$) )
+      .subscribe( res => {
+        console.log("phoneStatus",res)
+        this.estado = res;
+      });
+
+    this.wappSrv.phone
+      .pipe( takeUntil(this.destroy$) )
+      .subscribe( res => {
+        console.log(res)
+        this.selectedPhone = res;
+        this.estado = res.state;
+        console.log(this.selectedPhone,this.estado, res.state);
+      });
+
+  }
 
   ngOnInit(): void {
-    this.user = this.authSrv.userValue;
     this.setMenu();
   }
-  
-  ngOnDestroy(): void {
-    console.warn('OnDestroy');
+
+  async ngOnDestroy() {
+    this.destroy$.next({});
+    this.destroy$.complete();
   }
-  
+
   setMenu(){
     this.usrMenu = this.defmenu.filter( item => {
       if (item.roles?.length){

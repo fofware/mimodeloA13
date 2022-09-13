@@ -1,6 +1,7 @@
 import { Namespace, Socket } from "socket.io";
 import phones from "./models/phones";
 import { Client } from 'whatsapp-web.js';
+import { saveMsg } from "./wappgateway";
 import fs from 'fs';
 
 import { newGateway, storedGateway } from "./wappgateway";
@@ -32,6 +33,7 @@ export default (io:any) => {
     if(socket.handshake.query.token){
       const user = decodeToken(socket.handshake.query.token);
       setSkt(socket,user);
+      
 
     } else {
       socket.join('no-authorized');
@@ -39,24 +41,35 @@ export default (io:any) => {
       return
     }
 
-
+    socket.onAny((...args)=>{
+      console.log(args);
+    })
     socket.on('registranumero', async (token) => {
       console.log('************ Registra Celular ************')
       //console.log(socket.data);
       const registered:Client = await newGateway(socket);
       if (registered){
+        const dataPath = registered['authStrategy']?.dataPath;
         const phoneExist = await phones.findOne({phone: registered.info.wid.user})
         //console.log(phoneExist)
-        
+        //da2e98e5-f6a7-4f47-a9d3-1584732658e8
         if (phoneExist){
           socket.emit('error', `El número ${registered.info.wid.user} ya está registrado en el sistema`)
           registered.destroy();
+          console.log('aca tiene que borrar',`${dataPath}/session-${socket.data.sessionId}`);
+          fs.rmSync(`${dataPath}/session-${socket.data.sessionId}`, { recursive: true, force: true  });
+          console.log("Borró", `${dataPath}/session-${socket.data.sessionId}`)
         } else {
-          const dataPath = registered['authStrategy']?.dataPath;
           socket.data.phone = registered.info.wid.user;
-          const oldDir = `/session-${socket.data.user}`;
-          const newDir = `/session-${socket.data.user}_${socket.data.phone}`;
-          fs.renameSync(`${dataPath}${oldDir}`,`${dataPath}${newDir}`);
+
+          await registered.destroy();
+
+          //const oldDir = `/session-${socket.data.user}`;
+          //const newDir = `/session-${socket.data.user}_${socket.data.phone}`;
+          //console.log('old', oldDir);
+          //console.log('new', newDir);
+          //fs.renameSync(`${dataPath}${oldDir}`,`${dataPath}${newDir}`);
+          //console.log('renombró',oldDir,' a ',newDir);
           socket.data.activo = true;
           const filter = {
             phone: socket.data.phone,
@@ -65,6 +78,7 @@ export default (io:any) => {
           const data = {
             phone: socket.data.phone,
             user: socket.data.user,
+            sessionId: socket.data.sessionId,
             rooms: socket.data.rooms,
             activo: true
           }
@@ -80,13 +94,27 @@ export default (io:any) => {
           // The below property will be `false` if MongoDB upserted a new
           // document, and `true` if MongoDB updated an existing object.
           ret.lastErrorObject.updatedExisting; // false
-          console.log(ret);
-          console.log(`Debe borrar: ${dataPath}${oldDir}`)
-          fs.rmSync(`${dataPath}${oldDir}`, { recursive: true, force: true });
-          await registered.destroy();
-          await storedGateway(socket.data);
-        }
+          
+          console.log(socket.data);
 
+          const nuevo:Client = await storedGateway(socket.data);
+          const chats = await nuevo.getChats();
+          const tosave = [];
+          const limit = 15000
+          for (let i = 0; i < chats.length; i++) {
+            const e = chats[i];
+            e['messages'] = await e.fetchMessages( { limit } );
+            e['messages'].map( async (m:any) =>{
+              tosave.push( saveMsg(m) );
+            })
+          }
+          const results = await Promise.all(tosave)
+          //console.log(results);
+          console.log('grabó todos los messages', results.length);
+          //console.log('aca tiene que borrar',oldDir);
+          //fs.rmSync(`${dataPath}${oldDir}`, { recursive: true, force: true  });
+          //console.log('Borró',oldDir);
+        }
       }
     });
 

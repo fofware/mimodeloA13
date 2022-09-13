@@ -1,4 +1,20 @@
-<div class="container-fluid">
+<title>Example</title>
+<body>
+  <header>Header</header>
+  <div id="main">
+    <article>Article</article>
+    <nav>      
+      <app-wappchats-list
+        *ngFor="let item of chats; index as i"
+        [chat]="item"
+      >
+      </app-wappchats-list>
+    </nav>
+    <aside>Aside</aside>
+  </div>
+  <footer>Footer</footer>
+</body>
+<!--div class="container-fluid">
   <div class="row">
       <app-wappchats-list class="col-4"
         *ngFor="let item of chats; index as i"
@@ -9,4 +25,4 @@
   
       </app-wappmsgs-list>
   </div>
-</div>
+</div-->

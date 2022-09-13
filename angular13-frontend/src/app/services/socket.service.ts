@@ -29,8 +29,8 @@ export class Socket2Service extends Socket {
   constructor() {
     super( { url: environment.SKT2.URL, options: { query:{
       token: localStorage.getItem('token'),
-
-    } } } );
+    }
+   } } );
     super.on('connect', () => {
       this.ioSocket.onAny(async (eventName:string, ...args:any) => {
         console.log('evento',eventName)

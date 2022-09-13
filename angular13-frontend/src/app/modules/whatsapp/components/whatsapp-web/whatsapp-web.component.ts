@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { WappService } from '../../services/wapp.service';
 
 @Component({
@@ -11,17 +11,20 @@ export class WhatsappWebComponent implements OnInit {
   private _waChat!: Subscription;
   chats:any=[];
   contacts:any;
+  phoneSelected = "";
+  private destroy$ = new Subject<any>();
+
   constructor(private wappSrv: WappService) { }
 
   ngOnInit(): void {
-    this.wappSrv.getChats().subscribe((chats:any) => {
-      this.chats = chats;
-      console.warn(this.chats)
-    });
-    this.wappSrv.getContacts().subscribe(contacts => {
-      this.contacts = contacts;
-      console.warn(this.contacts)
+    this.wappSrv.phone
+    .pipe( takeUntil(this.destroy$) )
+    .subscribe( res => {
+      if(res.phone)
+        this.wappSrv.getChats(res.phone).subscribe(data => {
+          this.chats = data;
+          console.log(this.chats)
+        })
     });
   }
-
 }

@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { WappService } from '../../services/wapp.service';
 
 @Component({
@@ -8,7 +8,7 @@ import { WappService } from '../../services/wapp.service';
   templateUrl: './wappconnect.component.html',
   styleUrls: ['./wappconnect.component.css']
 })
-export class WappconnectComponent implements OnInit {
+export class WappconnectComponent implements OnInit, OnDestroy {
 
   qrstr = "1";
   numero = '';
@@ -19,11 +19,14 @@ export class WappconnectComponent implements OnInit {
   private _docSub!: Subscription;
   private _picUrlSub!: Subscription;
   private _ready!: Subscription;
+  private destroy$ = new Subject<any>();
 
   constructor(private documentService: WappService, private router: Router) {}
 
   ngOnInit(): void {
-    this._docSub = this.documentService.data.subscribe(
+    this._docSub = this.documentService.data
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
       data => {
         this.isqr = (data.qrSend > data.qrMaxRetries && data.qrMaxRetries > 0);
         this.qrstr = data.qr;
@@ -31,13 +34,14 @@ export class WappconnectComponent implements OnInit {
         this.qrMaxRetries = data.qrMaxRetries;
         this.qrSend = data.qrSend;
         this.picUrl = data.picUrl;
-    });
+      });
     this._ready = this.documentService.ready.subscribe(
       _ready => {
         this.isqr = true;
         this.router.navigate(['wa','web'])
       }
     );
+
     /*
     this._picUrlSub = this.documentService.picUrl.subscribe(
       picUrl => {
@@ -45,6 +49,13 @@ export class WappconnectComponent implements OnInit {
     });
     */
   }
+
+  ngOnDestroy() {
+    this.destroy$.next({});
+    this.destroy$.complete();
+  }
+
+
   checkNumber(){
     if(this.numero.length === 13)
       //this.documentService.getPicUrl(this.numero);
@@ -55,3 +66,4 @@ export class WappconnectComponent implements OnInit {
   }
 
 }
+

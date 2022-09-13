@@ -1,9 +1,9 @@
 import { Request, Response, Router } from "express";
 import passport from "passport";
 import { makeFilter } from "../common/utils";
-import marcas from "../models/marcas";
+import lineas from "../models/lineas";
 
-class MarcaControlers {
+class LineaControlers {
 
 	public router: Router = Router();
 
@@ -47,7 +47,7 @@ class MarcaControlers {
     },req.query,req.params,req.body);
 
     const filter = makeFilter(fldsString, params);
-    const count = await marcas.count(filter);
+    const count = await lineas.count(filter);
     if(params.rubro && params.ruro !== 'undefined')
       filter['rubro'] = params.rubro;   
     
@@ -59,7 +59,7 @@ class MarcaControlers {
     let status = 0;
     let ret = {}
     try {
-      const data = await marcas.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
+      const data = await lineas.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
       status = 200;
       ret = {
         url: req.headers.host+req.url,
@@ -97,7 +97,7 @@ class MarcaControlers {
   //  },req.query,req.params,req.body);
 //
   //  const filter = makeFilter(fldsString, params);
-  //  const count = await marcas.count(filter);
+  //  const count = await Lineas.count(filter);
   //  if(params.fabricante_id && params.fabricante_id !== 'undefined')
   //    filter['fabricante_id'] = params.fabricante_id;
   //  
@@ -110,7 +110,7 @@ class MarcaControlers {
   //  let status = 0;
   //  let ret = {}
   //  try {
-  //    const data = await marcas.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
+  //    const data = await Lineas.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
   //    status = 200;
   //    ret = {
   //      url: req.headers.host+req.url,
@@ -136,23 +136,23 @@ class MarcaControlers {
 
   async get(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
-    const ret = await marcas.findById( params.id );
+    const ret = await lineas.findById( params.id );
     res.status(200).json(ret)
   }
 
   async add(req: Request, res: Response){
     const update = Object.assign({},req.query,req.params,req.body);
     const filter = { 
-      name: update.marca,
+      name: update.linea,
     };
     try {
-      let ret = await marcas.findOneAndUpdate(filter, update, {
+      let ret = await lineas.findOneAndUpdate(filter, update, {
         new: true,
         upsert: true,
         rawResult: true // Return the raw result from the MongoDB driver
       });
 
-      ret.value instanceof marcas; // true
+      ret.value instanceof lineas; // true
       // The below property will be `false` if MongoDB upserted a new
       // document, and `true` if MongoDB updated an existing object.
       ret.lastErrorObject.updatedExisting; // false
@@ -169,7 +169,7 @@ class MarcaControlers {
     };
     let status = 0;
     try {
-      ret['data'] = await marcas.findByIdAndDelete(params._id);
+      ret['data'] = await lineas.findByIdAndDelete(params._id);
       ret['message'] = `Registro Borrado Ok ${params._id}`
       status = 200;
     } catch (error) {
@@ -186,7 +186,7 @@ class MarcaControlers {
     let status = 0;
     let ret = {};
     try {
-      ret['data'] = await marcas.findByIdAndUpdate(params._id, params);
+      ret['data'] = await lineas.findByIdAndUpdate(params._id, params);
       ret['message'] = `Update Ok`
       status = 200;
     } catch (error) {
@@ -199,4 +199,4 @@ class MarcaControlers {
 
 }
 
-export const MarcaCtrl = new MarcaControlers();
+export const LineaCtrl = new LineaControlers();
