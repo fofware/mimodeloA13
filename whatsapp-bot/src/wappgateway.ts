@@ -2,17 +2,20 @@
 import { Buttons, Client, List, LocalAuth, Location, Message } from 'whatsapp-web.js';
 import whatsapp from './models/whatsapp';
 import wappphone  from './models/phones';
+import wapproutes  from './models/routes';
+import wappcontacts from './models/contacts';
 import { Router } from 'express';
 import app from './app';
 import { Socket } from 'socket.io';
-import fs from 'fs';
+
 import { v4 as uuidv4 } from 'uuid';
 
 export const gateways = {}
 
 export const initAllWapp = async (app) =>{
-
-  const array = await wappphone.find({activo: true});
+  await wapproutes.deleteMany({});
+  //const array = await wappphone.find({activo: true});
+  const array = await wappphone.find();
   const io = app.get('sio');
   const router: Router = Router();
   const totalini = new Date();
@@ -33,12 +36,14 @@ export const initAllWapp = async (app) =>{
   app.use(router)
 }
 let io;
+
 export const storedGateway = async ( p:any ): Promise <Client> => {
+  console.log(p.phone)
   return new Promise(async (resolve, reject) => {
     io = app.get('sio')
     let id = p.user
     let qrSend = 0;
-    const retries = 10;
+    const retries = 5;
 
     const client = new Client({
       authStrategy: new LocalAuth(
@@ -76,14 +81,21 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
     });
 
     client.on('disconnected', async (state) => {
-      console.log(client)
-      io.to(p.rooms).emit('change_state',{phone: client.info.wid.user, state})
-      io.to(p.rooms).emit('disconnected',`${client.info.pushname} ${client.info.wid.user} disconnected ${state}`)
-      const borrar = `${client['user']}_${client.info.wid.user}`
-      fs.rmSync(`./sessions/session-${borrar}`, { recursive: true, force: true });
-      await wappphone.findOneAndUpdate({user: client['user'], phone: client.info.wid.user}, {activo: false})
-      console.log('---------------------------------')
-      console.log(`${client.info.pushname} ${client.info.wid.user} Desconecto`);
+      console.log('disconnected')
+      console.log(state);
+      if(`${state}` === 'Max qrcode retries reached'){
+        io.to(p.rooms).emit('disconnected', state )
+      } else {
+        io.to(p.rooms).emit('change_state',{phone: client.info.wid.user, state})
+        io.to(p.rooms).emit('disconnected',`${client.info.pushname} ${client.info.wid.user} disconnected ${state}`)
+        //const borrar = `${client['user']}_${client.info.wid.user}`
+        //fs.rmSync(`./sessions/session-${borrar}`, { recursive: true, force: true });
+        await wappphone.findOneAndUpdate({user: client['user'], phone: client.info.wid.user}, {activo: false})
+        console.log('---------------------------------')
+        console.log(`${client.info.pushname} ${client.info.wid.user} Desconecto`);
+        //await client.logout();
+      }
+      //await client.resetState();
     });
 
     client.on('group_join', (value) => {
@@ -174,7 +186,11 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
     })
 
     client.on('ready', async (ready) => {
+      io.to(p.rooms).emit('change_state',{phone: client.info.wid.user, state: 'CONNECTED'})
       io.to(p.rooms).emit('ready',`${client.info.pushname} ${client.info.wid.user} conected & ready`)
+      const picUrl = await client.getProfilePicUrl(client.info.wid._serialized);
+      
+      await wappphone.findOneAndUpdate({user: client['user'], phone: client.info.wid.user}, {activo: true, picUrl})
       console.log(`${client.info.pushname} ${client.info.wid.user} connected & ready ${ready}`);
 
       //const chats = await client.getChats();
@@ -192,7 +208,9 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
       //Promise.all(tosave).then( (data) => {
       //  console.timeLog('gabró los mensajes')
       //})
-  
+      const ruta = await wapproutes.find({phone: client.info.wid.user});
+      console.log("ruta",ruta);
+      //if (!ruta[0]?.phone) 
       setRoutes(client);
       resolve(client)
     })
@@ -208,7 +226,6 @@ export const saveMsg = async (m) => {
       { myId: m.myId, fromMe: m.fromMe, timestamp: m.timestamp, from: m.from, to: m.to}, 
       m, 
       {
-
         new: true,
         upsert: true,
         rawResult: true // Return the raw result from the MongoDB driver
@@ -243,7 +260,7 @@ export const newGateway = async ( skt:Socket ): Promise< Client | null > => {
     console.log('newGateway')
     skt.emit('menssage', 'newGateWay')
     skt.data.sessionId = uuidv4();
-    const retries = 10;
+    const retries = 5;
     let qrSend = 0
 
     const client:Client = new Client({
@@ -300,7 +317,7 @@ export const newGateway = async ( skt:Socket ): Promise< Client | null > => {
   })
 }
 
-const setRoutes = (client:Client) => {
+export const setRoutes = async (client:Client) => {
   /**
    * Routes
    */
@@ -403,27 +420,57 @@ const setRoutes = (client:Client) => {
     res.status(200).json(value);
   })
   
+  router.post(`/${num}/contacts`, async (req, res) =>{
+    const filter = {
+      from: num,
+      phone: req.body.phone
+    }
+    const ret = await wappcontacts.findOneAndUpdate(filter,req.body,{
+      new: true,
+      upsert: true
+    })
+    res.status(200).json(ret);
+  });
+
   router.get(`/${num}/contacts`, async (req, res) =>{
-    const contacts = await client.getContacts()
-    const datArray = []
-    contacts.map( async c => {
-      datArray.push(c.getAbout())
-      datArray.push(c.getChat())
-      datArray.push(c.getProfilePicUrl())
-      datArray.push(c.getFormattedNumber())
-      datArray.push(c.getCommonGroups())
-    })
-    const results = await Promise.all(datArray)
-    let i = 0;
-    contacts.map(c => {
-      c['about'] = results[0+i];
-      c['chat'] = results[1+i];
-      c['picUrl'] = results[2+i];
-      c['fNumber'] = results[3+i];
-      c['cGroups'] = results[4+i];
-      i+=5;
-    })
-    res.status(200).json(contacts);
+    const value = await client.getState();
+    if( `${value}` !== 'NAVIGATION' ){
+      const contacts = await client.getContacts()
+      const datArray = []
+      contacts.map( async c => {
+        datArray.push(c.getAbout())
+        datArray.push(c.getChat())
+        datArray.push(c.getProfilePicUrl())
+        datArray.push(c.getFormattedNumber())
+        datArray.push(c.getCommonGroups())
+      })
+      const results = await Promise.all(datArray)
+      let i = 0;
+      contacts.map(c => {
+        c['about'] = results[0+i];
+        c['chat'] = results[1+i];
+        c['picUrl'] = results[2+i];
+        c['fNumber'] = results[3+i];
+        c['cGroups'] = results[4+i];
+        i+=5;
+      })
+      const tosave = []
+      contacts.map( c => {
+        const filter = {
+          from: client.info.wid.user,
+          phone: c.id.user
+        }
+        const reg = Object.assign({}, filter, c);
+        tosave.push(wappcontacts.findOneAndUpdate(filter,reg,{
+          new: true,
+          upsert: true
+        }))
+      })
+      const ret = await Promise.all(tosave);
+      res.status(200).json(ret);
+    } else {
+      res.status(401).json("WhatsApp no conectado")
+    }
   });
 
   router.get(`/${num}/contact/:serialized`, async (req, res) =>{
@@ -527,7 +574,6 @@ const setRoutes = (client:Client) => {
   })
   router.get(`/${num}/messages`, async (req, res) =>{
     const messages = await whatsapp.find({$or:[{from: `${num}@c.us`},{to: `${num}@c.us`}]}).sort({ timestamp: -1}).limit(200)
- 
     res.status(200).json(messages);
   })
 
@@ -547,10 +593,19 @@ const setRoutes = (client:Client) => {
   router.get(`/${num}/unavailable`, async (req, res) =>{
     const value = await client.sendPresenceUnavailable();
     res.status(200).json('sendPresenceUnavailable');
-  })
+  });
+
+  await wapproutes.findOneAndUpdate(
+    {phone: num},
+    {phone: num}, 
+    {
+      new: true,
+      upsert: true,
+      rawResult: true // Return the raw result from the MongoDB driver
+    }
+  );
   app.use(router);
 }
-
 
 const procesaMsg = async (client, msg:Message) => {
   if (msg.body === '!ping reply') {

@@ -1,2 +1,40 @@
-<p>whatsapp-home works!</p>
-<pre *ngFor="let item of msgs"> {{item | json }} </pre>
+<div *ngIf="phoneList.length; else viewNoPhone">
+  <div class="card mb-3 col-md-6" *ngFor="let item of phoneList">
+    <div class="row g-0">
+      <div class="col-md-4" *ngIf="isqr; else viewQr">
+        <img [src]="item.picUrl" class="img-fluid rounded-start" alt="...">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">{{item.phone}}</h5>
+          <p class="card-text">Debe volver a escanear el Código Qr.</p>
+          <p class="card-text"><small class="text-muted">{{item.state}}</small></p>
+          <div class="text-end" [hidden]="item.state==='CONNECTED'">
+            <button (click)="reconnect()" class="btn btn-primary">Reconectar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #viewNoPhone>
+  <div class="d-flex justify-content-center align-items-center" style="width: 100%;height: 100%">
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <div class="card-title">
+          <h5>Registre un Whatsapp</h5>
+        </div>
+        <div *ngIf="isqr; else viewQr">
+          Para registrar un Whatsapp debe presionar el boton registrar y escanear el código qr con el Whatsapp del celular que desea registrar
+          <div class="text-end">
+            <button (click)="registrar()">Registrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #viewQr>
+  <qrcode  [qrdata]="qrstr" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
+  <div>Qr Recibidos: {{qrSend}} de {{qrMaxRetries}} </div>
+</ng-template>

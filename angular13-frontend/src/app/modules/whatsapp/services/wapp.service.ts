@@ -34,39 +34,76 @@ export class WappService {
   constructor(private socket: Socket2Service,private http: HttpClient) {
     const token = localStorage.getItem('token');
     const user:authUser = decodeToken(token);
-    if (user._id)
-      this.getPhones(user._id).subscribe( (data:any) => {
+    if (user._id){
+      const id = user.roles[0] === 'sys_admin' ? '' : `/${user._id}`
+      this.http.get<any[]>(`${ORI_API}/phones${id}`)
+        .subscribe( (data:any) => {
+        //console.log(data.length)
         if(data.length){
           data.map( async (p:phone) => {
-            if(p.phone) p.state = await this.getPhoneState(p.phone);
+            if (p.activo){
+              if(p.phone) p.state = await this.getPhoneState(p.phone);
+            } else {
+                p.state = 'NAVIGATION'
+            }
             this.phoneState.next(p.state)
           });
           this.phoneList.next(data);
           this.phoneSelected.next(data[0]);
         }
-      })
+      });
+    }
   }
-  public get phoneSelectedValue(): phone {
-    return this.phoneSelected.value;
-  }
+
   public get phoneListValue(): phone[] {
     return this.phoneList.value;
   }
+
   public get phonesList(): Observable<phone[]> {
     return this.phoneList.asObservable();
   }
+
   public get phone(): Observable<phone> {
     return this.phoneSelected.asObservable();
   }
+
+  public get phoneValue(): phone {
+    return this.phoneSelected.value;
+  }
+
   public get phoneStatus(): Observable<phone> {
     return this.phoneState.asObservable();
   }
+
   public get phoneStatusValue(): Observable<phone> {
     return this.phoneState.value();
   }
-  getPhones(clientId:string) {
-    return this.http.get<string[]>(`${ORI_API}/phones/${clientId}`);
+
+  getPhones(user:authUser) {
+    return new Promise((resolve, reject) => {
+      const id = user.roles[0] === 'sys_admin' ? '' : `/${user._id}`
+      this.http.get<string[]>(`${ORI_API}/phones${id}`)
+      .subscribe( (data:any) => {
+        console.log(data.length)
+        if(data.length){
+          data.map( async (p:phone) => {
+            if (p.activo){
+              if(p.phone) p.state = await this.getPhoneState(p.phone);
+            } else {
+              p.state = 'NAVIGATION'
+            }
+            this.phoneState.next(p.state)
+          });
+          this.phoneList.next(data);
+          this.phoneSelected.next(data[0]);
+          console.log(this.phoneListValue)
+          console.log(this.phoneValue)
+        }
+        resolve(data)
+      });
+    })
   }
+
   getPhoneState(num:string): Promise<string>{
     return new Promise((resolve, reject) => {
       this.http.get<string>(`${ORI_API}/${num}/state/`).subscribe( data => {
@@ -83,11 +120,14 @@ export class WappService {
   getContacts(num:string){
     return this.http.get(`${ORI_API}/${num}/contacts`);
   }
+
+  saveContact( num:string, data:any){
+    return this.http.post(`${ORI_API}/${num}/contacts`,data);
+  }
+
   async waConnect(param:any) {
     console.log('va a waConnect');
-    const token = localStorage.getItem('token')
-    const phone = ['5493624683656','5493624380337']
-    const emite = await this.socket.emit('id', {token,phone});
+    const emite = await this.socket.emit('authorizenumero', param );
     console.log('soket.emit',emite);
   }
 
@@ -98,7 +138,7 @@ export class WappService {
     console.log(emite);
   }
 
-  async waRegister(numero:any) {
+  async waRegister() {
     console.log('va a waRegister');
     const token = localStorage.getItem('token')
     const emite = await this.socket.emit('registranumero', token);

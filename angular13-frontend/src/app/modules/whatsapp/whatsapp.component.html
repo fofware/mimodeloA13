@@ -3,7 +3,16 @@
     <div class="container-fluid">
       <ul ngbNav [activeId]="route.fragment" class="navbar-nav">
         <li [ngbNavItem]="'/wa/'">
-          <a ngbNavLink [routerLink]="'/wa/'" routerLinkActive="active"><i ngClass="{{estado}}" class="fab fa-whatsapp fa-2xl"></i> {{selectedPhone.phone}} {{selectedPhone.state}} {{estado}}</a>
+          <a ngbNavLink [routerLink]="'/wa/'"
+            routerLinkActive="active">
+            <i ngClass="{{phoneSelected?.state}}" class="fab fa-whatsapp fa-2xl"></i>
+
+            {{phoneSelected?.phone}} {{phoneSelected?.state}}
+            <!--
+              {{phoneSelected.phone}} {{phoneSelected.state}} {{phoneEstado}}
+
+            -->
+            </a>
         </li>
         <li [ngbNavItem]="menu.link" *ngFor="let menu of usrMenu">
             <a ngbNavLink *ngIf="(menu.link && !menu.fragment)" [hidden]='menu.hidden || false' [routerLink]="menu.link" routerLinkActive="active" [innerHTML]="menu.title" (click)="isMenuCollapsed=true"></a>

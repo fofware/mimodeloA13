@@ -35,7 +35,9 @@ export class WappconnectComponent implements OnInit, OnDestroy {
         this.qrSend = data.qrSend;
         this.picUrl = data.picUrl;
       });
-    this._ready = this.documentService.ready.subscribe(
+    this._ready = this.documentService.ready
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(
       _ready => {
         this.isqr = true;
         this.router.navigate(['wa','web'])
@@ -62,7 +64,7 @@ export class WappconnectComponent implements OnInit, OnDestroy {
     console.log(this.numero)
   }
   registrar(){
-    this.documentService.waRegister(this.numero);
+    this.documentService.waRegister();
   }
 
 }

@@ -36,6 +36,11 @@ app.use(express.urlencoded({ extended: false }));
 router.get('/', (req, res) => {
   res.sendFile(__dirname + '/../html/index.html');
 });
+router.get('/phones', async (req:Request, res:Response) => {
+  const id = req.params.id;
+  const pl = await phones.find();
+  res.status(200).json(pl);
+})
 router.get('/phones/:id', async (req:Request, res:Response) => {
   const id = req.params.id;
   const pl = await phones.find({user: id});

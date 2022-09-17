@@ -118,11 +118,10 @@ export default (io:any) => {
       }
     });
 
-    socket.on('authorizenumero', async (token) => {
-      console.log('************ Registra Celular ************')
-      console.log(socket.data);
-      socket.data.registranumero = true;
-      const registered:any = await storedGateway(socket.data);
+    socket.on('authorizenumero', async (phone) => {
+      console.log('************ Autoriza Celular ************')
+      console.log(phone);
+      const registered:any = await storedGateway(phone);
             
     });
     socket.on('getChats', async () => {

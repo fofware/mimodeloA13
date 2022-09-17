@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { WappService } from '../../services/wapp.service';
 
 @Component({
   selector: 'app-whatsapp-contacts-card',
@@ -8,9 +9,11 @@ import { Component, Input, OnInit } from '@angular/core';
 export class WhatsappContactsCardComponent implements OnInit {
   @Input() contact:any;
 
-  constructor() { }
+  constructor(private wappSrv: WappService) { }
 
   ngOnInit(): void {
   }
-
+  cambio(e:any){
+    this.wappSrv.saveContact(e.from,e).subscribe(data => console.log(data));
+  }
 }
