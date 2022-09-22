@@ -1,0 +1,126 @@
+*, *::before{box-sizing: border-box;}
+
+.vineta{
+  position:relative;
+  width: 100%;
+  max-width: 600px;
+  height: calc(100vh - 30px);
+  max-height: 600px;
+  /*Opcionalmente con box-shadow, creamos varias sombras, para simular un marco*/
+  box-shadow:
+    0 0 0 1px black,
+    0 0 0 6px white,
+    0 0 0 7px black;
+}
+
+.globo{
+  position: relative;
+  /*
+  text-transform: uppercase;
+  font-size: 12px;
+  font-family: sans-serif;
+  */
+  border-radius: var(--borde);
+  padding: var(--borde);
+  --borde: 5px;
+  z-index: 1;
+  background-color: white;
+  filter: drop-shadow(0px 0px 1px black) ;
+  margin: 1rem;
+}
+
+.globo.i{
+  width: 150px;
+  top: 20px;
+  left: 80px;
+}
+
+.globo.ii{
+  width: 150px;
+  top: 100px;
+  left: 20px;
+}
+
+.globo.iii{
+  /*
+  width: 150px;
+  top: 60px;
+  */
+  right: 10px;
+}
+
+.globo.iv{
+  width: 150px;
+  bottom: 10px;
+  left: 40%;
+}
+
+.globo::before{
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: var(--colita);
+  height: var(--colita);
+}
+
+.globo.abajo-derecha::before{
+  --colita: 20px;
+  left: 50%;
+  bottom: calc( var(--colita) / -1.5);
+  transform: skewY(30deg) rotateZ(-30deg);
+  border-radius: 0 0 0 10em;
+  box-shadow:
+    inset calc(var(--colita)/2) calc(var(--colita)/3) 0 0 white;
+}
+
+.globo.derecha-arriba::before{
+  --colita: 20px;
+  top: 0px;
+  right: 2px;
+  /*
+  right: calc( var(--colita));
+  */
+  transform: skewX(-40deg);
+  /*
+   rotateZ(-120deg);
+  */
+  border-radius: 0 0 0 0;
+  /*
+  border-radius: 0 0 0 5px;
+  */
+  box-shadow:
+    inset calc(var(--colita)/2) calc(var(--colita)/3) 0 0 white;
+}
+
+.globo.abajo-izquierda::before{
+  --colita: 50px;
+  left: 10px;
+  bottom: calc( var(--colita) / -1.5);
+  border-radius: 0 0 10em 0;
+  box-shadow:
+    inset calc(var(--colita)/-3) calc(var(--colita)/4) 0 0 white;
+}
+
+.globo.izquierda-arriba::before{
+  --colita: 10px;
+  top: 0px;
+  left: calc( var(--colita) / -1.5);
+  transform: rotateZ(-60deg);
+  border-radius: 5px 0 0 0;
+  color: white;
+  box-shadow:
+    inset calc(var(--colita)/2) calc(var(--colita)/-3) 0 0;
+}
+
+.globo.yellow::before{
+  background-color: rgba(255,255,0,.8);
+  color: rgba(255,2,0,.5);
+  animation: cambio-color ease 5s infinite both;
+}
+
+@keyframes cambio-color{
+  45%,55% {
+    background-color: rgba(255,255,255,0);
+    color: white;
+  }
+}

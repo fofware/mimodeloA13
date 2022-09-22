@@ -1,0 +1,10 @@
+<div class="card mx-4" style="max-width: 40%;">
+  <video width="320" height="240" controls>
+    <source [src]="video" [type]="msg?.mediaData?.mimetype">
+    Your browser does not support the video tag.
+  </video>
+  <div class="card-body">
+    <h6 class="card-title">{{name}}</h6>
+    <p class="card-text">{{msg.body}}</p>
+  </div>
+</div>

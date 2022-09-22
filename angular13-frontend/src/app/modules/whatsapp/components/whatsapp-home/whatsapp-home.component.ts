@@ -31,10 +31,20 @@ export class WhatsappHomeComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.user = this.authSrv.userValue;
-    const pepe = await this.wappSrv.getPhones(this.user);
+    //const pepe = await this.wappSrv.getPhones(this.user);
+    this.wappSrv.phone
+    .pipe( takeUntil(this.destroy$) )
+    .subscribe( res => {
+      this.phoneSelected = res;
+      //this.user = this.authService.userValue;
+    });
+    this.wappSrv.phonesList
+    .pipe( takeUntil(this.destroy$) )
+    .subscribe( res => {
+      this.phoneList = res;
+      //this.user = this.authService.userValue;
+    });
 
-    this.phoneSelected = this.wappSrv.phoneValue;
-    this.phoneList = this.wappSrv.phoneListValue;
     //console.log(this.phoneList,this.phoneSelected, this.user)
     this._docSub = this.wappSrv.data
       .pipe(takeUntil(this.destroy$))

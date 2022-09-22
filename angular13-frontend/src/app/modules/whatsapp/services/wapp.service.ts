@@ -55,26 +55,26 @@ export class WappService {
     }
   }
 
-  public get phoneListValue(): phone[] {
-    return this.phoneList.value;
-  }
-
   public get phonesList(): Observable<phone[]> {
     return this.phoneList.asObservable();
+  }
+  public get phoneListValue(): phone[] {
+    return this.phoneList.value;
   }
 
   public get phone(): Observable<phone> {
     return this.phoneSelected.asObservable();
   }
-
   public get phoneValue(): phone {
     return this.phoneSelected.value;
+  }
+  public set phoneValue(data){
+    this.phoneSelected.next(data);
   }
 
   public get phoneStatus(): Observable<phone> {
     return this.phoneState.asObservable();
   }
-
   public get phoneStatusValue(): Observable<phone> {
     return this.phoneState.value();
   }

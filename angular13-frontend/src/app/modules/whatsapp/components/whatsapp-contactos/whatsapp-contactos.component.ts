@@ -19,6 +19,17 @@ export class WhatsappContactosComponent implements OnInit {
     this.wappSrv.phone
     .pipe( takeUntil(this.destroy$) )
     .subscribe( res => {
+      this.selectedPhone = res;
+      if(res.phone)
+        this.wappSrv.getContacts(this.selectedPhone.phone).subscribe(data => {
+          this.contactsList = data;
+          console.log(this.contactsList)
+        })
+  });
+/*
+    this.wappSrv.phone
+    .pipe( takeUntil(this.destroy$) )
+    .subscribe( res => {
       this.selectedPhone = res.phone;
       if(res.phone)
         this.wappSrv.getContacts(res.phone).subscribe(data => {
@@ -26,6 +37,7 @@ export class WhatsappContactosComponent implements OnInit {
           console.log(this.contactsList)
         })
     });
+  */
   }
   ngOnDestroy(): void{
     this.destroy$.next({});

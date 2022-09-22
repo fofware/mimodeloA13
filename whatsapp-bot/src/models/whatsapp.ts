@@ -12,7 +12,7 @@ export interface WappMessage extends Document {
 const MessageSchema = new Schema({
   from: { type: Schema.Types.String, index: true },
   to: { type: Schema.Types.String, index: true },
-  myId: {type: Schema.Types.String, index: true},
+  myid: {type: Schema.Types.String, index: true},
   fromMe: {type: Schema.Types.Boolean, index: true},
   ack: {type: Schema.Types.Number, index: true},
   timestamp: {type: Schema.Types.Number, index: true},

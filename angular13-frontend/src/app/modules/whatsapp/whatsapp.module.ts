@@ -21,6 +21,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { WhatsappHomeComponent } from './components/whatsapp-home/whatsapp-home.component';
 import { WhatsappContactosComponent } from './components/whatsapp-contactos/whatsapp-contactos.component';
 import { WhatsappContactsCardComponent } from './components/whatsapp-contacts-card/whatsapp-contacts-card.component';
+import { MsgImageComponent } from './components/msg-image/msg-image.component';
+import { MsgPttComponent } from './components/msg-ptt/msg-ptt.component';
+import { MsgVideoComponent } from './components/msg-video/msg-video.component';
+import { MsgStickerComponent } from './components/msg-sticker/msg-sticker.component';
+import { MsgDocumentComponent } from './components/msg-document/msg-document.component';
+import { MsgAudioComponent } from './components/msg-audio/msg-audio.component';
 
 
 @NgModule({
@@ -37,7 +43,13 @@ import { WhatsappContactsCardComponent } from './components/whatsapp-contacts-ca
     WappchatsListComponent,
     WhatsappHomeComponent,
     WhatsappContactosComponent,
-    WhatsappContactsCardComponent
+    WhatsappContactsCardComponent,
+    MsgImageComponent,
+    MsgPttComponent,
+    MsgVideoComponent,
+    MsgStickerComponent,
+    MsgDocumentComponent,
+    MsgAudioComponent
   ],
   providers:[
   //  Socket2Service,

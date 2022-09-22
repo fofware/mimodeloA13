@@ -31,6 +31,8 @@
   * https://mongoosejs.com/docs/populate.html#populating-multiple-paths-middleware
   * https://www.mongodb.com/docs/manual/tutorial/model-tree-structures-with-materialized-paths/
   * https://mongoosejs.com/docs/populate.html#checking-populated
+### WhatsApp Business API
+  * https://chat-api.com/en/whatsapp-bot-nodejs.html
 ### whatsaap-web.js 1.17.1
   * https://docs.wwebjs.dev/ClientInfo.html
   * https://wwebjs.dev/guide/authentication.html#noauth-strategy
@@ -68,6 +70,7 @@
   * https://stackoverflow.com/questions/68628029/implement-async-validator-on-angular-formcontrol
   * https://upmostly.com/angular/async-validators-in-angular
   * https://www.youtube.com/watch?v=TJ9IPJ-Qgao
+  * audio https://www.c-sharpcorner.com/article/build-custom-audio-player-with-audio-waveform-in-angular/
   
 ### js
   * https://www.digitalocean.com/community/tutorials/js-array-find-method

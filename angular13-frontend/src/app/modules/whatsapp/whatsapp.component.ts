@@ -101,6 +101,12 @@ export class WhatsappComponent implements OnInit, OnDestroy {
     this.destroy$.next({});
     this.destroy$.complete();
   }
+  
+  onChange(event:any){
+    
+    this.phoneSelected=event;
+    this.wappSrv.phoneValue = event;
+  }
 
   setMenu(){
     this.usrMenu = this.defmenu.filter( item => {

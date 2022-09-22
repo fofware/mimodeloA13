@@ -1,1 +1,97 @@
-<p>whatsapp-msgs works!</p>
+<!--
+TEXT
+AUDIO
+VOICE
+IMAGE
+VIDEO
+DOCUMENT
+STICKER
+LOCATION
+CONTACT_CARD
+CONTACT_CARD_MULTI
+ORDER
+REVOKED
+PRODUCT
+UNKNOWN
+GROUP_INVITE
+LIST
+LIST_RESPONSE
+BUTTONS_RESPONSE
+PAYMENT
+BROADCAST_NOTIFICATION
+CALL_LOG
+CIPHERTEXT
+DEBUG
+E2E_NOTIFICATION
+GP2
+GROUP_NOTIFICATION
+HSM
+INTERACTIVE
+NATIVE_FLOW
+NOTIFICATION
+NOTIFICATION_TEMPLATE
+OVERSIZED
+PROTOCOL
+REACTION
+TEMPLATE_BUTTON_REPLY
+-->
+<div *ngFor="let msg of messages">
+  <div [ngSwitch]="msg.type">
+    <div *ngSwitchCase="'chat'">
+      <div class="container-fluid" style="position: relative;">
+        <div [ngClass]="msg.fromMe === true ? ['d-flex', 'flex-row-reverse'] : ['d-flex', 'flex-row']">
+          <div style="width: max-content; max-width: 60%;" [ngClass]="msg.fromMe === true ? ['globo','derecha-arriba'] : ['globo','izquierda-arriba']">
+            <div>Type: {{msg.type}} Me: {{msg.fromMe}}</div>
+            <div>{{msg.body}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngSwitchCase="'ptt'">
+      <app-msg-ptt
+        [picUrl] = "picUrl"
+        [name]="name"
+        [msg]="msg"
+      ></app-msg-ptt>
+    </div>
+    <div *ngSwitchCase="'audio'">
+      <app-msg-audio
+        [picUrl] = "picUrl"
+        [name]="name"
+        [msg]="msg"
+      ></app-msg-audio>
+    </div>
+    <div *ngSwitchCase="'image'">
+      <app-msg-image
+        [picUrl] = "picUrl"
+        [name]="name"
+        [msg]="msg"
+      ></app-msg-image>
+    </div>
+    <div *ngSwitchCase="'video'">
+      <app-msg-video
+        [picUrl] = "picUrl"
+        [name]="name"
+        [msg]="msg"
+      ></app-msg-video>
+    </div>
+    <div *ngSwitchCase="'sticker'">
+      <app-msg-sticker
+        [picUrl] = "picUrl"
+        [name]="name"
+        [msg]="msg"
+      ></app-msg-sticker>
+    </div>
+    <div *ngSwitchCase="'document'">
+      <app-msg-document
+        [picUrl] = "picUrl"
+        [name]="name"
+        [msg]="msg"
+      ></app-msg-document>
+    </div>
+    <div *ngSwitchDefault>
+      <div>Type: {{msg.type}} Me: {{msg.fromMe}}</div>
+      <pre>{{msg | json}}</pre>
+    </div>
+  </div>
+</div>

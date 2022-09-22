@@ -4,9 +4,11 @@ import whatsapp from './models/whatsapp';
 import wappphone  from './models/phones';
 import wapproutes  from './models/routes';
 import wappcontacts from './models/contacts';
+import wappmediadata from './models/mediadata'
 import { Router } from 'express';
 import app from './app';
 import { Socket } from 'socket.io';
+import fs from 'fs';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -121,8 +123,43 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
     client.on('message', async msg => {
       //gateways[client.info.wid.user].sockets.forEach( stk => stk.emit('message',msg))
       msg['on'] = `message ${client.info.wid.user}`;
-      msg['serialized'] = msg.id._serialized; 
-      io.to(p.rooms).emit('message',msg)
+      msg['serialized'] = msg.id._serialized;
+      let mediadata:any;
+      if(msg.hasMedia){
+        let veces = 0
+        do {
+          mediadata = await msg.downloadMedia() 
+          veces++;
+          console.log('veces', veces)
+        } while (veces < 4 && !mediadata?.data );
+        
+        if (mediadata?.data){
+          const reg = {
+            filename: mediadata.filename,
+            mimetype: mediadata.mimetype,
+            msgid: msg.id.id,
+            serialized: msg.id._serialized,
+            from: msg.from,
+            author: msg.author,
+            to: msg.to,
+            type: msg.type,
+            mediaKey: msg.mediaKey,
+            width: msg['_data'].width,
+            height: msg['_data'].height,
+            mediaTimestamp: msg['_data'].mediaTimestamp,
+            filehash: msg['_data'].filehash
+          }
+
+          console.log('graba media data');
+          const mdata = new wappmediadata(reg);
+          const smdata = await mdata.save();
+          console.log(smdata);
+          const fn = `${__dirname}/../mediaReceive/${client.info.wid.user}_${msg.from}_${smdata._id}`
+          fs.writeFileSync(fn,JSON.stringify(mediadata),{encoding:"utf8"});
+          msg['mediafile'] = fn;
+        }
+      }
+      io.to(p.rooms).emit('message',msg,mediadata);
 
       const ret = await saveMsg(msg)
 
@@ -336,14 +373,46 @@ export const setRoutes = async (client:Client) => {
   router.get(`/${num}/chats`, async (req, res) =>{
     const limit = 10;
     const chats = await client.getChats();
-    const tosave = [];
-    //for (let i = 0; i < chats.length; i++) {
-    //  const e = chats[i];
-    //  e['messages'] = await e.fetchMessages( {limit} );
-    //  //e['contacto'] = await e.getContact();
-    //  //e['picUrl'] = await e['contacto'].getProfilePicUrl();
-    //}
-    res.status(200).json(chats);
+    const msgToRead = [];
+    for (let i = 0; i < chats.length; i++) {
+      const e = chats[i];
+      const limit = e.unreadCount + 10;
+      msgToRead.push(e.fetchMessages( {limit} ));
+      e['contacto'] = await e.getContact();
+      e['picUrl'] = await e['contacto'].getProfilePicUrl();
+    }
+    const msgs = await Promise.all(msgToRead);
+    const mediaData = [];
+    chats.map( async (c,i) => {
+      msgs[i].map( async (m:any) => {
+        if(m['hasMedia']){
+          m['mediaIdx'] = mediaData.length;
+          mediaData.push(m.downloadMedia());  
+          //m['mediaData'] = await m.downloadMedia();
+        }
+      })
+      c['messages'] = msgs[i];
+    })
+    const mediarslt = await Promise.all(mediaData);
+
+    chats.map( async (c,i) => {
+      c['messages'].map( async (m:any) => {
+        if(m['hasMedia']){
+          //if (m['type'] === 'video'){
+            let count = 0;
+            while (mediarslt[m['mediaIdx']] === null && count < 2) {
+              mediarslt[m['mediaIdx']] = await mediaData[m['mediaIdx']]
+              count++;
+              console.log(count);
+            }
+            //console.log( mediarslt[m['mediaIdx']]);
+          //}
+        }
+      })
+    })
+
+    console.log("envia Chats")
+    res.status(200).json({chats,mediarslt});
   });
 
   router.get(`/${num}/chats/:limit`, async (req, res) =>{
@@ -398,8 +467,10 @@ export const setRoutes = async (client:Client) => {
 
   router.get(`/${num}/chat/:serialized`, async (req, res) =>{
     const {serialized} = req.params
-    const value = await client.getChatById(serialized);
-    res.status(200).json(value);
+    const chat = await client.getChatById(serialized);
+    const limit = chat.unreadCount + 10;
+    chat['messages'] = await chat.fetchMessages({limit })
+    res.status(200).json(chat);
   })
 
   router.get(`/${num}/chat/:serialized/labels`, async (req, res) =>{

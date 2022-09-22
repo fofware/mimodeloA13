@@ -1,1 +1,26 @@
-<pre>{{chat | json}}</pre>
+<div class="card" style="max-width: 540px;" (click)="select(chat)">
+  <div class="row g-0">
+    <div class="col-md-2">
+      <img src="{{chat.picUrl || '/assets/images/defuser.png'}}" class="img-fluid rounded-circle" alt="...">
+    </div>
+    <div class="col-md-10">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-8">
+            <h5 class="card-title" >{{chat.name}}</h5>
+
+          </div>
+          <div class="col-md-4">
+            <div class="text-end p-0" [ngClass]="chat.unreadCount > 0 ? ['text-success', 'unreadCount'] : ''">{{ fch }}</div>
+            <div class="float-end">
+              <div class="rounded-pill bg-success text-white text-center" [hidden]="!chat.unreadCount" style="width: fit-content;padding-left: 6px;padding-right: 8px;font-weight: 600;"> {{chat.unreadCount}} </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--pre>{{chat | json}}</pre-->

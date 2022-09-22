@@ -10,13 +10,41 @@ import { WappService } from '../../services/wapp.service';
 export class WhatsappWebComponent implements OnInit {
   private _waChat!: Subscription;
   chats:any=[];
+  media:any=[];
   contacts:any;
-  phoneSelected = "";
+  phoneSelected = {};
+  selectedChat = {};
+
   private destroy$ = new Subject<any>();
 
   constructor(private wappSrv: WappService) { }
 
   ngOnInit(): void {
+    this.wappSrv.phone
+    .pipe( takeUntil(this.destroy$) )
+    .subscribe( res => {
+      this.phoneSelected = res;
+      console.log(res)
+      //this.user = this.authService.userValue;
+      if(res.phone){
+        console.log(`leyebdo los chats de ${res.phone}`)
+        this.wappSrv.getChats(res.phone).subscribe( (data:any) => {
+          this.chats = data.chats;
+          this.media = data.mediarslt;
+          this.chats.map( (c:any) => {
+            c.messages.map( (m:any) => {
+              if(m.mediaIdx)
+                m.mediaData = this.media[m.mediaIdx]
+            })
+          })
+          console.log(this.media)
+          console.log(this.chats)
+        })
+      }
+
+    })
+
+    /*
     this.wappSrv.phone
     .pipe( takeUntil(this.destroy$) )
     .subscribe( res => {
@@ -26,5 +54,10 @@ export class WhatsappWebComponent implements OnInit {
           console.log(this.chats)
         })
     });
+    */
+  }
+
+  setSelectedChat(ev:any){
+    this.selectedChat = ev;
   }
 }

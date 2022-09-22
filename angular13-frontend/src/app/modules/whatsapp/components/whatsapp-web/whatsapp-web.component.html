@@ -1,18 +1,24 @@
 <title>Example</title>
 <body>
-  <header>Header</header>
+  <!--header>Header</header-->
   <div id="main">
-    <article>Article</article>
-    <nav>      
+    <article>
+      <app-whatsapp-msgs
+        [chat]="selectedChat"
+      >
+      </app-whatsapp-msgs>
+    </article>
+    <nav>
       <app-wappchats-list
         *ngFor="let item of chats; index as i"
         [chat]="item"
+        (selectedChat)="setSelectedChat($event)"
       >
       </app-wappchats-list>
     </nav>
-    <aside>Aside</aside>
+    <!--aside>Aside</aside-->
   </div>
-  <footer>Footer</footer>
+  <!--footer>Footer</footer-->
 </body>
 <!--div class="container-fluid">
   <div class="row">
@@ -22,7 +28,7 @@
       >
       </app-wappchats-list>
       <app-wappmsgs-list class="col-8">
-  
+
       </app-wappmsgs-list>
   </div>
 </div-->

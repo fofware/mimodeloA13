@@ -1,18 +1,19 @@
 <div class="container-fluid bg-light">
-  <nav class="navbar navbar-expand-sm">
+  <nav class="navbar navbar-expand-sm d-inline">
     <div class="container-fluid">
       <ul ngbNav [activeId]="route.fragment" class="navbar-nav">
         <li [ngbNavItem]="'/wa/'">
           <a ngbNavLink [routerLink]="'/wa/'"
             routerLinkActive="active">
             <i ngClass="{{phoneSelected?.state}}" class="fab fa-whatsapp fa-2xl"></i>
-
-            {{phoneSelected?.phone}} {{phoneSelected?.state}}
-            <!--
-              {{phoneSelected.phone}} {{phoneSelected.state}} {{phoneEstado}}
-
-            -->
-            </a>
+          </a>
+        </li>
+        <li [ngbNavItem]="'/wa/'">
+          <a ngbNavLink>
+            <span *ngIf="phoneList.length === 1; else viewSelect">
+              {{phoneSelected?.phone}} {{phoneSelected?.state}}
+            </span>
+          </a>
         </li>
         <li [ngbNavItem]="menu.link" *ngFor="let menu of usrMenu">
             <a ngbNavLink *ngIf="(menu.link && !menu.fragment)" [hidden]='menu.hidden || false' [routerLink]="menu.link" routerLinkActive="active" [innerHTML]="menu.title" (click)="isMenuCollapsed=true"></a>
@@ -21,7 +22,13 @@
         </ul>
         <span></span>
     </div>
-
   </nav>
 </div>
+<ng-template #viewSelect>
+  <span class="d-inline">
+    <select class="d-inline mx-2" [ngModel]="phoneSelected" (ngModelChange)="onChange($event)" name="deviceText">
+      <option [ngValue]="i" *ngFor="let i of phoneList">{{i.phone}}</option>
+    </select>  {{phoneSelected?.state}}
+  </span>
+</ng-template>
 <router-outlet></router-outlet>
