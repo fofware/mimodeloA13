@@ -22,7 +22,7 @@ export default (io:any) => {
     socket.data.nickname = user.nickname;
     socket.data.nombre = user.nombre;
     socket.data.apellido = user.apellido;
-    socket.data.rooms = [`${user._id}`]
+    socket.data.rooms = [`${user._id}`];
     socket.data.name = user.name;
     socket.data.sktId = socket.id;
     socket.join(`${user._id}`)
@@ -33,32 +33,32 @@ export default (io:any) => {
     if(socket.handshake.query.token){
       const user = decodeToken(socket.handshake.query.token);
       setSkt(socket,user);
-      
-
     } else {
       socket.join('no-authorized');
       socket.emit('no-authorized','no-authorized')
-      return
+      socket.disconnect(true);
+      return;
     }
 
     socket.onAny((...args)=>{
       console.log(args);
-    })
+    });
+
     socket.on('registranumero', async (token) => {
       console.log('************ Registra Celular ************')
       //console.log(socket.data);
       const registered:Client = await newGateway(socket);
       if (registered){
         const dataPath = registered['authStrategy']?.dataPath;
-        const phoneExist = await phones.findOne({phone: registered.info.wid.user})
+        const phoneExist = await phones.findOne({phone: registered.info.wid.user});
         //console.log(phoneExist)
         //da2e98e5-f6a7-4f47-a9d3-1584732658e8
         if (phoneExist){
-          socket.emit('error', `El número ${registered.info.wid.user} ya está registrado en el sistema`)
+          socket.emit('error', `El número ${registered.info.wid.user} ya está registrado en el sistema`);
           registered.destroy();
           console.log('aca tiene que borrar',`${dataPath}/session-${socket.data.sessionId}`);
           fs.rmSync(`${dataPath}/session-${socket.data.sessionId}`, { recursive: true, force: true  });
-          console.log("Borró", `${dataPath}/session-${socket.data.sessionId}`)
+          console.log("Borró", `${dataPath}/session-${socket.data.sessionId}`);
         } else {
           socket.data.phone = registered.info.wid.user;
 
@@ -70,11 +70,13 @@ export default (io:any) => {
           //console.log('new', newDir);
           //fs.renameSync(`${dataPath}${oldDir}`,`${dataPath}${newDir}`);
           //console.log('renombró',oldDir,' a ',newDir);
+
           socket.data.activo = true;
           const filter = {
             phone: socket.data.phone,
             user: socket.data.user
           }
+          
           const data = {
             phone: socket.data.phone,
             user: socket.data.user,
@@ -82,6 +84,7 @@ export default (io:any) => {
             rooms: socket.data.rooms,
             activo: true
           }
+          
           let ret = await phones.findOneAndUpdate({ number: socket.data.phone, user: socket.data.user },   // Query parameter
             socket.data, 
             {
@@ -108,7 +111,7 @@ export default (io:any) => {
               tosave.push( saveMsg(m) );
             })
           }
-          const results = await Promise.all(tosave)
+          const results = await Promise.all(tosave);
           //console.log(results);
           console.log('grabó todos los messages', results.length);
           //console.log('aca tiene que borrar',oldDir);
@@ -122,11 +125,12 @@ export default (io:any) => {
       console.log('************ Autoriza Celular ************')
       console.log(phone);
       const registered:any = await storedGateway(phone);
-            
     });
+
     socket.on('getChats', async () => {
       console.log(socket.data);
-    })
+    });
+
     /**
      * esto es para un chat de demo
      */

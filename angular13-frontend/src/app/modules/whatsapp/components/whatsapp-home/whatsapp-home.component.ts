@@ -33,49 +33,49 @@ export class WhatsappHomeComponent implements OnInit {
     this.user = this.authSrv.userValue;
     //const pepe = await this.wappSrv.getPhones(this.user);
     this.wappSrv.phone
-    .pipe( takeUntil(this.destroy$) )
-    .subscribe( res => {
-      this.phoneSelected = res;
-      //this.user = this.authService.userValue;
+        .pipe( takeUntil(this.destroy$) )
+        .subscribe( res => {
+        this.phoneSelected = res;
+        //this.user = this.authService.userValue;
     });
     this.wappSrv.phonesList
-    .pipe( takeUntil(this.destroy$) )
-    .subscribe( res => {
-      this.phoneList = res;
-      //this.user = this.authService.userValue;
+        .pipe( takeUntil(this.destroy$) )
+        .subscribe( res => {
+        this.phoneList = res;
+        //this.user = this.authService.userValue;
     });
 
     //console.log(this.phoneList,this.phoneSelected, this.user)
     this._docSub = this.wappSrv.data
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-      data => {
-        this.isqr = (data.qrSend > data.qrMaxRetries && data.qrMaxRetries > 0);
-        this.qrstr = data.qr;
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+        data => {
+          this.isqr = (data.qrSend > data.qrMaxRetries && data.qrMaxRetries > 0);
+          this.qrstr = data.qr;
 //        this.numero = data.numero;
-        this.qrMaxRetries = data.qrMaxRetries;
-        this.qrSend = data.qrSend;
+          this.qrMaxRetries = data.qrMaxRetries;
+          this.qrSend = data.qrSend;
 //        this.picUrl = data.picUrl;
       });
-      this._status = this.wappSrv.state
-      .pipe( takeUntil(this.destroy$) )
-      .subscribe((res:any) => {
+    this._status = this.wappSrv.state
+        .pipe( takeUntil(this.destroy$) )
+        .subscribe((res:any) => {
         //console.log('_status',res)
-        this.phoneList.map( (p:any) => {
+          this.phoneList.map( (p:any) => {
           if(p.phone === res.phone) p.state = res.state;
         })
-      })
+    })
 
     this._ready = this.wappSrv.ready
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(
-      async _ready => {
-        this.isqr = true;
-        await this.wappSrv.getPhones(this.user._id);
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+          async _ready => {
+            this.isqr = true;
+            await this.wappSrv.getPhones(this.user._id);
 
-        this.phoneSelected = this.wappSrv.phoneValue;
-        this.phoneList = this.wappSrv.phoneListValue;      }
-    );
+            this.phoneSelected = this.wappSrv.phoneValue;
+            this.phoneList = this.wappSrv.phoneListValue;
+        });
   }
 
   //ngOnInit(): void {

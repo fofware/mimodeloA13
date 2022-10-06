@@ -11,6 +11,7 @@ import { MenuService } from 'src/app/services/menu.service';
 
 export class HomeComponent implements OnInit {
   menuId = '';
+  /*
   menudata = [
     {
       id: 'menu',
@@ -80,6 +81,15 @@ export class HomeComponent implements OnInit {
         icon: 'fas fa-cogs fa-4x',
         comment: 'Puesta a punto el sistema',
         menu: [
+          {
+            title: 'Menues',
+            icon: 'fas fa-folder fa-3x',
+            permiso: 'moderator',
+            target: '',
+            rel: 'noopener',
+            route: 'menues',
+            param: ''
+          },
           {
             title: 'Archivos',
             icon: 'fas fa-folder fa-3x',
@@ -287,23 +297,20 @@ export class HomeComponent implements OnInit {
       }
     }
   ];
-  
-  data: any = {
-
-  };
+  */
+  data: any = {};
   title = '';
   comment = '';
   menu: any[] = [];
-  breadcrumb = [];
+  breadcrumb:any = [];
 
   constructor(
     public actRoute: ActivatedRoute,
     public route: Router,
     private menuService: MenuService
   ) {
-    this.menuId = this.actRoute.snapshot.params['id'] || 'menu';
-    const array:any = this.route.url.split('/');
-    this.breadcrumb = array;
+    this.menuId = this.actRoute.snapshot.params['id'] || 'admin';
+
     this.findMenu();
 
   }
@@ -319,7 +326,7 @@ export class HomeComponent implements OnInit {
   findMenu(): void{
     const menuData = this.menuService.get( this.menuId) ;
     this.data = menuData;
-    console.log(this.data);
+    console.log("Menu Data",this.data);
   }
 
 

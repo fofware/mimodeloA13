@@ -2,30 +2,31 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'app-formhijos',
-  templateUrl: './formhijos.component.html',
-  styleUrls: ['./formhijos.component.css']
+  selector: 'app-menues',
+  templateUrl: './menues.component.html',
+  styleUrls: ['./menues.component.css']
 })
-export class FormhijosComponent implements OnInit {
+export class MenuesComponent implements OnInit {
 
-  public formParent: FormGroup = new FormGroup({});
+  public menuParent: FormGroup = new FormGroup({});
 
   constructor() { }
 
   ngOnInit(): void {
-    this.initFormParent()
+    this.initMenuParent()
     this.addSkill();
   }
-  initFormParent():void {
-    this.formParent = new FormGroup(
+  initMenuParent():void {
+    this.menuParent = new FormGroup(
       {
         name: new FormControl('', [Validators.required, Validators.minLength(10)]),
-        skills: new FormArray([], [Validators.required])
+        group: new FormControl('', [Validators.required]),
+        childMenu: new FormArray([], [Validators.required])
       }
     )
   }
 
-  initFormSkill(): FormGroup {
+  initFormChildsMenu(): FormGroup {
     return new FormGroup(
       {
         email: new FormControl(''),
@@ -36,11 +37,12 @@ export class FormhijosComponent implements OnInit {
   }
 
   addSkill(): void {
-    const refSkills = this.formParent.get('skills') as FormArray;
-    refSkills.push(this.initFormSkill());
+    const refSkills = this.menuParent.get('skills') as FormArray;
+    refSkills.push(this.initFormChildsMenu());
   }
 
   getCtrl(key: string, form: FormGroup): any {
     return form.get(key);
   }
+
 }

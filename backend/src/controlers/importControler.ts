@@ -74,7 +74,7 @@ class ImportDataControler {
       const newData = [];
       //repta.push({next: 'http://fofware.com.ar:4444/make/articulo'})
       repta.push({next: 'http://192.168.100.150:4444/make/tablas'});
-      repta.push(ret);
+      //repta.push(ret);
       repta.push(newData);
       const campos = [
         'rubro',

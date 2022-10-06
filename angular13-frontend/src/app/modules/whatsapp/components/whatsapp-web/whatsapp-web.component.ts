@@ -14,6 +14,7 @@ export class WhatsappWebComponent implements OnInit {
   contacts:any;
   phoneSelected = {};
   selectedChat = {};
+  newMessage = {}
 
   private destroy$ = new Subject<any>();
 
@@ -24,10 +25,10 @@ export class WhatsappWebComponent implements OnInit {
     .pipe( takeUntil(this.destroy$) )
     .subscribe( res => {
       this.phoneSelected = res;
-      console.log(res)
+      //console.log(res)
       //this.user = this.authService.userValue;
       if(res.phone){
-        console.log(`leyebdo los chats de ${res.phone}`)
+        console.log(`leyendo los chats de ${res.phone}`)
         this.wappSrv.getChats(res.phone).subscribe( (data:any) => {
           this.chats = data.chats;
           this.media = data.mediarslt;
@@ -41,8 +42,13 @@ export class WhatsappWebComponent implements OnInit {
           console.log(this.chats)
         })
       }
-
     })
+    this.newMessage = this.wappSrv.currentMessage
+        .subscribe(
+          data => {
+            console.log(data)
+            //this.msgs.push(data);
+        });
 
     /*
     this.wappSrv.phone

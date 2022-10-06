@@ -12,6 +12,10 @@ import { EspecieComponent } from './components/especie/especie.component';
 import { RazaComponent } from './components/raza/raza.component';
 import { ArticuloComponent } from './components/articulo/articulo.component';
 import { PresentacionComponent } from './components/presentacion/presentacion.component';
+import { ArticuloFormComponent } from './components/articulo-form/articulo-form.component';
+import { MenuesComponent } from './components/menues/menues.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 @NgModule({
@@ -25,11 +29,17 @@ import { PresentacionComponent } from './components/presentacion/presentacion.co
     EspecieComponent,
     RazaComponent,
     ArticuloComponent,
-    PresentacionComponent
+    PresentacionComponent,
+    ArticuloFormComponent,
+    MenuesComponent
   ],
   imports: [
     CommonModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    FormsModule,
+    //BrowserAnimationsModule,
+    ReactiveFormsModule,
+
   ]
 })
 export class AdminModule { }

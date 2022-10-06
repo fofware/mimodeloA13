@@ -6,6 +6,7 @@ import { ArticuloComponent } from './components/articulo/articulo.component';
 import { FabricanteComponent } from './components/fabricante/fabricante.component';
 import { HomeComponent } from './components/home/home.component';
 import { MarcaComponent } from './components/marca/marca.component';
+import { MenuesComponent } from './components/menues/menues.component';
 
 const routes: Routes = [
   {
@@ -24,6 +25,10 @@ const routes: Routes = [
       {
         path: ':id',
         component: HomeComponent
+      },
+      {
+        path: 'config/menues',
+        component: MenuesComponent
       },
       {
         path: 'archivos/fabricantes',

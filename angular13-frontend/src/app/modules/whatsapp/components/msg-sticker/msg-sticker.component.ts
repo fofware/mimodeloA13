@@ -16,8 +16,13 @@ export class MsgStickerComponent implements OnInit {
 
   ngOnInit(): void {
     console.log(this.msg);
-    this.sticker = `data:${this.msg.mediaData.mimetype};base64,${this.msg.mediaData.data}`;
-
+    //this.sticker = `data:${this.msg.mediaData.mimetype};base64,${this.msg.mediaData.data}`;
+    let num = '';
+    if(this.msg.id.fromMe){
+      console.log(this.msg.id.fromMe)
+    } else {
+      num = this.msg._data.to.user
+    }
+    this.sticker = `http://192.168.100.150:4445/media/${this.msg.id._serialized}`;
   }
-
 }

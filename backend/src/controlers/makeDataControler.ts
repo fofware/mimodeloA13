@@ -451,7 +451,8 @@ class MakeDataControler {
     }
 		const name = await _articulo.distinct('name');
 		const tags = await _articulo.distinct('tags');
-		res.status(200).json({next,fabricante,marca,rubro,linea,especie,raza,edad,name,tags});
+		//res.status(200).json({next,fabricante,marca,rubro,linea,especie,raza,edad,name,tags});
+		res.status(200).json({next});
   }
 
 
@@ -561,7 +562,7 @@ class MakeDataControler {
       );
       console.log(reg._id);
     }
-    res.status(200).json({ret,array});
+    res.status(200).json({ret});
   }
 
   async costo(req: Request, res: Response){

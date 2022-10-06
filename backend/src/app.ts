@@ -21,6 +21,7 @@ import { proveedorCtrl } from './controlers/proveedorControler';
 import { proveedorProductoCtrl } from './controlers/proveedorProductoControler';
 import { MarcaCtrl } from './controlers/marcaControler';
 import { FabricanteCtrl } from './controlers/fabricanteControler';
+import { MenuCtrl } from './controlers/menuControler';
 
 //import { articuloCtrl } from './controlers/articuloControler';
 //import { productoCtrl } from './controlers/productoControler';
@@ -55,5 +56,6 @@ app.use(proveedorProductoCtrl.router);
 app.use(FabricanteCtrl.router);
 app.use(MarcaCtrl.router);
 app.use(proveedorProductoCtrl.router);
+app.use(MenuCtrl.router);
 app.use(authRoutes);
 export default app;

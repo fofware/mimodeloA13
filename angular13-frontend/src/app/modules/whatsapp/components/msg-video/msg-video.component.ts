@@ -12,12 +12,27 @@ export class MsgVideoComponent implements OnInit {
   @Input() name:any;
 
   video: any;
+  height = 0;
+  width = 0;
 
   constructor(private domsanitize: DomSanitizer) { }
 
   ngOnInit(): void {
     console.log("video",this.msg)
-    if(this.msg?._data?.mimetype)
-      this.video = this.domsanitize.bypassSecurityTrustUrl(`data:${this.msg.mediaData?.mimetype};base64,${this.msg.mediaData?.data}`);
+    let coef = this.msg._data.height / this.msg._data.width;
+    if (coef >= 1){
+      this.height = this.msg._data.height * (240/this.msg._data.width);
+      this.width = 240;
+    } else {
+      this.width = 346;
+      this.height = this.msg._data.height * (346/this.msg._data.width);
+    }
+    console.log(this.width, this.height)
+    //if(this.msg?._data?.mimetype) {
+    //  this.video = this.domsanitize.bypassSecurityTrustUrl(`data:${this.msg.mediaData?.mimetype};base64,${this.msg.mediaData?.data}`);
+    //} else {
+      let num = this.msg.id.fromMe ? this.msg._data.from : this.msg._data.to.user;
+      this.video = this.domsanitize.bypassSecurityTrustUrl(`http://192.168.100.150:4445/media/${this.msg.id._serialized}`);
+    //}
   }
 }

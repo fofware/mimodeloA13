@@ -24,9 +24,9 @@ export const initAllWapp = async (app) =>{
   const asyncFunctions = []
   for (let index = 0; index < array.length; index++) {
     const p:any = array[index];
-    asyncFunctions.push(storedGateway(p))
+    asyncFunctions.push(storedGateway(p));
   }
-  const results:Client[] = await Promise.all(asyncFunctions)
+  const results:Client[] = await Promise.all(asyncFunctions);
   //results.map( client => { setRoutes(router,client) })
   //for (let i = 0; i < results.length; i++) {
   //  const c = results[i];
@@ -34,8 +34,8 @@ export const initAllWapp = async (app) =>{
   //}
   const totalend = new Date();
   const totaldif = totalend.getTime()-totalini.getTime();
-  console.log(totaldif)
-  app.use(router)
+  console.log(totaldif);
+  app.use(router);
 }
 let io;
 
@@ -59,13 +59,16 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
         args: ['--no-sandbox'],
       }
     });
+
     client.initialize();
+    
     client['user'] = p.user;
-    client['retriessend'] = 0
+    client['retriessend'] = 0;
+    
     client.on('auth_failure', err =>  {
-      io.to(p.rooms).emit('auth_failure',err)
+      io.to(p.rooms).emit('auth_failure',err);
       console.error(err);
-      reject(err)
+      reject(err);
     });
 
     client.on('authenticated', async (session) => {
@@ -121,79 +124,74 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
     });
 
     client.on('message', async msg => {
-      //gateways[client.info.wid.user].sockets.forEach( stk => stk.emit('message',msg))
+
       msg['on'] = `message ${client.info.wid.user}`;
       msg['serialized'] = msg.id._serialized;
-      let mediadata:any;
-      if(msg.hasMedia){
-        let veces = 0
-        do {
-          mediadata = await msg.downloadMedia() 
-          veces++;
-          console.log('veces', veces)
-        } while (veces < 4 && !mediadata?.data );
-        
-        if (mediadata?.data){
-          const reg = {
-            filename: mediadata.filename,
-            mimetype: mediadata.mimetype,
-            msgid: msg.id.id,
-            serialized: msg.id._serialized,
-            from: msg.from,
-            author: msg.author,
-            to: msg.to,
-            type: msg.type,
-            mediaKey: msg.mediaKey,
-            width: msg['_data'].width,
-            height: msg['_data'].height,
-            mediaTimestamp: msg['_data'].mediaTimestamp,
-            filehash: msg['_data'].filehash
-          }
+      if (msg.from !== 'status@broadcast'){
 
-          console.log('graba media data');
-          const mdata = new wappmediadata(reg);
-          const smdata = await mdata.save();
-          console.log(smdata);
-          const fn = `${__dirname}/../mediaReceive/${client.info.wid.user}_${msg.from}_${smdata._id}`
-          fs.writeFileSync(fn,JSON.stringify(mediadata),{encoding:"utf8"});
-          msg['mediafile'] = fn;
-        }
+        const mediadata = saveMedia(client,msg);
+      
+        msg['contact'] = await msg.getContact();
+        msg['chat'] = await msg.getChat();
+  
+        io.to(p.rooms).emit('message',msg,mediadata);
+  
+        const ret = await saveMsg(msg);
+        procesaMsg(client,msg);
+  
+      } else {
+        console.log('--------------------- IGNORADO ---------------------')
       }
-      io.to(p.rooms).emit('message',msg,mediadata);
 
-      const ret = await saveMsg(msg)
-
-      console.log('---------------------------------')
+      console.log('----------------------------------------------------')
       console.log(`${client.info.pushname} ${client.info.wid.user} MESSAGE RECEIVED`);
       showTime(msg);
-      procesaMsg(client,msg)
+
     })
 
     client.on('message_ack', async (msg, ack) => {
 
       msg['on'] = `message_ack ${client.info.wid.user}`;
       msg['serialized'] = msg.id._serialized; 
+      
       io.to(p.rooms).emit('message_ack',{msg,ack})
 
       const ret = await saveMsg(msg)
 
       const ackTxt = ['','se envio','recibió','leyó','Dio play al audio']
-      console.log('---------------------------------')
+      console.log('----------------------------------------------------')
       console.log(`${client.info.pushname} ${client.info.wid.user} message_ack ${ack} ${msg.to} ${ackTxt[ack]}`);
+
       showTime(msg);
+
     })
 
     client.on('message_create', async (msg) => {
 
       msg['on'] = `message_create ${client.info.wid.user}`;
       msg['serialized'] = msg.id._serialized; 
-      io.to(p.rooms).emit('message_create',msg)
 
-      const ret = await saveMsg(msg)
+      
+      if (msg.from !== 'status@broadcast'){
+        if(msg.fromMe){
+          const mediadata = await saveMedia(client,msg);
+      
+          msg['contact'] = await msg.getContact();
+          msg['chat'] = await msg.getChat();
+    
+          io.to(p.rooms).emit('message_create',msg,mediadata);
+    
+          const ret = await saveMsg(msg);
+          procesaMsg(client,msg);
+        }
+      } else {
+        console.log('--------------------- IGNORADO ---------------------')
+      }
 
-      console.log('---------------------------------')
+      console.log('----------------------------------------------------')
       console.log(`${client.info.pushname} ${client.info.wid.user} message_create`);
       showTime(msg);
+
     });
 
     client.on('message_revoke_everyone', async (msg, revoked_msg) => {
@@ -205,7 +203,7 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
       const ret = await saveMsg(msg)
 
       io.to(p.rooms).emit('message_revoke_everyone',{msg,revoked_msg})
-      console.log('---------------------------------')
+      console.log('----------------------------------------------------')
       console.log(`${client.info.pushname} ${client.info.wid.user} message_revoke_everyone`);
       showTime(msg);
     })
@@ -253,7 +251,63 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
     })
   })
 }
+const saveMedia = (client:Client, msg:Message) => {
+  return new Promise( async (resolve, reject) => {
+    let mediadata:any;
+    const fn = `${__dirname}/../mediaReceive/${msg.id._serialized}.json`;
 
+    let existe = fs.existsSync(fn)
+    
+    console.log('saveMedia',msg.hasMedia, existe);
+  
+    if(msg.hasMedia && !existe){
+      let veces = 0
+      do {
+        mediadata = await msg.downloadMedia() ;
+        veces++;
+      } while (veces < 4 && !mediadata?.data?.length );
+    
+      console.log('veces', veces, `${msg.id._serialized}`,mediadata?.data.length);
+    
+      if (mediadata?.data?.length > 0){
+        //const reg = {
+        //  filename: mediadata.filename,
+        //  mimetype: mediadata.mimetype,
+        //  msgid: msg.id.id,
+        //  serialized: msg.id._serialized,
+        //  from: msg.from,
+        //  author: msg.author,
+        //  to: msg.to,
+        //  type: msg.type,
+        //  mediaKey: msg.mediaKey,
+        //  width: msg['_data'].width,
+        //  height: msg['_data'].height,
+        //  mediaTimestamp: msg['_data'].mediaTimestamp,
+        //  filehash: msg['_data'].filehash
+        //}
+
+//        const mdata = new wappmediadata(reg);
+//        const smdata = await mdata.save();
+        //console.log(smdata);
+          console.log('graba media data');
+          try {
+            console.log(typeof(mediadata))
+            fs.writeFileSync(fn,JSON.stringify(mediadata),{encoding:"utf8"});
+          } catch (error) {
+            console.log(error)
+            reject(error);            
+          }
+          existe = true;
+          //msg['mediafile'] = fn;
+      } else {
+        existe = false;
+        console.log('no grabó', `${msg.id._serialized}`)
+      }
+    }
+    console.log(existe);
+    resolve({existe})
+  })
+} 
 export const saveMsg = async (m) => {
 
   m['myid'] = m.id.id;
@@ -376,43 +430,58 @@ export const setRoutes = async (client:Client) => {
     const msgToRead = [];
     for (let i = 0; i < chats.length; i++) {
       const e = chats[i];
-      const limit = e.unreadCount + 10;
+      const limit = e.unreadCount + 150;
       msgToRead.push(e.fetchMessages( {limit} ));
-      e['contacto'] = await e.getContact();
-      e['picUrl'] = await e['contacto'].getProfilePicUrl();
+      //e['contacto'] = await e.getContact();
+      //e['picUrl'] = await e['contacto'].getProfilePicUrl();
     }
     const msgs = await Promise.all(msgToRead);
-    const mediaData = [];
+    const med = [];
     chats.map( async (c,i) => {
-      msgs[i].map( async (m:any) => {
-        if(m['hasMedia']){
-          m['mediaIdx'] = mediaData.length;
-          mediaData.push(m.downloadMedia());  
-          //m['mediaData'] = await m.downloadMedia();
-        }
-      })
+    //  msgs[i].map( async (m:Message) => {
+    //    //if(m.hasMedia) med.push(saveMedia(client,m));
+    //    if(m.hasMedia) await saveMedia(client,m)  
+    //  });
       c['messages'] = msgs[i];
-    })
-    const mediarslt = await Promise.all(mediaData);
+    });
+    //const mediaData = await Promise.all(med);
 
-    chats.map( async (c,i) => {
-      c['messages'].map( async (m:any) => {
-        if(m['hasMedia']){
-          //if (m['type'] === 'video'){
-            let count = 0;
-            while (mediarslt[m['mediaIdx']] === null && count < 2) {
-              mediarslt[m['mediaIdx']] = await mediaData[m['mediaIdx']]
-              count++;
-              console.log(count);
-            }
-            //console.log( mediarslt[m['mediaIdx']]);
-          //}
-        }
-      })
-    })
+    //const mediarslt = await Promise.all(mediaData);
 
+    
+    //chats.map( async (c,i) => {
+    //  await c['messages'].map( async (m:any,j) => {
+    //    let cnt = 0;
+//
+    //    let loop = true;
+    //    const r = 40;
+    //    if( m['hasMedia'] === true ){
+    //      //if (m['type'] === 'video'){
+    //        do {
+    //          //console.log( '1',!mediarslt[m['mediaIdx']]?.data && cnt < r )
+    //          if( !mediarslt[m['mediaIdx']]?.data && cnt < r )
+    //          {
+    //            mediarslt[m['mediaIdx']] = mediaData[m['mediaIdx']]
+    //            cnt++;
+    //            //console.log(cnt);
+    //            //console.log('2',mediarslt[m['mediaIdx']]?.data || cnt >= r);
+    //            if( mediarslt[m['mediaIdx']]?.data || cnt >= r ) loop = false;
+    //          } else {
+    //            loop = false;
+    //          }
+    //        } while ( loop );
+//
+    //        console.log(i,j,m['mediaIdx'], cnt, loop, mediarslt[m['mediaIdx']]?.data?.length);
+    //        cnt = 0;
+    //        //console.log( mediarslt[m['mediaIdx']]);
+    //      //}
+    //    }
+    //  })
+    //});
+        
     console.log("envia Chats")
-    res.status(200).json({chats,mediarslt});
+    //res.status(200).json({ chats, mediarslt });
+    res.status(200).json({ chats });
   });
 
   router.get(`/${num}/chats/:limit`, async (req, res) =>{
@@ -473,6 +542,28 @@ export const setRoutes = async (client:Client) => {
     res.status(200).json(chat);
   })
 
+  router.get(`/${num}/mediadata`, async (req, res) => {
+    const {message, remote } = req.query;
+    const chatId:any = remote ? remote : null;
+    const fexist = fs.existsSync(`${__dirname}/../mediaReceive/${message}.json`);
+    let fr:any;
+    if(fexist){
+      fr = JSON.parse(fs.readFileSync(`${__dirname}/../mediaReceive/${message}.json`,{encoding: 'utf8', flag: 'r'}));
+      if(!fr?.data){
+        const msgs = await client.searchMessages('',{ chatId, limit:15200});
+      } 
+    }
+    /*
+    console.log(fr);
+    console.log(fr.mimetype);
+    console.log(fr.data);
+    */
+    //res.set('Content-Type', fr.mimetype);
+    //res.set('Content-Length', fr.data.length);
+    //const buffer = Buffer.from(fr.data, 'base64');
+    res.send(fr);
+  });
+  
   router.get(`/${num}/chat/:serialized/labels`, async (req, res) =>{
     const {serialized} = req.params
     const value = await client.getChatLabels(serialized);
@@ -638,15 +729,22 @@ export const setRoutes = async (client:Client) => {
   //})
   
   // No está probada
-  router.post(`/${num}/searchmessages`, async (req, res) =>{
-    const { query, options } = req.body;
+  router.get(`/${num}/searchmessages`, async (req, res) =>{
+    const query:any = req.query.query;
+    const options = {}
+
+    if (req.query?.limit) options['limit'] = parseInt(req.query.limit.toString());
+    if (req.query?.page) options['page'] = parseInt(req.query.page.toString());
+    if (req.query?.chatid) options['chatId'] = req.query.chatid;
+
     const value = await client.searchMessages(query,options);
     res.status(200).json(value);
-  })
+  });
+
   router.get(`/${num}/messages`, async (req, res) =>{
     const messages = await whatsapp.find({$or:[{from: `${num}@c.us`},{to: `${num}@c.us`}]}).sort({ timestamp: -1}).limit(200)
     res.status(200).json(messages);
-  })
+  });
 
   // No está probada
   /*

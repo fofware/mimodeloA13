@@ -1,6 +1,6 @@
 <div class="card mx-4" style="max-width: 40%;">
-  <video width="320" height="240" controls>
-    <source [src]="video" [type]="msg?.mediaData?.mimetype">
+  <video [width]="width" [height]="height" controls class="">
+    <source [src]="video" [type]="msg?._data?.mimetype">
     Your browser does not support the video tag.
   </video>
   <div class="card-body">

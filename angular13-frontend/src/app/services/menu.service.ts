@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 export const menudata = [
   {
-    id: 'menu',
+    id: 'admin',
     data: {
       title: 'Administración',
       comment: '',

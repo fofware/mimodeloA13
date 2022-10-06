@@ -1,2 +1,6 @@
-<p>{{breadcrumb | json}}</p>
+  <div class="container-fluid">
+    <span *ngFor="let item of breadcrumb;index as i">
+      <a [routerLink]="item.link">{{item.title}} / </a>
+    </span>
+  </div>
 <router-outlet></router-outlet>
