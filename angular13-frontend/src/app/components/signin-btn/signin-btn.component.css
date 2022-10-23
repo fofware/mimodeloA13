@@ -1,5 +1,5 @@
 .arriba {
-  z-index: 20000;
+  z-index: 1000;
 }
 .dropdown-toggle::after {
   border-top: 0;

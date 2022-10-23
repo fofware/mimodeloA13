@@ -3,10 +3,16 @@ import { RouterModule, Routes } from '@angular/router';
 import { NoPageComponent } from 'src/app/components/no-page/no-page.component';
 import { AdminComponent } from './admin.component';
 import { ArticuloComponent } from './components/articulo/articulo.component';
+import { EdadesComponent } from './components/edades/edades.component';
+import { EspecieComponent } from './components/especie/especie.component';
 import { FabricanteComponent } from './components/fabricante/fabricante.component';
 import { HomeComponent } from './components/home/home.component';
+import { LineaComponent } from './components/linea/linea.component';
 import { MarcaComponent } from './components/marca/marca.component';
+import { MedidasComponent } from './components/medidas/medidas.component';
 import { MenuesComponent } from './components/menues/menues.component';
+import { PresentacionComponent } from './components/presentacion/presentacion.component';
+import { RubroComponent } from './components/rubro/rubro.component';
 
 const routes: Routes = [
   {
@@ -39,8 +45,32 @@ const routes: Routes = [
         component: MarcaComponent
       },
       {
+        path: 'archivos/rubros',
+        component: RubroComponent
+      },
+      {
+        path: 'archivos/lineas',
+        component: LineaComponent
+      },
+      {
+        path: 'archivos/especies',
+        component: EspecieComponent
+      },
+      {
+        path: 'archivos/medidas',
+        component: MedidasComponent
+      },
+      {
+        path: 'archivos/edades',
+        component: EdadesComponent
+      },
+      {
         path: 'archivos/articulos',
         component: ArticuloComponent
+      },
+      {
+        path: 'archivos/presentaciones',
+        component: PresentacionComponent
       },
       {
         path: '**',

@@ -37,7 +37,11 @@ export class WhatsappComponent implements OnInit, OnDestroy {
   private _status!: Subscription;
   private destroy$ = new Subject<any>();
 
-  constructor( public route: ActivatedRoute, private authSrv: AuthService, private wappSrv: WappService ) {
+  constructor(
+    public route: ActivatedRoute,
+    private authSrv: AuthService,
+    private wappSrv: WappService
+  ) {
     this.user = this.authSrv.userValue;
     this.phoneList = this.wappSrv.phoneListValue;
     this.phoneSelected = this.wappSrv.phoneValue;
@@ -101,9 +105,9 @@ export class WhatsappComponent implements OnInit, OnDestroy {
     this.destroy$.next({});
     this.destroy$.complete();
   }
-  
+
   onChange(event:any){
-    
+
     this.phoneSelected=event;
     this.wappSrv.phoneValue = event;
   }

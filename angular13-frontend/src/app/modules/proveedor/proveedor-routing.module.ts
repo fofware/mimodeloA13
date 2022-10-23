@@ -5,6 +5,7 @@ import { ArticulosComponent } from './components/articulos/articulos.component';
 import { FormComponent } from './components/form/form.component';
 import { HomeComponent } from './components/home/home.component';
 import { ListComponent } from './components/list/list.component';
+import { ListapreciosComponent } from './components/listaprecios/listaprecios.component';
 import { MarcaComponent } from './components/marca/marca.component';
 import { ProductosComponent } from './components/productos/productos.component';
 import { ProveedorComponent } from './proveedor.component';
@@ -42,6 +43,10 @@ const routes: Routes = [
           {
             path: 'productos',
             component: ProductosComponent
+          },
+          {
+            path: 'precios',
+            component: ListapreciosComponent
           },
           {
             path: '**',

@@ -27,7 +27,7 @@ export class ArticulosPublicComponent implements OnInit {
   //@ViewChild('myTabla', { static: true }) myTableRef!: ElementRef;
   @HostListener('scroll', ['$event.target'])
   onScroll( elem:any ) {
-    //console.log('scrollTop',elem.scrollTop)
+    console.log('scrollTop',elem.scrollTop)
     //console.log('offsetHeight',elem.offsetHeight)
     //console.log('scrollHeight',elem.scrollHeight)
     //console.log('scrollHeight',elem.scrollHeight)

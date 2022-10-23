@@ -1,0 +1,141 @@
+<div class="card-title px-2 pt-1 mt-2">
+    <h5 class="font-weight-bold">{{presentacion.fullName}}</h5>
+  </div>
+  <div class="product-card">
+    <nav>
+      <i class="pesable fa fa-balance-scale fa-fw fa-2x" aria-hidden="true" [hidden]="!presentacion.pesable"></i>
+      <i class="pesable fas fa-box fa-2x" aria-hidden="true"
+        [hidden]="!(presentacion.parent !== null && presentacion.pVenta && presentacion.pCompra)"></i>
+      <div class="imgbox">
+        <img class="caja-img" src="{{presentacion.image || articulo.images[0]}}" alt="">
+      </div>
+    </nav>
+    <article>
+      <div class="card">
+        <div class="close" [hidden]='idx===null' (click)='borrar()'><i class="fas fa-window-close"></i></div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+              <div class="row">
+                <div class="col-6 col-lg-3 col-xl-3 px-1">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="pesable" name="pesable"
+                      [(ngModel)]="presentacion.pesable">
+                    <label class="form-check-label" for="pesable">
+                      <i class="fa fa-balance-scale fa-fw" aria-hidden="true"></i>
+                    </label>&nbsp;
+                  </div>
+                </div>
+                <div class="col-6 col-lg-3 col-xl-3 px-1">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="servicio" name="servicio"
+                      [(ngModel)]="presentacion.servicio">
+                    <label class="form-check-label" for="servicio">
+                      Servicio
+                    </label>&nbsp;
+                  </div>
+                </div>
+                <div class="col-6 col-lg-3 col-xl-3 px-1">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="pCompra" name="pCompra"
+                      [(ngModel)]="presentacion.pCompra">
+                    <label class="form-check-label" for="pCompra">
+                      Compra
+                    </label>&nbsp;
+                  </div>
+                </div>
+                <div class="col-6 col-lg-3 col-xl-3 px-1">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="pVenta" name="pVenta"
+                      [(ngModel)]="presentacion.pVenta">
+                    <label class="form-check-label" for="pVenta">
+                      Venta
+                    </label>&nbsp;
+                  </div>
+                </div>
+                <div class="col-6 col-lg-3 col-xl-3 px-1">
+                  <input type="text" class="form-control form-control-sm mb-1" name="codigo"
+                    placeholder="Código de Barras" [(ngModel)]="presentacion.codigo">
+                </div>
+                <div class="col-6 col-lg-3 col-xl-3 px-1">
+                  <input type="text" class="form-control form-control-sm mb-1" name="plu" placeholder="PLU"
+                    [(ngModel)]="presentacion.plu">
+                </div>
+                <div class="col-12 col-lg-6 col-xl-6 px-1">
+                  <input type="text" class="form-control form-control-sm mb-1" name="image" placeholder="url imagen"
+                    [(ngModel)]="presentacion.image">
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="row">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-3 px-1">
+                  <input type="text" class="form-control form-control-sm mb-1" name="name" placeholder="Nombre"
+                    [(ngModel)]="presentacion.name">
+                </div>
+                <div class="col-6 col-md-3 col-lg-2 col-xl-1 px-1">
+                  <input type="text" class="form-control form-control-sm mb-1" name="contiene" placeholder="Contiene"
+                    [(ngModel)]="presentacion.contiene">
+                </div>
+                <div class="col-6 col-md-3 col-lg-2 col-xl-1 px-1">
+                  <input type="text" class="form-control form-control-sm mb-1" name="unidad" placeholder="Unidad"
+                    [(ngModel)]="presentacion.unidad">
+                </div>
+                <div class="col-6 col-md-6 col-lg-4 col-xl-3 px-1">
+                  <select class="form-control form-control-sm mb-1" name="parent" aria-placeholder="de Articulo"
+                    [(ngModel)]="presentacion.relacion">
+                    <option value="{{pack.id}}" *ngFor="let pack of unidades;">
+                      {{pack.name}}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-6 col-md-3 col-lg-3 col-xl-2 px-1">
+                  <input type="text" class="form-control form-control-sm mb-1" name="stock" placeholder="Stock"
+                    [(ngModel)]="presentacion.stock">
+                </div>
+                <div class="col-6 col-md-3 col-lg-3 col-xl-2 px-1">
+                  <input type="text" class="form-control form-control-sm mb-1" name="stockMin" placeholder="Stock Min"
+                    [(ngModel)]="presentacion.stockMin">
+                </div>
+              </div>
+            </div>
+            <!--div class="col-12">
+              <div class="row">
+                <div class="col-6 col-lg-3 col-xl-2 px-1">
+                  <input type="text" class="form-control form-control-sm mb-1" name="compra" placeholder="compra"
+                    [(ngModel)]="presentacion.compra">
+                </div>
+                <div class="col-6 col-lg-3 col-xl-2 px-1">
+                  <input type="text" class="form-control form-control-sm mb-1" name="reposicion"
+                    placeholder="Reposicion" [(ngModel)]="presentacion.reposicion">
+                </div>
+                <div class="col-6 col-md-3 col-lg-2 col-xl-2 px-1">
+                  <input type="text" class="form-control form-control-sm mb-1" name="margen" placeholder="Margen"
+                    [(ngModel)]="presentacion.margen">
+                </div>
+                <div class="col-6 col-md-6 col-lg-3 col-xl-2 px-1">
+                  <input type="text" class="form-control form-control-sm mb-1" name="precio" placeholder="precio vta"
+                    [(ngModel)]="presentacion.precio">
+                </div>
+                <div class="col-6 col-md-3 col-lg-1 col-xl-2 px-1">
+                  <input type="text" class="form-control form-control-sm mb-1" name="iva" placeholder="% IVA"
+                    [(ngModel)]="presentacion.iva">
+                </div>
+                <div class="col-6 col-md-6 col-lg-3 col-xl-2 px-1">
+                  <input type="datetime-local" class="form-control form-control-sm mb-1" name="precio_desde" placeholder="precio desde"
+                    [(ngModel)]="presentacion.precio_desde">
+                </div>
+                <div class="col-6 col-md-6 col-lg-3 col-xl-2 px-1">
+                  <input type="datetime-local" class="form-control form-control-sm mb-1" name="precio_hasta" placeholder="precio hasta"
+                    [(ngModel)]="presentacion.precio_hasta">
+                </div-->
+                <!--div [hidden]="presentacion.pesable" class="col-6 col-md-6 col-lg-3 col-xl-2 px-1">
+                  <button (click)="productLink()">Proveedores</button>
+                </div-->
+              <!--/div>
+            </div-->
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>

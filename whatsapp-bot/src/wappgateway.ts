@@ -65,23 +65,26 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
     client['user'] = p.user;
     client['retriessend'] = 0;
     
-    client.on('auth_failure', err =>  {
-      io.to(p.rooms).emit('auth_failure',err);
+    client.on('auth_failure', async (err) =>  {
+      await io.to(p.phone).emit('auth_failure',err);
+      //await io.to(p.rooms).emit('auth_failure',err);
       console.error(err);
       reject(err);
     });
 
     client.on('authenticated', async (session) => {
-      console.log(`Authenticated`);
+      console.log(`Authenticated`,session);
     });
 
-    client.on('change_battery', (batteryInfo) => {
-      io.to(p.rooms).emit('change_battery',{phone: client.info.wid.user, batteryInfo})
+    client.on('change_battery', async (batteryInfo) => {
+      await io.to(p.phone).emit('change_battery',{phone: client.info.wid.user, batteryInfo})
+      //await io.to(p.rooms).emit('change_battery',{phone: client.info.wid.user, batteryInfo})
       console.log(`${client.info.pushname} ${client.info.wid.user} BatteryInfo ${batteryInfo}`);
     });
 
-    client.on('change_state', (state) => {
-      io.to(p.rooms).emit('change_state',{phone: client.info.wid.user, state})
+    client.on('change_state', async (state) => {
+      await io.to(p.phone).emit('change_state',{phone: client.info.wid.user, state});
+      //await io.to(p.rooms).emit('change_state',{phone: client.info.wid.user, state});
       console.log(`${client.info.pushname} ${client.info.wid.user} cambio de estado ${state}`);
     });
 
@@ -89,10 +92,13 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
       console.log('disconnected')
       console.log(state);
       if(`${state}` === 'Max qrcode retries reached'){
-        io.to(p.rooms).emit('disconnected', state )
+        await io.to(p.phone).emit('disconnected', state )
+        //await io.to(p.rooms).emit('disconnected', state )
       } else {
-        io.to(p.rooms).emit('change_state',{phone: client.info.wid.user, state})
-        io.to(p.rooms).emit('disconnected',`${client.info.pushname} ${client.info.wid.user} disconnected ${state}`)
+        await io.to(p.phone).emit('change_state',{phone: client.info.wid.user, state})
+        await io.to(p.phone).emit('disconnected',`${client.info.pushname} ${client.info.wid.user} disconnected ${state}`)
+        //await io.to(p.rooms).emit('change_state',{phone: client.info.wid.user, state})
+        //await io.to(p.rooms).emit('disconnected',`${client.info.pushname} ${client.info.wid.user} disconnected ${state}`)
         //const borrar = `${client['user']}_${client.info.wid.user}`
         //fs.rmSync(`./sessions/session-${borrar}`, { recursive: true, force: true });
         await wappphone.findOneAndUpdate({user: client['user'], phone: client.info.wid.user}, {activo: false})
@@ -103,45 +109,52 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
       //await client.resetState();
     });
 
-    client.on('group_join', (value) => {
-      io.to(p.rooms).emit('group_join',value)
+    client.on('group_join', async (value) => {
+      await io.to(p.phone).emit('group_join',value)
+      //await io.to(p.rooms).emit('group_join',value)
       console.log(`${client.info.pushname} ${client.info.wid.user} group_join ${value}`);
     });
 
-    client.on('group_leave', (value) => {
-      io.to(p.rooms).emit('group_leave',value)
+    client.on('group_leave', async (value) => {
+      await io.to(p.phone).emit('group_leave',value)
+      //await io.to(p.rooms).emit('group_leave',value)
       console.log(`${client.info.pushname} ${client.info.wid.user} group_leave ${value}`);
     });
 
-    client.on('incoming_call', (value) => {
-      io.to(p.rooms).emit('incoming_call',value)
+    client.on('incoming_call', async (value) => {
+      await io.to(p.phone).emit('incoming_call',value);
+      //await io.to(p.rooms).emit('incoming_call',value);
       console.log(`${client.info.pushname} ${client.info.wid.user} incoming_call ${value}`);
     });
 
-    client.on('media_uploaded', (value) => {
-      io.to(p.rooms).emit('media_uploaded',value)
+    client.on('media_uploaded', async (value) => {
+      await io.to(p.phone).emit('media_uploaded',value);
+      //await io.to(p.rooms).emit('media_uploaded',value);
       console.log(`${client.info.pushname} ${client.info.wid.user} media_uploaded ${value}`);
     });
 
     client.on('message', async msg => {
-
+      const phone = client.info.wid.user;
+      console.log('onMessage',phone);
+      //const contact = await msg.getContact();
+      //const chat = await msg.getChat();
       msg['on'] = `message ${client.info.wid.user}`;
       msg['serialized'] = msg.id._serialized;
-      if (msg.from !== 'status@broadcast'){
-
-        const mediadata = saveMedia(client,msg);
-      
-        msg['contact'] = await msg.getContact();
-        msg['chat'] = await msg.getChat();
+      //if (msg.from !== 'status@broadcast'){
+        const mediadata = await saveMedia(client,msg);
+        //msg['contact'] = contact;
+        //msg['chat'] = chat;
   
-        io.to(p.rooms).emit('message',msg,mediadata);
+        await io.to(phone).emit('message',{ msg, phone });
+        //await io.to(phone).emit('message',{ msg, contact, chat, phone });
+        //await io.to(p.rooms).emit('message',msg,mediadata);
   
         const ret = await saveMsg(msg);
         procesaMsg(client,msg);
-  
-      } else {
-        console.log('--------------------- IGNORADO ---------------------')
-      }
+
+      //} else {
+      //  console.log('--------------------- IGNORADO ---------------------')
+      //}
 
       console.log('----------------------------------------------------')
       console.log(`${client.info.pushname} ${client.info.wid.user} MESSAGE RECEIVED`);
@@ -150,23 +163,31 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
     })
 
     client.on('message_ack', async (msg, ack) => {
+      const phone = client.info.wid.user;
+      console.log('onMessageAck',phone);
+      //const contact = await msg.getContact();
+      //const chat = await msg.getChat();
 
       msg['on'] = `message_ack ${client.info.wid.user}`;
       msg['serialized'] = msg.id._serialized; 
       
-      io.to(p.rooms).emit('message_ack',{msg,ack})
+      //await io.to(client.info.wid.user).emit('message_ack', { msg, ack, contact, chat, phone });
+      await io.to(client.info.wid.user).emit('message_ack', { msg, ack, phone });
+      //await io.to(p.rooms).emit('message_ack',{msg,ack})
 
       const ret = await saveMsg(msg)
 
       const ackTxt = ['','se envio','recibió','leyó','Dio play al audio']
       console.log('----------------------------------------------------')
       console.log(`${client.info.pushname} ${client.info.wid.user} message_ack ${ack} ${msg.to} ${ackTxt[ack]}`);
-
       showTime(msg);
-
     })
 
     client.on('message_create', async (msg) => {
+      const phone = client.info.wid.user;
+      console.log('onMessage_Create',phone);
+      //const contact = await msg.getContact();
+      //const chat = await msg.getChat();
 
       msg['on'] = `message_create ${client.info.wid.user}`;
       msg['serialized'] = msg.id._serialized; 
@@ -174,21 +195,23 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
       
       if (msg.from !== 'status@broadcast'){
         if(msg.fromMe){
-          const mediadata = await saveMedia(client,msg);
+          const mediadata = await saveMedia( client, msg );
       
-          msg['contact'] = await msg.getContact();
-          msg['chat'] = await msg.getChat();
+          //msg['contact'] = await msg.getContact();
+          //msg['chat'] = await msg.getChat();
     
-          io.to(p.rooms).emit('message_create',msg,mediadata);
+          await io.to(phone).emit('message_create', { msg, phone });
+          //await io.to(phone).emit('message_create', { msg, contact, chat, phone });
+          //await io.to(p.rooms).emit('message_create',msg,mediadata);
     
           const ret = await saveMsg(msg);
           procesaMsg(client,msg);
         }
-      } else {
-        console.log('--------------------- IGNORADO ---------------------')
-      }
 
-      console.log('----------------------------------------------------')
+      } else {
+        console.log('--------------------- IGNORADO ---------------------');
+      }
+      console.log('----------------------------------------------------');
       console.log(`${client.info.pushname} ${client.info.wid.user} message_create`);
       showTime(msg);
 
@@ -196,13 +219,17 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
 
     client.on('message_revoke_everyone', async (msg, revoked_msg) => {
       //gateways[client.info.wid.user].sockets.forEach( stk => stk.emit('message_revoke_everyone',{message,revoked_msg}))
+      const phone = client.info.wid.user;
+      const contact = await msg.getContact();
+      const chat = await msg.getChat();
       msg['on'] = 'message_revoke_everyone';
       msg['serialized'] = msg.id._serialized; 
       msg['revoked_msg'] = revoked_msg;
 
       const ret = await saveMsg(msg)
 
-      io.to(p.rooms).emit('message_revoke_everyone',{msg,revoked_msg})
+      await io.to(phone).emit('message_revoke_everyone',{ msg, revoked_msg, contact, chat, phone });
+      //await io.to(p.rooms).emit('message_revoke_everyone',{msg,revoked_msg})
       console.log('----------------------------------------------------')
       console.log(`${client.info.pushname} ${client.info.wid.user} message_revoke_everyone`);
       showTime(msg);
@@ -213,7 +240,8 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
       qrSend++;
       const qrMaxRetries = client['options']?.qrMaxRetries
       console.log(qrMaxRetries);
-      io.to(p.rooms).emit('qr',{qr, qrSend, qrMaxRetries, numero: client['toPhone']})
+      await io.to(p.phone).emit('qr',{qr, qrSend, qrMaxRetries, numero: client['toPhone']})
+      //await io.to(p.rooms).emit('qr',{qr, qrSend, qrMaxRetries, numero: client['toPhone']})
 //      console.log(`${client.info.pushname} ${client.info.wid.user} qr=>`,qr);
       console.log("qr",qr);
       resolve(client)
@@ -221,8 +249,10 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
     })
 
     client.on('ready', async (ready) => {
-      io.to(p.rooms).emit('change_state',{phone: client.info.wid.user, state: 'CONNECTED'})
-      io.to(p.rooms).emit('ready',`${client.info.pushname} ${client.info.wid.user} conected & ready`)
+      await io.to(p.phone).emit('change_state',{phone: client.info.wid.user, state: 'CONNECTED'})
+      await io.to(p.phone).emit('ready',`${client.info.pushname} ${client.info.wid.user} conected & ready`)
+      //await io.to(p.rooms).emit('change_state',{phone: client.info.wid.user, state: 'CONNECTED'})
+      //await io.to(p.rooms).emit('ready',`${client.info.pushname} ${client.info.wid.user} conected & ready`)
       const picUrl = await client.getProfilePicUrl(client.info.wid._serialized);
       
       await wappphone.findOneAndUpdate({user: client['user'], phone: client.info.wid.user}, {activo: true, picUrl})
@@ -258,58 +288,54 @@ const saveMedia = (client:Client, msg:Message) => {
 
     let existe = fs.existsSync(fn)
     
-    console.log('saveMedia',msg.hasMedia, existe);
-  
+    console.warn('saveMedia', msg.id._serialized, 'hasMedia', msg.hasMedia, 'existe', existe);
+    if (!msg.hasMedia){
+      console.log('Vuelve no medida data')
+      existe = false;
+    }
     if(msg.hasMedia && !existe){
-      let veces = 0
+      let veces = 0;
+//      console.log(msg);
       do {
-        mediadata = await msg.downloadMedia() ;
+        mediadata = {};
+        mediadata = await msg.downloadMedia();
         veces++;
+        console.log('veces', veces, msg.id._serialized, mediadata?.data?.length);
       } while (veces < 4 && !mediadata?.data?.length );
     
-      console.log('veces', veces, `${msg.id._serialized}`,mediadata?.data.length);
-    
-      if (mediadata?.data?.length > 0){
-        //const reg = {
-        //  filename: mediadata.filename,
-        //  mimetype: mediadata.mimetype,
-        //  msgid: msg.id.id,
-        //  serialized: msg.id._serialized,
-        //  from: msg.from,
-        //  author: msg.author,
-        //  to: msg.to,
-        //  type: msg.type,
-        //  mediaKey: msg.mediaKey,
-        //  width: msg['_data'].width,
-        //  height: msg['_data'].height,
-        //  mediaTimestamp: msg['_data'].mediaTimestamp,
-        //  filehash: msg['_data'].filehash
-        //}
+//      console.log('veces', veces, msg.id._serialized, mediadata?.data.length);
+//console.warn('length', mediadata?.data?.length)
+//console.warn('data', mediadata?.data)
+//console.warn('mediadata', mediadata)
 
-//        const mdata = new wappmediadata(reg);
-//        const smdata = await mdata.save();
-        //console.log(smdata);
+      if (mediadata?.data?.length > 0){
           console.log('graba media data');
           try {
-            console.log(typeof(mediadata))
+//            console.log(typeof(mediadata));
+//            console.log(mediadata);
             fs.writeFileSync(fn,JSON.stringify(mediadata),{encoding:"utf8"});
           } catch (error) {
-            console.log(error)
-            reject(error);            
+            console.log('sale por catch error');
+            console.log('mediadata', mediadata);
+            console.log(error);
+            existe = false;            
+            resolve({existe})
           }
           existe = true;
-          //msg['mediafile'] = fn;
-      } else {
+          resolve({existe})
+        } else {
         existe = false;
-        console.log('no grabó', `${msg.id._serialized}`)
+        console.log('no leyó media', `${msg.id._serialized}`)
+        resolve({existe})
       }
+    } else {
+      console.log('hasMedia', msg.hasMedia, 'existe', existe, 'no graba');
+      resolve({existe})
     }
-    console.log(existe);
-    resolve({existe})
   })
 } 
-export const saveMsg = async (m) => {
 
+export const saveMsg = async (m) => {
   m['myid'] = m.id.id;
   m['fromMe'] = m.id.fromMe;
   try {
@@ -335,15 +361,18 @@ export const saveMsg = async (m) => {
 
 
 const showTime = (msg) => {
-  console.log(`(${msg.id._serialized})`)
-  console.log(`${msg.id.id} (${msg.ack}) - ${msg.orderId}`);
-  const tn = new Date();
-  const at = tn.toISOString()
-  const am = tn.getTime();
-  const t = new Date();
-  t.setTime(msg.timestamp*1000);
-  const ts = t.toISOString();
-  console.log(msg.timestamp, am, ts, at);
+  if (msg.hasMedia){
+    console.log(`(${msg.id._serialized})`)
+    console.log(`${msg.id.id} (${msg.ack}) - ${msg.orderId}`);
+    const tn = new Date();
+    const at = tn.toISOString()
+    const am = tn.getTime();
+    const t = new Date();
+    t.setTime(msg.timestamp*1000);
+    const ts = t.toISOString();
+    console.log(msg.timestamp, am, ts, at);
+  
+  }
 }
 
 export const newGateway = async ( skt:Socket ): Promise< Client | null > => {
@@ -425,22 +454,32 @@ export const setRoutes = async (client:Client) => {
   })
 
   router.get(`/${num}/chats`, async (req, res) =>{
-    const limit = 10;
+    let limit = 10;
     const chats = await client.getChats();
+    const contactsToRead = [];
+    const picturesToRead = [];
     const msgToRead = [];
     for (let i = 0; i < chats.length; i++) {
       const e = chats[i];
-      const limit = e.unreadCount + 150;
-      msgToRead.push(e.fetchMessages( {limit} ));
-      //e['contacto'] = await e.getContact();
-      //e['picUrl'] = await e['contacto'].getProfilePicUrl();
+      const limit = e.unreadCount + 20;
+      console.log(limit);
+    //  e['messages'] = await e.fetchMessages( {limit} );
+    //  console.log(e['messages']);
+      msgToRead.push( e.fetchMessages( {limit} ) );
+    //    contactsToRead.push(e.getContact());
+    //  //e['contacto'] = await e.getContact();
+    //  //e['picUrl'] = await e['contacto'].getProfilePicUrl();
     }
     const msgs = await Promise.all(msgToRead);
-    const med = [];
+    ////console.log(msgs);
+
+//    const contacts = await Promise.all(contactsToRead);
+
+    //const med = [];
     chats.map( async (c,i) => {
     //  msgs[i].map( async (m:Message) => {
-    //    //if(m.hasMedia) med.push(saveMedia(client,m));
-    //    if(m.hasMedia) await saveMedia(client,m)  
+    //    if(m.hasMedia) med.push(saveMedia(client,m));
+    ////    if(m.hasMedia) await saveMedia(client,m)  
     //  });
       c['messages'] = msgs[i];
     });
@@ -452,7 +491,7 @@ export const setRoutes = async (client:Client) => {
     //chats.map( async (c,i) => {
     //  await c['messages'].map( async (m:any,j) => {
     //    let cnt = 0;
-//
+    //
     //    let loop = true;
     //    const r = 40;
     //    if( m['hasMedia'] === true ){
@@ -470,7 +509,7 @@ export const setRoutes = async (client:Client) => {
     //            loop = false;
     //          }
     //        } while ( loop );
-//
+    //
     //        console.log(i,j,m['mediaIdx'], cnt, loop, mediarslt[m['mediaIdx']]?.data?.length);
     //        cnt = 0;
     //        //console.log( mediarslt[m['mediaIdx']]);
@@ -563,7 +602,15 @@ export const setRoutes = async (client:Client) => {
     //const buffer = Buffer.from(fr.data, 'base64');
     res.send(fr);
   });
-  
+
+  router.get(`/${num}/schat/:serialized`, async ( req, res ) => {
+    const { serialized } = req.params;
+    let ret = await whatsapp.find(
+        { $or: [ { from: serialized, to: `${num}@c.us` }, { from: `${num}@c.us`, to: serialized } ] }
+    ).sort({timestamp: 1});
+    res.status(200).json(ret);
+  });
+
   router.get(`/${num}/chat/:serialized/labels`, async (req, res) =>{
     const {serialized} = req.params
     const value = await client.getChatLabels(serialized);
@@ -637,8 +684,9 @@ export const setRoutes = async (client:Client) => {
 
   router.get(`/${num}/contact/:serialized`, async (req, res) =>{
     const {serialized} = req.params
-    const value = await client.getContactById(serialized);
-    res.status(200).json(value);
+    const contact = await client.getContactById(serialized);
+    const picUrl = await contact.getProfilePicUrl() 
+    res.status(200).json({ contact, picUrl });
   })
 
   router.get(`/${num}/countrycode/:number`, async (req, res) =>{

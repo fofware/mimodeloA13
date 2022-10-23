@@ -16,6 +16,7 @@ import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ProdNameFilterPipe } from 'src/app/pipes/prod-name-filter.pipe';
+import { ListapreciosComponent } from './components/listaprecios/listaprecios.component';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { ProdNameFilterPipe } from 'src/app/pipes/prod-name-filter.pipe';
     MarcaComponent,
     ProductosComponent,
     ArticulosComponent,
-    ProdNameFilterPipe
+    ProdNameFilterPipe,
+    ListapreciosComponent
   ],
   imports: [
     CommonModule,

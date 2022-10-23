@@ -15,7 +15,7 @@ export class MsgDocumentComponent implements OnInit {
   constructor(domsanitize: DomSanitizer) { }
 
   ngOnInit(): void {
-    console.log(document);
+    //console.log(document);
   }
 
 }

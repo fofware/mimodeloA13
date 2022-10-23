@@ -16,7 +16,7 @@ export class MsgImageComponent implements OnInit {
   constructor( private domsanitize: DomSanitizer) { }
 
   ngOnInit(): void {
-    console.log(this.msg)
+    //console.log(this.msg)
     let coef = this.msg._data.height / this.msg._data.width;
     if (coef >= 1){
       this.height = this.msg._data.height * (240/this.msg._data.width);

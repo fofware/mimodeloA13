@@ -25,7 +25,8 @@ export default (io:any) => {
     socket.data.rooms = [`${user._id}`];
     socket.data.name = user.name;
     socket.data.sktId = socket.id;
-    socket.join(`${user._id}`)
+//    socket.join(`${user._id}`)
+    socket.data.previus = `${user._id}`;
   }
 
   io.on('connection', async (socket:Socket) => {
@@ -127,8 +128,10 @@ export default (io:any) => {
       const registered:any = await storedGateway(phone);
     });
 
-    socket.on('getChats', async () => {
-      console.log(socket.data);
+    socket.on('getChats', async (phone) => {
+      await socket.leave(socket.data.previus)
+      await socket.join(phone)
+      console.log(`joined to ${phone}`);
     });
 
     /**

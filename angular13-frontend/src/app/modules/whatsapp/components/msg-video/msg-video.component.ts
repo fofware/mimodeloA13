@@ -18,7 +18,7 @@ export class MsgVideoComponent implements OnInit {
   constructor(private domsanitize: DomSanitizer) { }
 
   ngOnInit(): void {
-    console.log("video",this.msg)
+    //console.log("video",this.msg)
     let coef = this.msg._data.height / this.msg._data.width;
     if (coef >= 1){
       this.height = this.msg._data.height * (240/this.msg._data.width);

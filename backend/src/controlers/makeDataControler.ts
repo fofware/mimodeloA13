@@ -20,6 +20,7 @@ import productoname from "../models/productoname";
 import presentaciones from "../models/presentaciones";
 import proveedorProductos from "../models/proveedorProductos";
 import reposicion from "../models/reposicion";
+import medidas from "../models/medidas";
 
 class MakeDataControler {
 
@@ -402,6 +403,9 @@ class MakeDataControler {
       );
       console.log(retd);
     }
+  
+    await medidas.insertMany(array); 
+
     const edad = [];    
     array = await _articulo.distinct( 'edadTxt' );
     console.log(array);

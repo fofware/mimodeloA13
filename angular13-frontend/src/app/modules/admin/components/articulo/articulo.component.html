@@ -1,1 +1,15 @@
-<p>articulo works!</p>
+<div class="container-fluid">
+  <input type="search" id="busca" aria-label="Search" class="form-control mr-sm-2" placeholder="Buscar por Nombre"
+  name="searchItem" #searchInput [(ngModel)]="searchItem">
+</div>
+
+<div id="main" (scroll)="onScroll($event)">
+  <table>
+    <tr *ngFor="let item of data"
+    (click)="edit(item)">
+      <td>{{item._id}}</td>
+      <td style="color:brown">{{item.fullnameM}}</td>
+      <td>{{item.fullname}}</td>
+    </tr>
+  </table>
+</div>

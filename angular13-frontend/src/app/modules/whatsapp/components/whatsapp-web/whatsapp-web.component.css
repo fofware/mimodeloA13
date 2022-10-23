@@ -10,20 +10,40 @@ body {
   display: flex;
   min-height: calc(100vh - 252px);
   max-height: calc(100vh - 252px);
-  min-height: calc(100vh - 112px);
-  max-height: calc(100vh - 112px);
+  min-height: calc(100vh - 100px);
+  max-height: calc(100vh - 100px);
 }
 
 #main > article {
    flex: 1;
-   max-height: calc(100vh - 112px);
+   max-height: calc(100vh - 100px);
    overflow-y: scroll;
 }
 
+/*
 #main > nav,
+*/
 #main > aside {
   flex: 0 0 30vw;
   background: beige;
+}
+::-webkit-scrollbar {
+  width: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
 }
 
 #main > nav {
@@ -33,9 +53,21 @@ body {
   /*
   max-height: calc(100vh - 252px);
   */
-  max-height: calc(100vh - 112px);
+  max-height: calc(100vh - 100px);
   overflow-y: scroll;
 }
+
+.enca {
+  width: 100%;
+  height: 100px;
+}
+
+
+.lista{
+  max-height: calc(100vh - 200px);
+  overflow-y: scroll;
+}
+
 /*
 header, footer, article, nav, aside {
    padding: 1em;

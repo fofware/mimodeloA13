@@ -1,13 +1,13 @@
-<div class="card" style="max-width: 540px;" (click)="select(chat)">
+<div class="card chat " [ngClass]="chat.selected ? ['selected'] : ''"  (click)="select(chat)">
   <div class="row g-0">
-    <div class="col-md-2">
-      <img src="{{chat.picUrl || '/assets/images/defuser.png'}}" class="img-fluid rounded-circle" alt="...">
+    <div class="col-md-2 position-relative">
+      <img src="{{picUrl || '/assets/images/defuser.png'}}" class="img-fluid rounded-circle picurl position-absolute top-50 start-50 translate-middle" alt="...">
     </div>
     <div class="col-md-10">
       <div class="card-body">
-        <div class="row">
-          <div class="col-md-8">
-            <h5 class="card-title" >{{chat.name}}</h5>
+        <div class="row ">
+          <div class="col-md-8 p-0">
+            <div class="card-title" >{{chat.name}}</div>
 
           </div>
           <div class="col-md-4">

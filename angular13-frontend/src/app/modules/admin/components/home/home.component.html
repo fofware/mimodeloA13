@@ -15,8 +15,7 @@
   <div class="card-container">
     <div *ngFor="let item of data.menu" class="card">
       <a *ngIf="item.route"
-        [routerLink]="[item.route, item.param ]"
-        target="{{item.target}}" rel="{{item.rel}}"
+        [routerLink]="[item.route]"
       >
         <i class="{{item.icon}}"></i>
         <div>{{item.title}}</div>

@@ -35,7 +35,7 @@ PROTOCOL
 REACTION
 TEMPLATE_BUTTON_REPLY
 -->
-<div *ngFor="let msg of messages">
+<div *ngFor="let msg of messages" id="msjs">
   <div [ngSwitch]="msg.type">
     <div *ngSwitchCase="'chat'">
       <div class="container-fluid" style="position: relative;">

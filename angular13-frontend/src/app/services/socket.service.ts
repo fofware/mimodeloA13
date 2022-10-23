@@ -33,8 +33,14 @@ export class Socket2Service extends Socket {
    } } );
     super.on('connect', () => {
       this.ioSocket.onAny(async (eventName:string, ...args:any) => {
-        console.log('evento',eventName)
-        console.log('datos', args)
+        if(
+          eventName !== 'message' &&
+          eventName !== 'message_create' &&
+          eventName !== 'change_state'
+          ){
+          console.log('Debug,evento',eventName)
+          console.log('datos', args)
+        }
      })
     })
   }

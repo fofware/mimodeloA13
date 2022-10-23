@@ -2,6 +2,7 @@ import { Schema, model, Document } from "mongoose";
 
 export interface IExtaData extends Document {
   articulo: string;
+  tipo: string;
   order: number;
   name: string;
   value: string;
@@ -12,6 +13,7 @@ export interface IExtaData extends Document {
 
 const extradataSchema = new Schema({
   articulo: {type: Schema.Types.ObjectId, ref: 'articulo'},
+  tipo: { type: Schema.Types.String, trim: true, default: '', index: true },
   order: { type: Schema.Types.Number },
   name: { type: Schema.Types.String, trim: true, default: '' },
   value: { type: Schema.Types.String, trim: true, default: '' },

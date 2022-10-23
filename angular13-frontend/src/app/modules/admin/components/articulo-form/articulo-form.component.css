@@ -1,0 +1,236 @@
+.form-group {
+  margin-bottom: .2rem;
+}
+
+.modal {
+  min-height: 100% !important;
+  max-height: 100% !important;
+  height: 100%;
+}
+
+.modal-content {
+  min-height: 100% !important;
+  height: 100%;
+}
+.modal-header .close {
+  padding: .2rem .4rem;
+  /*
+  margin: -1.1rem -.7rem -1rem auto;
+  */
+}
+.modal-header {
+  padding: 0;
+  background-color: blue;
+  color: #ffffff;
+  text-align: center;
+}
+.modal-footer {
+  background-color: beige;
+}
+.modal-header .card {
+  border: unset;
+  background-color: beige;
+}
+.modal-body {
+  padding-top: .1rem;
+  text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+  background-color: beige;
+/*
+  min-height: 100% !important;
+  height: 100%;
+*/
+}
+.modal-body .card {
+  border: unset;
+  background-color: beige;
+/*
+  min-height: 100% !important;
+  height: 100%;
+*/
+}
+.bg-alternate:nth-child(3n+1) {
+  background: #efefef;
+  border: 1px solid black;
+}
+.fullSize {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+}
+.modal-content {
+  max-width: 98%;
+  width: 98%;
+  max-height: 98%;
+  height: 98%;
+}
+.xlModal > .modal-dialog {
+  max-width: 1490px !important;
+  min-width: 971px !important;
+  width: 95% !important;
+  height: 98%;
+  max-width: 98%;
+}
+::ng-deep .my-class .modal-dialog {
+  max-width: 80%;
+  width: 80%;
+  max-height: 100%;
+  height: 100%;
+}
+::ng-deep .sm-class .modal-dialog {
+  max-width: 98%;
+  width: 98%;
+  max-height: 98%;
+  height: 98%;
+}
+.bg-alternate:nth-child(3n+2) {
+  background: #dddddd;
+  border: 1px solid black;
+}
+.bg-alternate:nth-child(3n+3) {
+  background: #eeeeee;
+  border: 1px solid black;
+}
+.modal-dialog,
+.modal-dialog-centered,
+.modal-dialog-scrollable,
+.modal-xl {
+  height: 100%;
+  width: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  margin: 0;
+
+}
+.modal-content{
+  height: 100%;
+  width: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+.product-card {
+  position: relative;
+
+  border: 1px solid orange;
+
+  height: fit-content;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+  display: -webkit-flex;
+  display:         flex;
+  -webkit-flex-flow: row;
+          flex-flow: row;
+}
+
+.product-card > article {
+  position: relative;
+  margin: 0px;
+  padding: 0px;
+  -webkit-flex: 3 1 70%;
+  flex: 3 1 70%;
+  -webkit-order: 2;
+  order: 2;
+  overflow: none;
+  -webkit-border-radius: 7pt;
+  -moz-border-radius: 7pt;
+  -ms-border-radius: 7pt;
+  -o-border-radius: 7pt;
+}
+
+article .control {
+  position: absolute;
+  top: .1rem;
+  right: .1rem;
+}
+.delproduct {
+  position: absolute;
+  top: -5px;
+  right: 2px;
+  font-size: larger;
+  z-index: 100;
+  color:#adb5bd;
+}
+.delproduct:hover {
+    color:  #dc3545;
+}
+.product-card > nav {
+  margin: 0px;
+  padding: 0px;
+
+  -webkit-flex: 1 6 30%;
+  flex: 1 6 30%;
+  -webkit-order: 1;
+  order: 1;
+  max-width: 150px;
+  position: relative;
+  -webkit-border-radius:;
+  -moz-border-radius:;
+  -ms-border-radius:;
+  -o-border-radius:;
+}
+
+.product-card > aside {
+  margin: 0px;
+  padding: 0px;
+  min-width: 235px;
+  border-radius: 7pt;
+  -webkit-flex: 1 6 40%;
+          flex: 1 6 40%;
+  -webkit-order: 3;
+          order: 3;
+  overflow: auto;
+}
+
+.imgbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+.textbox {
+  max-width: 370px;
+  height: 200px;
+}
+.caja-img {
+  max-height: 100%;
+  max-width: 200px;
+  width: 100%;
+}
+.center {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+}
+.pesable {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 10;
+}
+@media screen and (min-width: 576px) {
+  .modal-dialog {
+    max-width: 400px;
+    margin: 1.75rem auto;
+  }
+  .modal-dialog-centered {
+    min-height: calc(100% - 3.5rem);
+  }
+  .modal-dialog-scrollable {
+    display: flex;
+    max-height: calc(100% - 1rem);
+  }
+}
+@media print {
+  @page {
+    widows: 40;
+  }
+  .card {
+    page-break-before: avoid;
+  }
+}

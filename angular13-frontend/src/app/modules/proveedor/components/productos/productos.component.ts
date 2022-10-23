@@ -190,13 +190,15 @@ export class ProductosComponent implements OnInit {
       limit: 500
     })
     .subscribe((retData:any) => {
-      this.provData = retData.data;
+      console.log(retData);
+      this.provData = retData.rows;
       this.provDataSort();
       console.log(this.provData);
     });
   }
 
   provDataSort(){
+    if(this.provData)
     this.provData.sort((a, b) => {
       let fa = a.fullname.toLowerCase(),
           fb = b.fullname.toLowerCase();
@@ -233,7 +235,7 @@ export class ProductosComponent implements OnInit {
         ,{spinner: 'false'} )
         .subscribe(
           (retData) => {
-            this.newData = retData.data;
+            this.newData = retData.rows;
             console.log(retData);
             this.removeIsExists();
           }
@@ -346,8 +348,10 @@ export class ProductosComponent implements OnInit {
       presentacion: reg._id,
     }
     this.apiServ.post('/proveedor/producto',newProve, {spinner: 'false'}).subscribe( ret => {
-      const retitem:any = ret;
+      console.log(ret)
+      const retitem:any = ret;1
       retitem.value['fullname']= reg.fullname;
+      if(!this.provData) this.provData = [];
       this.provData.push(retitem.value);
       const el = document.getElementById(reg._id)?.parentElement?.parentElement;
       if(el){
@@ -393,6 +397,7 @@ export class ProductosComponent implements OnInit {
   }
 
   removeIsExists(){
+    if(this.provData)
     this.provData.map(provItem => {
       const idx = this.newData.findIndex( reg => provItem.presentacion._id === reg._id);
       if(idx > -1){

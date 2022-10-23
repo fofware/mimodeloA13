@@ -15,7 +15,7 @@ export class MsgStickerComponent implements OnInit {
   constructor(private domsanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
-    console.log(this.msg);
+    //console.log(this.msg);
     //this.sticker = `data:${this.msg.mediaData.mimetype};base64,${this.msg.mediaData.data}`;
     let num = '';
     if(this.msg.id.fromMe){

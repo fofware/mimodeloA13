@@ -2,33 +2,31 @@
 <body>
   <!--header>Header</header-->
   <div id="main">
-    <article>
-      <app-whatsapp-msgs
-        [chat]="selectedChat"
-      >
-      </app-whatsapp-msgs>
+    <article >
+      <div class="enca">
+        Info Selected
+      </div>
+      <div class="lista">
+        <app-whatsapp-msgs
+          [chat]="selectedChat"
+        >
+        </app-whatsapp-msgs>
+      </div>
     </article>
     <nav>
-      <app-wappchats-list
-        *ngFor="let item of chats; index as i"
-        [chat]="item"
-        (selectedChat)="setSelectedChat($event)"
-      >
-      </app-wappchats-list>
+      <div class="enca">
+        <h2>Chats</h2>
+      </div>
+      <div class="lista" id="msjs">
+        <app-wappchats-list
+          *ngFor="let item of chats; index as i"
+          [chat]="item"
+          (selectedChat)="setSelectedChat($event,i)"
+        >
+        </app-wappchats-list>
+      </div>
     </nav>
     <!--aside>Aside</aside-->
   </div>
   <!--footer>Footer</footer-->
 </body>
-<!--div class="container-fluid">
-  <div class="row">
-      <app-wappchats-list class="col-4"
-        *ngFor="let item of chats; index as i"
-        [chat]="item"
-      >
-      </app-wappchats-list>
-      <app-wappmsgs-list class="col-8">
-
-      </app-wappmsgs-list>
-  </div>
-</div-->

@@ -122,7 +122,7 @@ export const menudata = [
           icon: 'fas fa-barcode fa-3x',
           permiso: 'moderator',
           target: '',
-          rel: 'noopener',
+          rel: '',
           route: 'fabricantes',
           param: ''
         },
@@ -136,6 +136,51 @@ export const menudata = [
           param: ''
         },
         {
+          title: 'Rubros',
+          icon: 'fas fa-barcode fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: 'rubros',
+          param: ''
+        },
+        {
+          title: 'Líneas',
+          icon: 'fas fa-barcode fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: 'lineas',
+          param: ''
+        },
+        {
+          title: 'Especie',
+          icon: 'fas fa-barcode fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: 'especies',
+          param: ''
+        },
+        {
+          title: 'Medidas',
+          icon: 'fas fa-barcode fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: 'medidas',
+          param: ''
+        },
+        {
+          title: 'Edades',
+          icon: 'fas fa-barcode fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: 'edades',
+          param: ''
+        },
+        {
           title: 'Articulos',
           icon: 'fas fa-barcode fa-3x',
           permiso: 'moderator',
@@ -145,12 +190,21 @@ export const menudata = [
           param: ''
         },
         {
-          title: 'Productos',
+          title: 'Presentaciones',
           icon: 'fas fa-barcode fa-3x',
           permiso: 'moderator',
           target: '',
           rel: 'noopener',
-          route: '/productlist',
+          route: 'presentaciones',
+          param: ''
+        },
+        {
+          title: 'Manufacturado',
+          icon: 'fas fa-barcode fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: 'manufacturado',
           param: ''
         },
         {

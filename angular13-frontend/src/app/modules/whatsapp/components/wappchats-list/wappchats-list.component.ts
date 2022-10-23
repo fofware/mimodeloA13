@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { WappService } from '../../services/wapp.service';
 
 @Component({
   selector: 'app-wappchats-list',
@@ -9,11 +10,21 @@ export class WappchatsListComponent implements OnInit {
   @Input() chat:any;
   @Output() selectedChat = new EventEmitter<any>()
   fch = '';
+  contact:any;
+  picUrl: string = '';
 
-  constructor() { }
+  constructor( private wappSrv: WappService ) { }
 
   ngOnInit(): void {
-    this.fch = this.calcDate()
+    this.fch = this.calcDate();
+    const phone = this.wappSrv.phoneValue.phone || '';
+    this.wappSrv.getContac( phone, this.chat.id._serialized).subscribe( (data:any) => {
+      this.contact = data.contacts;
+      this.picUrl = data.picUrl;
+    });
+//          this.media = data.mediarslt;
+
+    //console.log("chatlist",this.chat)
   }
 
   calcDate():string{
@@ -40,7 +51,7 @@ export class WappchatsListComponent implements OnInit {
     //- (3600000*3);
   }
   select(chat:any){
-    console.log(chat);
+    //console.log(chat);
     this.selectedChat.emit(chat);
   }
 }

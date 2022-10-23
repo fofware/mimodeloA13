@@ -13,7 +13,7 @@ export class MsgPttComponent implements OnInit {
   constructor(private domsanitize:DomSanitizer) { }
 
   ngOnInit(): void {
-    console.log(this.msg);
+    //console.log(this.msg);
     //if(this.msg?.mediaData?.mimetype)
     //this.audio = this.domsanitize.bypassSecurityTrustUrl(`data:${this.msg.mediaData.mimetype};base64,${this.msg.mediaData.data}`);
     this.audio = `http://192.168.100.150:4445/media/${this.msg.id._serialized}`;

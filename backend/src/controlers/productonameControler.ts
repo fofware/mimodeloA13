@@ -95,7 +95,11 @@ class ProductoNameControler {
     let nextOffset = params.offset+params.limit;
     nextOffset = nextOffset > count ? false : params.offset+params.limit;
     
-    const rows = await prodName.find(filter).populate('relacion').limit(params.limit).skip(params.offset).sort(params.sort);
+    const rows = await prodName.find(filter)
+      //.populate('relacion')
+      .limit(params.limit)
+      .skip(params.offset)
+      .sort(params.sort);
     const ret = {
       url: req.headers.host+req.url,
       limit: params.limit,

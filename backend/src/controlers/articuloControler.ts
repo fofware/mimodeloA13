@@ -5,6 +5,31 @@ import articulo, { IArticulo } from '../models/articulos';
 import { makeFilter } from '../common/utils';
 import { SucursalesControler } from '../mp/controlers/sucursalesControler';
 
+export const art_full_name_template = 
+{ $trim: 
+	{ input: 
+		{	$concat: [
+			{ $cond: ['$d_fabricante', '$fabricante.name', '']},
+			{ $cond: ['$d_marca', ' ', '']},
+			{ $cond: ['$d_marca', '$marca.name', '']},
+			{ $cond: [ { $or: ['$d_marca','$d_fabricante'] }, ' ', '']},
+			{ $cond: ['$d_especie', ' ', '']},
+			{ $cond: ['$d_especie', '$especie.name', '']},
+			{ $cond: [ { $or: ['$d_marca','$d_fabricante',,'$d_especie'] }, ' ', '']},
+			{ $cond: ['$name', '$name', '']},
+			{ $cond: ['$d_edad', ' ', '']},
+			{ $cond: ['$d_edad', '$edad.name', '']},
+			{ $cond: ['$d_raza', ' ', '']},
+			{ $cond: ['$d_raza', '$raza.name', '']},
+			{ $cond: ['$d_rubro', ' ', '']},
+			{ $cond: ['$d_rubro', '$rubro.name', '']},
+			{ $cond: ['$d_linea', ' ', '']},
+			{ $cond: ['$d_linea', '$linea.name', '']},
+			]
+		}
+	}
+}
+
 class ArticuloControler {
 
 	public router: Router = Router();
@@ -14,6 +39,7 @@ class ArticuloControler {
 
 	config () {
 		this.router.get( '/articulos', this.list );
+		this.router.get( '/articulos/:id', this.data );
 		this.router.post('/articulos/lista', this.list)
 		this.router.get( '/articulos/lista', this.lista );
 		this.router.get( '/articulos/full/lista', this.flista );
@@ -332,6 +358,7 @@ class ArticuloControler {
 						edad: '$edad.name',
 						rubro: '$rubro.name',
 						linea: '$linea.name',
+						fullnameM: art_full_name_template,
 						presentaciones: 1,
 						presentacionesv: 1,
 						precios: 1,
@@ -343,11 +370,13 @@ class ArticuloControler {
 					}
 				},
 				{
-					$sort: { 'fabricante': 1, 'marca': 1, 'rubro': 1, 'linea': 1,'especie': 1, 'edad': 1, 'name': 1, 'raza': 1 }
+					//$sort: { 'fullnameM': 1 }
+					$sort: { 'fullnameM': 1, 'fabricante': 1, 'marca': 1, 'rubro': 1, 'linea': 1,'especie': 1, 'edad': 1, 'name': 1, 'raza': 1 }
 				},
 				{ $skip: params.offset},
 				{ $limit: params.limit},
 			])
+			
 			rows.map((reg) =>{
 				reg['fullname']  = '';
 				let sep = '';
@@ -395,18 +424,18 @@ class ArticuloControler {
 						}
 					}
 				});
-				reg.presentaciones.sort((a, b) => {
-					let fa = a.fullname.toLowerCase(),
-							fb = b.fullname.toLowerCase();
-			
-					if (fa < fb) {
-							return -1;
-					}
-					if (fa > fb) {
-							return 1;
-					}
-					return 0;
-				});
+				//reg.presentaciones.sort((a, b) => {
+				//	let fa = a.fullname.toLowerCase(),
+				//			fb = b.fullname.toLowerCase();
+			//
+				//	if (fa < fb) {
+				//			return -1;
+				//	}
+				//	if (fa > fb) {
+				//			return 1;
+				//	}
+				//	return 0;
+				//});
 			
 			})
       status = 200;
@@ -429,6 +458,17 @@ class ArticuloControler {
       ret['error'] = error;
     }
     res.status(status).json(ret);
+	}
+
+	async data( req: Request, res: Response ) {
+		const id = req.params.id
+		try {
+			//const rpta = await articulo.find().populate({path: 'presentaciones', populate: {path: 'relacion'}});
+			const rpta = await articulo.findById(id);
+			res.status(200).json(rpta);
+		} catch (error) {
+			res.status(error.status).json(error);
+		}
 	}
 
 	async lista( req: Request, res: Response ) {

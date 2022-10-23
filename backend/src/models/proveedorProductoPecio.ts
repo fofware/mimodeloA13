@@ -2,6 +2,8 @@ import { Schema, model, Document } from "mongoose";
 
 export interface IProveedorProductoPrecio extends Document {
   proveedorProducto: string;
+  proveedor: string;
+  presentacion: string;
   fecha: Date;
   coheficiente: number;
   value: number;
@@ -9,6 +11,9 @@ export interface IProveedorProductoPrecio extends Document {
 
 const ProveedorProductoPrecioSchema = new Schema({
   proveedorProducto: { ref: "Proveedorproducto", type: Schema.Types.ObjectId, default: null },
+  proveedor: { ref: "Proveedor", type: Schema.Types.ObjectId, default: null },
+  presentacion: { ref: "Presentacion", type: Schema.Types.ObjectId, default: null },
+  
   fecha: { type: Schema.Types.Date, default: Date.now() },
   coheficiente: { type: Schema.Types.Number, default: 1 },
   value: { type: Schema.Types.Number, default: 0 },

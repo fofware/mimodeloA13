@@ -14,7 +14,15 @@ export class WhatsappMsgsComponent implements OnInit, OnChanges {
   constructor() { }
 
   ngOnInit(): void {
-
+    /*
+    window.setInterval(function() {
+      const elem = document.getElementById('msjs');
+      if(elem){
+        console.log(elem.scrollHeight);
+        elem.scrollTop = elem.scrollHeight;
+      }
+    }, 5000);
+    */
   }
 
   ngOnChanges(e:any){

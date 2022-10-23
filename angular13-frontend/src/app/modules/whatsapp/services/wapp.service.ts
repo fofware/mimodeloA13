@@ -115,10 +115,14 @@ export class WappService {
 
   getChats(num:string){
     //const num = '5493624683656'
+    this.socket.emit('getChats', num );
     return this.http.get(`${ORI_API}/${num}/chats`);
   }
   getContacts(num:string){
     return this.http.get(`${ORI_API}/${num}/contacts`);
+  }
+  getContac(num:string,contactId:string){
+    return this.http.get(`${ORI_API}/${num}/contact/${contactId}`);
   }
 
   saveContact( num:string, data:any){

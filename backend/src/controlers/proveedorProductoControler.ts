@@ -64,7 +64,7 @@ class ProveedorProductoControlers {
     let nextOffset = params.offset+params.limit;
     nextOffset = nextOffset > count ? false : params.offset+params.limit;
     
-    const data = await ProveedorProducto
+    const rows = await ProveedorProducto
           .find(filter)
           .limit(params.limit)
           .skip(params.offset)
@@ -81,7 +81,7 @@ class ProveedorProductoControlers {
       count,
       apiTime: new Date().getTime() - params.iniTime,
       filter,
-      data,
+      rows,
     }
     res.status(200).json(ret);
   }
@@ -109,6 +109,7 @@ class ProveedorProductoControlers {
       // The below property will be `false` if MongoDB upserted a new
       // document, and `true` if MongoDB updated an existing object.
       ret.lastErrorObject.updatedExisting; // false
+      console.log(ret)
       return res.status(200).json(ret);
     } catch (error) {
       console.log(error);

@@ -1,0 +1,105 @@
+.product-card {
+    position: relative;
+    height: fit-content;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    display: -webkit-flex;
+    display:         flex;
+    -webkit-flex-flow: row;
+            flex-flow: row;
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: .25rem;
+    margin-bottom: .5rem;
+  }
+  .close {
+    position: absolute;
+    top: -1px;
+    right: 1px;
+  }
+  .close > i{
+    color: #dc3545
+  }
+  .close > i:hover {
+    color:red
+  }
+  .product-card > nav {
+    margin: 0px;
+    padding: 0px;
+    -webkit-flex: 1 6 30%;
+    flex: 1 6 30%;
+    -webkit-order: 1;
+    order: 1;
+    max-width: 150px;
+    position: relative;
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: .25rem;
+  }
+  
+  .product-card > aside {
+    margin: 0px;
+    padding: 0px;
+    min-width: 235px;
+    border-radius: 7pt;
+    -webkit-flex: 1 6 40%;
+            flex: 1 6 40%;
+    -webkit-order: 3;
+            order: 3;
+    overflow: auto;
+  }
+  .product-card > article {
+    position: relative;
+    margin: 0px;
+    padding: 0px;
+    -webkit-flex: 3 1 70%;
+    flex: 3 1 70%;
+    -webkit-order: 2;
+    order: 2;
+    overflow: none;
+    -webkit-border-radius: 7pt;
+    -moz-border-radius: 7pt;
+    -ms-border-radius: 7pt;
+    -o-border-radius: 7pt;
+  }
+  
+  article .control {
+    position: absolute;
+    top: .1rem;
+    right: .1rem;
+  }
+  article .card {
+    background-color: unset;
+  }
+  .imgbox {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+  }
+  .textbox {
+    max-width: 370px;
+    height: 200px;
+  }
+  .caja-img {
+    max-height: 100%;
+    max-width: 200px;
+    width: 100%;
+  }
+  .center {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+    font-size: 16px;
+  }
+  .pesable {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 10;
+  }
+  

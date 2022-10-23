@@ -16,7 +16,12 @@ import { ArticuloFormComponent } from './components/articulo-form/articulo-form.
 import { MenuesComponent } from './components/menues/menues.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { MedidasComponent } from './components/medidas/medidas.component';
+import { EdadesComponent } from './components/edades/edades.component';
+import { SortableModule } from 'ngx-bootstrap/sortable';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { PresentacionesComponent } from './components/presentaciones/presentaciones.component';
+import { PresentacionesFormEditComponent } from './components/presentaciones-form-edit/presentaciones-form-edit.component';
 
 @NgModule({
   declarations: [
@@ -31,15 +36,20 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ArticuloComponent,
     PresentacionComponent,
     ArticuloFormComponent,
-    MenuesComponent
+    MenuesComponent,
+    MedidasComponent,
+    EdadesComponent,
+    PresentacionesComponent,
+    PresentacionesFormEditComponent
   ],
   imports: [
     CommonModule,
     AdminRoutingModule,
     FormsModule,
+    NgbModule,
     //BrowserAnimationsModule,
     ReactiveFormsModule,
-
+    SortableModule.forRoot()
   ]
 })
 export class AdminModule { }
