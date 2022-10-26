@@ -1,4 +1,5 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, fromEvent, map } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 
@@ -17,12 +18,12 @@ export class ListapreciosComponent implements OnInit {
   count = 0;
   limit = 50;
   searchItem = '';
+  productos:any[] = [];
 
   constructor(
-    private apiSrv: ApiService
-  ) {
-
-  }
+    private apiSrv: ApiService,
+    private router: Router
+  ) { }
 
   @ViewChild('searchInput', { static: true }) articulosSearchInput!: ElementRef;
 
@@ -45,6 +46,17 @@ export class ListapreciosComponent implements OnInit {
 
 
   ngOnInit(): void {
+    const proveedorId = this.router.routerState.snapshot.url.split('/')[2];
+    this.apiSrv.get(`/proveedor/${proveedorId}/productos`,{
+      limit: 500
+    })
+    .subscribe((retData:any) => {
+      console.log(retData);
+      this.productos = retData.rows;
+      this.provDataSort();
+      console.log(this.productos);
+    });
+
     fromEvent(this.articulosSearchInput.nativeElement, 'keyup')
     .pipe(
       // get value
@@ -62,7 +74,22 @@ export class ListapreciosComponent implements OnInit {
     .subscribe((text: string) => {
       this.searchData();
     })
-    this.searchData();
+    //this.searchData();
+  }
+
+  provDataSort(){
+    if(this.productos)
+    this.productos.sort((a, b) => {
+      let fa = a.fullname.toLowerCase(),
+          fb = b.fullname.toLowerCase();
+      if (fa < fb) {
+          return -1;
+      }
+      if (fa > fb) {
+          return 1;
+      }
+      return 0;
+    });
   }
 
   setData() {

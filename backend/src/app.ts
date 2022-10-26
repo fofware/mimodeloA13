@@ -27,6 +27,7 @@ import { FabricanteCtrl } from './controlers/fabricanteControler';
 import { EdadCtrl } from './controlers/edadControler';
 import { MedidaCtrl } from './controlers/medidaControler';
 import { MenuCtrl } from './controlers/menuControler';
+import { extraDataCtrl } from './controlers/extradataControler';
 
 //import { articuloCtrl } from './controlers/articuloControler';
 //import { productoCtrl } from './controlers/productoControler';
@@ -66,6 +67,7 @@ app.use(EspecieCtrl.router);
 app.use(EdadCtrl.router);
 app.use(MedidaCtrl.router);
 app.use(proveedorProductoCtrl.router);
+app.use(extraDataCtrl.router);
 app.use(MenuCtrl.router);
 app.use(authRoutes);
 export default app;

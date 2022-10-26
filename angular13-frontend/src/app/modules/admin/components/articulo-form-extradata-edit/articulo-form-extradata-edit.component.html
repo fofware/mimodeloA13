@@ -1,0 +1,46 @@
+<p>articulo-form-extradata-edit {{dato}} works!</p>
+        <div class="row col-6 offset-3">
+          <table>
+            <thead>
+              <th>#</th>
+              <th>Descripción</th>
+              <th>Valor</th>
+              <th>Mostrar</th>
+              <th>boton</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of extradata | extraDataFilter: dato; index as i">
+                <td>{{i}}</td>
+                <td>
+                  <input type="text" name="bname_{{i}}" [(ngModel)]="item.name">
+                </td>
+                <td>
+                  <input type='checkbox' name="bshowname_{{i}}" [(ngModel)]="item.showname">
+                </td>
+                <td>
+                  <input type="text" name="bvalue_{{i}}" [(ngModel)]="item.value">
+                </td>
+                <td>
+                  <input type='checkbox' name="bshow_{{i}}" [(ngModel)]="item.showvalue">
+                </td>
+                <td><button class='btn btn-outline-danger' (click)='borraData(i)'><i class="fas fa-trash-alt"></i></button></td>
+              </tr>
+              <tr class="">
+                <td></td>
+                <td>
+                  <input type="text" name="new_bname" [(ngModel)]="newData.name">
+                </td>
+                <td>
+                  <input type='checkbox' name="new_bshowname" [(ngModel)]="newData.showname">
+                </td>
+                <td>
+                  <input type="text" name="new_bvalue" [(ngModel)]="newData.value">
+                </td>
+                <td>
+                  <input type='checkbox' name="new_bshowvalue" [(ngModel)]="newData.showvalue">
+                </td>
+                <td><button class='btn btn-outline-primary' (click)='addData()'><i class="fas fa-plus"></i></button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>

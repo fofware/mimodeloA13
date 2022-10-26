@@ -69,37 +69,40 @@
 -->
 <input name="filtro" [(ngModel)]="filtro" placeholder="filtro" (keyup)="unsetDefaultCheck()">
 <button *ngIf="newData.length" (click)="addSelected()">Add Selected</button>
-<div class="container">
+<button *ngIf="provData.length && !newData.length"1(click)="removeSelected()">Remove Selected</button>
 <div class="mb-2" *ngIf="max">
   <progressbar [max]="max" [value]="dynamic">
     <span class="text-nowrap">{{dynamic}} / {{max}}</span>
   </progressbar>
 </div>
-<table *ngIf="newData.length; else viewProvProduct">
-  <tr>
-    <!--td></td-->
-    <td></td>
-    <td>
-      <input [(ngModel)]="allNewValue" type="checkbox" name="default" (change)="toggleAll(newData,allNewValue)" />
-    </td>
-  </tr>
-  <tr *ngFor="let item of newData | prodNameFilter: filtro; index as i">
-    <!--td>{{item.articulo}}</td-->
-    <td>{{item.fullname}} </td>
-    <td>
-      <input [(ngModel)]="item.isSelected" id="{{item._id}}" type="checkbox" name="toadd" />
-    </td>
-  </tr>
-</table>
+<div id="main" >
+  <!--div class="container-fluid"-->
+    <table whidt="100%" *ngIf="newData.length; else viewProvProduct">
+      <tr>
+        <!--td></td-->
+        <td></td>
+        <td>
+          <input [(ngModel)]="allNewValue" type="checkbox" name="default" (change)="toggleAll(newData,allNewValue)" />
+        </td>
+      </tr>
+      <tr *ngFor="let item of newData | prodNameFilter: filtro; index as i">
+        <!--td>{{item.articulo}}</td-->
+        <td>{{item.fullname}} </td>
+        <td>
+          <input *ngIf="newData.length" [(ngModel)]="item.isSelected" id="{{item._id}}" type="checkbox" name="toadd" />
+        </td>
+      </tr>
+    </table>
+  <!--/div-->
+</div>
 <ng-template #viewProvProduct>
-  <div class="container">
-    <button (click)="removeSelected()">Remove Selected</button>
+  <!--div class="container-fluid"-->
     <table whidt="100%" *ngIf="newData.length === 0">
       <tr>
         <!--td></td-->
         <td></td>
         <td>
-          <input [(ngModel)]="allProvValue" type="checkbox" name="default" (change)="toggleAll(provData,allProvValue)" />
+          <input *ngIf="provData.length" [(ngModel)]="allProvValue" type="checkbox" name="default" (change)="toggleAll(provData,allProvValue)" />
         </td>
       </tr>
       <tr *ngFor="let item of provData | prodNameFilter: filtro;index as i">
@@ -110,7 +113,6 @@
         </td>
       </tr>
     </table>
-  </div>
+  <!--/div-->
 </ng-template>
 
-</div>

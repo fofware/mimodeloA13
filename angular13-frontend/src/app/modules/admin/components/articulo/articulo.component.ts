@@ -121,7 +121,7 @@ export class ArticuloComponent implements OnInit {
     * modalRef.componentInstance.selectedArticulo = this.selectedArticulo;
     * modalRef.componentInstance.previusArticulo = this.previusArticulo;
     */
-    modalRef.componentInstance.Articulo = ev;
+    modalRef.componentInstance.articulo = ev;
     modalRef.result.then( (result:any) => {
       if (result) {
         console.log(result);

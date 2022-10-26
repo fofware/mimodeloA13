@@ -1,4 +1,5 @@
 import { Request, Response, Router } from "express";
+import { ObjectID } from 'bson'
 import jwt from 'jsonwebtoken';
 import config from '../config';
 import passport from "passport";
@@ -30,6 +31,91 @@ class ProveedorProductoControlers {
         passport.authenticate('jwt', {session:false}),
         this.put );
   }
+  async list1(req: Request, res: Response){
+    const fldsString = [
+    ];
+  
+    const params = Object.assign({
+      limit: 50,
+      offset: 0,
+      iniTime: new Date().getTime(),
+      sort: {},
+      searchItem: ''
+    },req.query,req.params,req.body);
+
+    console.log('list',params,fldsString);
+
+    const filter = makeFilter(fldsString, params);
+
+    if(params.proveedor && params.proveedor !== 'undefined') filter['proveedor'] = params.proveedor;
+    if(params.fabricante && params.fabricante !== 'undefined') filter['fabricante'] = params.fabricante;
+    if(params.marca && params.marca !== 'undefined') filter['marca'] = params.marca;
+    if(params.articulo && params.articulo !== 'undefined') filter['articulo'] = params.articulo;
+    if(params.presentacion && params.presentacion !== 'undefined') filter['presentacion'] = params.presentacion;
+    
+    console.log('filter',filter);
+    
+    const count = await ProveedorProducto
+    .count(filter)
+    .populate({path: 'articulo', populate: { path: 'fabricante marca rubro linea especie edad raza' }})
+    .populate({path: 'presentacion', populate: {path: 'relacion'}});
+    
+    params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
+    params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
+
+    let nextOffset = params.offset+params.limit;
+    nextOffset = nextOffset > count ? false : params.offset+params.limit;
+    /*
+      const rows = await ProveedorProducto
+          .find(filter)
+          .limit(params.limit)
+          .skip(params.offset)
+          .populate({path: 'articulo', populate: { path: 'fabricante marca rubro linea especie edad raza' }})
+          .populate({path: 'presentacion', populate: {path: 'relacion'}})
+          //.populate({path:'v_prodname', select: 'fullname -_id'})
+          .sort(params.sort);
+    */
+
+      const rows = await ProveedorProducto.aggregate([
+        { $match : filter },
+        /*
+        {$lookup: {
+          from: 'articulo',
+          localField: 'articulo',
+          foreignField: '_id',
+          as: 'articulo'
+        }},
+				{
+					$unwind: "$articulo"
+				},
+
+        {$lookup: {
+          from: 'presentacion',
+          localField: 'presentacion',
+          foreignField: '_id',
+          as: 'presentacion'
+        }},
+				{
+					$unwind: "$presentacion"
+				},
+        */
+
+       ]);
+      
+      const ret = {
+      url: req.headers.host+req.url,
+      limit: params.limit,
+      offset: params.offset,
+      nextOffset,
+      sort: params.sort,
+      count,
+      apiTime: new Date().getTime() - params.iniTime,
+      filter,
+      rows,
+    }
+    res.status(200).json(ret);
+  }
+
   async list(req: Request, res: Response){
     const fldsString = [
       'name'

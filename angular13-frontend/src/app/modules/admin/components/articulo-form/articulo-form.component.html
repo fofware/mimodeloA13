@@ -1,14 +1,14 @@
 <div class="modal-header">
   <div class='d-flex flex-column w-100 bd-highlight'>
     <h4 class="modal-title" id="modal-basic-title">
-      <span *ngIf="Articulo.d_fabricante">{{Articulo.fabricante}} </span>
-      <span *ngIf="Articulo.d_marca">{{Articulo.marca}} </span>
-      <span>{{Articulo.name}} </span>
-      <span *ngIf="Articulo.d_especie">{{Articulo.especie}} </span>
-      <span *ngIf="Articulo.d_edad">{{Articulo.edad}} </span>
-      <span *ngIf="Articulo.d_raza">{{Articulo.raza}} </span>
-      <span *ngIf="Articulo.d_rubro">{{Articulo.rubro}} </span>
-      <span *ngIf="Articulo.d_linea">{{Articulo.linea}} </span>
+      <span *ngIf="articulo.d_fabricante">{{articulo.fabricante}} </span>
+      <span *ngIf="articulo.d_marca">{{articulo.marca}} </span>
+      <span>{{articulo.name}} </span>
+      <span *ngIf="articulo.d_especie">{{articulo.especie}} </span>
+      <span *ngIf="articulo.d_edad">{{articulo.edad}} </span>
+      <span *ngIf="articulo.d_raza">{{articulo.raza}} </span>
+      <span *ngIf="articulo.d_rubro">{{articulo.rubro}} </span>
+      <span *ngIf="articulo.d_linea">{{articulo.linea}} </span>
     </h4>
   </div>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
@@ -20,128 +20,28 @@
     <li [ngbNavItem]="1">
       <a ngbNavLink><b>Articulo</b></a>
       <ng-template ngbNavContent>
-        <div class="d-flex flex-row">
-          <div class="d-flex flex-row bd-highlight justify-content-between" style="width: 150px; height: 100%;">
-            <div class="align-self-center">
-              <div class="" class="d-flex flex-colum bd-highlight" style="width: 150px;">
-                <img src="{{Articulo.images[0]}}" alt="" style="height: auto; width: 100%;">
-              </div>
-            </div>
-          </div>
-          <div>
-            <div class="input-group input-group-sm mb-1 mt-1">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="far fa-image"></i></span>
-              </div>
-              <input type="text" class="form-control" name="image" placeholder="Imagen del Producto"
-                [(ngModel)]="Articulo.images[0]">
-            </div>
-            <div class="input-group input-group-sm mb-1">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-cloud"></i></span>
-              </div>
-              <input type="text" class="form-control form-control-sm" name="url" placeholder="Url del fabricante"
-                [(ngModel)]="Articulo.url">
-            </div>
-            <div class="input-group input-group-sm mb-1">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
-              </div>
-              <input type="text" class="form-control form-control-sm" name="tags" placeholder="Tags"
-                [(ngModel)]="Articulo.tags">
-            </div>
-            <div class="card">
-              <div class="row">
-                <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                  <input type="text" class="form-control form-control-sm" name="fabricante" placeholder="Fabricante"
-                    [(ngModel)]="Articulo.fabricante">
-                  <div class="input-group-append">
-                    <div class="input-group-text">
-                      <input type="checkbox" name="d_fabricante" [(ngModel)]="Articulo.d_fabricante">
-                    </div>
-                  </div>
-                </div>
-                <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                  <input type="text" class="form-control form-control-sm" name="marca" placeholder="Marca"
-                    [(ngModel)]="Articulo.marca">
-                  <div class="input-group-append">
-                    <div class="input-group-text">
-                      <input type="checkbox" name="d_marca" [(ngModel)]="Articulo.d_marca">
-                    </div>
-                  </div>
-                </div>
-                <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                  <input type="text" class="form-control form-control-sm" name="rubro" placeholder="Rubro"
-                    [(ngModel)]="Articulo.rubro">
-                  <div class="input-group-append">
-                    <div class="input-group-text">
-                      <input type="checkbox" name="d_rubro" [(ngModel)]="Articulo.d_rubro">
-                    </div>
-                  </div>
-                </div>
-                <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                  <input type="text" class="form-control form-control-sm" name="linea" placeholder="Linea"
-                    [(ngModel)]="Articulo.linea">
-                  <div class="input-group-append">
-                    <div class="input-group-text">
-                      <input type="checkbox" name="d_linea" [(ngModel)]="Articulo.d_linea">
-                    </div>
-                  </div>
-                </div>
-                <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                  <input type="text" class="form-control form-control-sm" name="especie" placeholder="Especie"
-                    [(ngModel)]="Articulo.especie">
-                  <div class="input-group-append">
-                    <div class="input-group-text">
-                      <input type="checkbox" name="d_especie" [(ngModel)]="Articulo.d_especie">
-                    </div>
-                  </div>
-                </div>
-                <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                  <input type="text" class="form-control form-control-sm" name="edad" placeholder="Edad"
-                    [(ngModel)]="Articulo.edad">
-                  <div class="input-group-append">
-                    <div class="input-group-text">
-                      <input type="checkbox" name="d_edad" [(ngModel)]="Articulo.d_edad">
-                    </div>
-                  </div>
-                </div>
-                <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                  <input type="text" class="form-control form-control-sm" name="raza" placeholder="Raza"
-                    [(ngModel)]="Articulo.raza">
-                  <div class="input-group-append">
-                    <div class="input-group-text">
-                      <input type="checkbox" name="d_raza" [(ngModel)]="Articulo.d_raza">
-                    </div>
-                  </div>
-                </div>
-                <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                  <input type="text" class="form-control form-control-sm" name="name"
-                    placeholder="Nombre del Artículo" [(ngModel)]="Articulo.name">
-                </div>
-                <div class="form-check col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                  <input class="form-check-input" type="checkbox" name="private_web"
-                    [(ngModel)]="Articulo.private_web">
-                  <label for="">Private Web</label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <app-articulo-form-articulo-edit
+          [articulo]="articulo"
+        >
+        </app-articulo-form-articulo-edit>
       </ng-template>
     </li>
     <li [ngbNavItem]="2">
       <a ngbNavLink><b>Descripción</b></a>
       <ng-template ngbNavContent>
-        <!--div class="form-group">
+        <div class="form-group">
           <label for="exampleFormControlTextarea1">Example textarea</label>
-          <textarea class="form-control" id="exampleFormControlTextarea1" rows="7" [(ngModel)]="Articulo.detalles"></textarea>
-        </div-->
+          <textarea class="form-control" id="exampleFormControlTextarea1" rows="7" [(ngModel)]="articulo.detalles"></textarea>
+        </div>
       </ng-template>
     </li>
     <li [ngbNavItem]="3">
       <a ngbNavLink><b>Beneficios</b></a>
       <ng-template ngbNavContent>
+        <app-articulo-form-extradata-edit
+          [dato]="'beneficio'"
+          [extradata] = "articulo.extradata"
+        ></app-articulo-form-extradata-edit>
         <!--div class="row col-6 offset-3">
           <table>
             <thead>
@@ -192,6 +92,10 @@
     <li [ngbNavItem]="4">
       <a ngbNavLink><b>Fórmula</b></a>
       <ng-template ngbNavContent>
+        <app-articulo-form-extradata-edit
+          [dato]="'formula'"
+          [extradata] = "articulo.extradata"
+        ></app-articulo-form-extradata-edit>
         <!--div class="row col-6 offset-3">
           <table>
             <thead>
@@ -245,13 +149,13 @@
         <!--div class="d-flex">
           <button class="btn btn-info ml-auto mb-2" (click)="add_producto()">add</button>
         </div-->
-        <app-presentaciones-form-edit
-          *ngFor="let presentacion of Articulo.presentaciones;index as i;"
+        <app-articulo-form-presentaciones-edit
+          *ngFor="let presentacion of articulo.presentaciones;index as i;"
           [presentacion]='presentacion'
-          [articulo]="Articulo"
+          [articulo]="articulo"
           [unidades]='unidades'
           [idx]='i'
-        ></app-presentaciones-form-edit>
+        ></app-articulo-form-presentaciones-edit>
       </ng-template>
     </li>
     <li [ngbNavItem]="6" class="mr-auto">

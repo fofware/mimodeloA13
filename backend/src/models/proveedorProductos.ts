@@ -9,9 +9,9 @@ export interface IProveedorProducto extends Document {
 };
 
 const proveedorProductoSchema = new Schema({
-  proveedor: { ref: "Proveedor", type: Schema.Types.ObjectId, default: null },
-  articulo: {ref: 'Articulo', type: Schema.Types.ObjectId, default: null },
-  presentacion: { ref: "Presentacion", type: Schema.Types.ObjectId, default: null },
+  proveedor: { ref: "Proveedor", type: Schema.Types.ObjectId, default: null, index: true },
+  articulo: {ref: 'Articulo', type: Schema.Types.ObjectId, default: null, index: true },
+  presentacion: { ref: "Presentacion", type: Schema.Types.ObjectId, default: null, index: true },
   codigo: { type: Schema.Types.String, trim: true, default: '', index: true }, 
   name: [{ type: Schema.Types.String, trim: true, default: '', index: true }],
 },

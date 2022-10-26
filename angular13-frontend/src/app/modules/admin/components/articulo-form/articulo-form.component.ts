@@ -12,7 +12,7 @@ interface IItemObject {
   styleUrls: ['./articulo-form.component.css']
 })
 export class ArticuloFormComponent implements OnInit {
-  @Input() Articulo: any;
+  @Input() articulo: any;
 
   compareArticulo = {};
   prodList:any[] = [];
@@ -43,14 +43,12 @@ export class ArticuloFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.Articulo);
+    console.log(this.articulo);
+    this.apiSrv.get(`/extradata/articulo/${this.articulo._id}`).subscribe((data:any) => {
+      this.articulo.extradata = data.rows;
+      console.log(this.articulo.extradata);
+    });
     this.setProdList();
-
-    //const _id = this.Articulo._id;
-    //this.apiSrv.get(`/articulos/${_id}`).subscribe((data:any) => {
-    //  this.Articulo = data;
-    //});
-
   }
 
   checkData(): boolean {
@@ -64,8 +62,8 @@ export class ArticuloFormComponent implements OnInit {
   }
 
   setProdList(){
-    this.compareArticulo = JSON.parse(JSON.stringify(this.Articulo));
-    this.prodList = JSON.parse(JSON.stringify(this.Articulo.presentaciones));
+    this.compareArticulo = JSON.parse(JSON.stringify(this.articulo));
+    this.prodList = JSON.parse(JSON.stringify(this.articulo.presentaciones));
     this.unidades = [{ id: null, name: null }];
     console.log(this.compareArticulo);
     console.warn('ProducList',this.prodList);

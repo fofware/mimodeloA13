@@ -1,0 +1,108 @@
+<div class="d-flex flex-row">
+    <div class="d-flex flex-row bd-highlight justify-content-between" style="width: 150px; height: 100%;">
+      <div class="align-self-center">
+        <div class="" class="d-flex flex-colum bd-highlight" style="width: 150px;">
+          <img src="{{articulo.images[0]}}" alt="" style="height: auto; width: 100%;">
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="input-group input-group-sm mb-1 mt-1">
+        <div class="input-group-prepend">
+          <span class="input-group-text"><i class="far fa-image"></i></span>
+        </div>
+        <input type="text" class="form-control" name="image" placeholder="Imagen del Producto"
+          [(ngModel)]="articulo.images[0]">
+      </div>
+      <div class="input-group input-group-sm mb-1">
+        <div class="input-group-prepend">
+          <span class="input-group-text"><i class="fas fa-cloud"></i></span>
+        </div>
+        <input type="text" class="form-control form-control-sm" name="url" placeholder="Url del fabricante"
+          [(ngModel)]="articulo.url">
+      </div>
+      <div class="input-group input-group-sm mb-1">
+        <div class="input-group-prepend">
+          <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+        </div>
+        <input type="text" class="form-control form-control-sm" name="tags" placeholder="Tags"
+          [(ngModel)]="articulo.tags">
+      </div>
+      <div class="card">
+        <div class="row">
+          <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+            <input type="text" class="form-control form-control-sm" name="fabricante" placeholder="Fabricante"
+              [(ngModel)]="articulo.fabricante">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <input type="checkbox" name="d_fabricante" [(ngModel)]="articulo.d_fabricante">
+              </div>
+            </div>
+          </div>
+          <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+            <input type="text" class="form-control form-control-sm" name="marca" placeholder="Marca"
+              [(ngModel)]="articulo.marca">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <input type="checkbox" name="d_marca" [(ngModel)]="articulo.d_marca">
+              </div>
+            </div>
+          </div>
+          <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+            <input type="text" class="form-control form-control-sm" name="rubro" placeholder="Rubro"
+              [(ngModel)]="articulo.rubro">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <input type="checkbox" name="d_rubro" [(ngModel)]="articulo.d_rubro">
+              </div>
+            </div>
+          </div>
+          <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+            <input type="text" class="form-control form-control-sm" name="linea" placeholder="Linea"
+              [(ngModel)]="articulo.linea">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <input type="checkbox" name="d_linea" [(ngModel)]="articulo.d_linea">
+              </div>
+            </div>
+          </div>
+          <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+            <input type="text" class="form-control form-control-sm" name="especie" placeholder="Especie"
+              [(ngModel)]="articulo.especie">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <input type="checkbox" name="d_especie" [(ngModel)]="articulo.d_especie">
+              </div>
+            </div>
+          </div>
+          <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+            <input type="text" class="form-control form-control-sm" name="edad" placeholder="Edad"
+              [(ngModel)]="articulo.edad">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <input type="checkbox" name="d_edad" [(ngModel)]="articulo.d_edad">
+              </div>
+            </div>
+          </div>
+          <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+            <input type="text" class="form-control form-control-sm" name="raza" placeholder="Raza"
+              [(ngModel)]="articulo.raza">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <input type="checkbox" name="d_raza" [(ngModel)]="articulo.d_raza">
+              </div>
+            </div>
+          </div>
+          <div class="input-group mb-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+            <input type="text" class="form-control form-control-sm" name="name"
+              placeholder="Nombre del Artículo" [(ngModel)]="articulo.name">
+          </div>
+          <div class="form-check col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+            <input class="form-check-input" type="checkbox" name="private_web"
+              [(ngModel)]="articulo.private_web">
+            <label for="">Private Web</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -29,7 +29,7 @@ import { ListapreciosComponent } from './components/listaprecios/listaprecios.co
     ProductosComponent,
     ArticulosComponent,
     ProdNameFilterPipe,
-    ListapreciosComponent
+    ListapreciosComponent,
   ],
   imports: [
     CommonModule,

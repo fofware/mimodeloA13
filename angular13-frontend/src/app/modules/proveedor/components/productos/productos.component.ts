@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 
@@ -129,7 +129,24 @@ export class ProductosComponent implements OnInit {
     private apiServ: ApiService,
     private router: Router,
     ) { }
-
+    /*
+    @HostListener('scroll', ['$event'])
+    onScroll( elem:any ) {
+        //console.log('scrollTop',elem.target.scrollTop)
+        //console.log('offsetHeight',elem.offsetHeight)
+        //console.log('scrollHeight',elem.scrollHeight)
+        //console.log('scrollHeight',elem.scrollHeight)
+  
+        //console.log('-----------------------------')
+        if(( elem.target.offsetHeight + elem.target.scrollTop ) >=  elem.target.scrollHeight-800) {
+          //console.log(elem.offsetHeight)
+          //console.log(elem.scrollTop)
+          //console.log(elem.scrollHeight)
+          //console.log('entro',elem.offsetHeight + elem.scrollTop, elem.scrollHeight)
+          //if( this.nextOffset !== false ) this.setData();
+        }
+      }
+    */
   ngOnInit(): void {
     this.fabricanteSource$ = new Observable((observer: Observer<string | undefined>) => {
       observer.next(this.fabricanteSelected);

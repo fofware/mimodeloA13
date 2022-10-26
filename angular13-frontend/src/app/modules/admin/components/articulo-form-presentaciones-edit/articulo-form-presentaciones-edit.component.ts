@@ -1,11 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-presentaciones-form-edit',
-  templateUrl: './presentaciones-form-edit.component.html',
-  styleUrls: ['./presentaciones-form-edit.component.css']
+  selector: 'app-articulo-form-presentaciones-edit',
+  templateUrl: './articulo-form-presentaciones-edit.component.html',
+  styleUrls: ['./articulo-form-presentaciones-edit.component.css']
 })
-export class PresentacionesFormEditComponent implements OnInit {
+export class ArticuloFormPresentacionesEditComponent implements OnInit {
   @Input() presentacion:any;
   @Input() articulo:any;
   @Input() unidades:any;

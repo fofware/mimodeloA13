@@ -21,7 +21,12 @@ import { EdadesComponent } from './components/edades/edades.component';
 import { SortableModule } from 'ngx-bootstrap/sortable';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PresentacionesComponent } from './components/presentaciones/presentaciones.component';
-import { PresentacionesFormEditComponent } from './components/presentaciones-form-edit/presentaciones-form-edit.component';
+//import { PresentacionesFormEditComponent } from './components/presentaciones-form-edit/presentaciones-form-edit.component';
+import { ArticuloFormArticuloEditComponent } from './components/articulo-form-articulo-edit/articulo-form-articulo-edit.component';
+import { ArticuloFormPresentacionesEditComponent } from './components/articulo-form-presentaciones-edit/articulo-form-presentaciones-edit.component';
+//import { ArticuloFormFormulaEditComponent } from './components/articulo-form-formula-edit/articulo-form-formula-edit.component';
+import { ArticuloFormExtradataEditComponent } from './components/articulo-form-extradata-edit/articulo-form-extradata-edit.component';
+import { ExtraDataFilterPipe } from 'src/app/pipes/extra-data-filter.pipe';
 
 @NgModule({
   declarations: [
@@ -40,7 +45,13 @@ import { PresentacionesFormEditComponent } from './components/presentaciones-for
     MedidasComponent,
     EdadesComponent,
     PresentacionesComponent,
-    PresentacionesFormEditComponent
+//    PresentacionesFormEditComponent,
+    ArticuloFormArticuloEditComponent,
+    ArticuloFormPresentacionesEditComponent,
+//    ArticuloFormFormulaEditComponent,
+    ArticuloFormExtradataEditComponent,
+    ExtraDataFilterPipe
+
   ],
   imports: [
     CommonModule,

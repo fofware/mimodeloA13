@@ -5,10 +5,21 @@
 
 <div id="main" (scroll)="onScroll($event)">
   <table>
-    <tr *ngFor="let item of data">
-      <td>{{item._id}}</td>
+    <tr>
+      <td></td>
+      <td></td>
+      <td>Precio</td>
+      <td>Coef</td>
+    </tr>
+    <tr *ngFor="let item of productos">
       <td style="color:brown">{{item.fullnameM}}</td>
       <td>{{item.fullname}}</td>
+      <td>
+        <input type="text">
+      </td>
+      <td>
+        <input type="text">
+      </td>
     </tr>
   </table>
 </div>
