@@ -1,5 +1,5 @@
 
-import { Buttons, Client, List, LocalAuth, Location, Message } from 'whatsapp-web.js';
+import { Buttons, Client, List, LocalAuth, Location, Message, RemoteAuth } from 'whatsapp-web.js';
 import whatsapp from './models/whatsapp';
 import wappphone  from './models/phones';
 import wapproutes  from './models/routes';
@@ -16,29 +16,77 @@ export const gateways = {}
 
 export const initAllWapp = async (app) =>{
   await wapproutes.deleteMany({});
-  //const array = await wappphone.find({activo: true});
-  const array = await wappphone.find();
+  const array = await wappphone.find({activo: true});
+  //const array = await wappphone.find();
   const io = app.get('sio');
   const router: Router = Router();
   const totalini = new Date();
   const asyncFunctions = []
   for (let index = 0; index < array.length; index++) {
     const p:any = array[index];
+    ///**
+    // * conecta de a uno
+    // */
+    //try {
+    //  const rst:Client = await storedGateway(p);
+    //  console.log('termio ',p.phone);
+    //} catch (error) {
+    //  console.log('Error ',p.phone);
+    //  console.log(error);      
+    //}
+    /**
+     * Prepara array para arrancar todos juntos con promise
+     */
     asyncFunctions.push(storedGateway(p));
   }
-  const results:Client[] = await Promise.all(asyncFunctions);
-  //results.map( client => { setRoutes(router,client) })
-  //for (let i = 0; i < results.length; i++) {
-  //  const c = results[i];
-  //  //console.log(c.info)
-  //}
+  
+  try {
+    const results = await Promise.allSettled(asyncFunctions);
+    results.map(g => {
+      //console.log(g);
+      if(g.status === 'fulfilled'){
+        console.log(g.value.info.me.user, 'Ok');
+      } else {
+        console.log(`Error`);
+      }
+    });
+  } catch (error) {
+    console.log(error);    
+  }
+  
   const totalend = new Date();
   const totaldif = totalend.getTime()-totalini.getTime();
+  console.log('termino con todos');
   console.log(totaldif);
   app.use(router);
 }
 let io;
+/*
+import { MongoStore } from 'wwebjs-mongo';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config();
 
+await mongoose.connect(process.env.MONGODB_URI!);
+const store = new MongoStore({ mongoose });
+const client = new Client({
+    authStrategy: new RemoteAuth({
+        store,
+        backupSyncIntervalMs: 300000, // in ms, minimum interval starts at 60000
+        clientId: `your-client-id`, // I would say it's required
+        dataPath: './your_sessions_path/', // optional
+    }),
+    restartOnAuthFail: true, // optional
+    puppeteer: {
+        headless: true,
+        args: [
+            '--no-sandbox',
+            // other node args
+        ],
+    },
+});
+client.initialize();
+*/
 export const storedGateway = async ( p:any ): Promise <Client> => {
   console.log(p.phone)
   return new Promise(async (resolve, reject) => {
@@ -49,8 +97,9 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
 
     const client = new Client({
       authStrategy: new LocalAuth(
+
         {
-          dataPath: './sessions/',
+          //dataPath: './sessions/',
           clientId: p.sessionId,
         },
       ),
@@ -59,23 +108,21 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
         args: ['--no-sandbox'],
       }
     });
-
-    client.initialize();
-    
     client['user'] = p.user;
     client['retriessend'] = 0;
-    
+    console.log("ahi va")
     client.on('auth_failure', async (err) =>  {
+      console.log('auth_failure')
       await io.to(p.phone).emit('auth_failure',err);
       //await io.to(p.rooms).emit('auth_failure',err);
       console.error(err);
-      reject(err);
+      //reject(null);
+      //resolve(null);
     });
-
     client.on('authenticated', async (session) => {
-      console.log(`Authenticated`,session);
+      console.log('authenticated')
+      console.log(`Authenticated`,p.phone);
     });
-
     client.on('change_battery', async (batteryInfo) => {
       await io.to(p.phone).emit('change_battery',{phone: client.info.wid.user, batteryInfo})
       //await io.to(p.rooms).emit('change_battery',{phone: client.info.wid.user, batteryInfo})
@@ -83,6 +130,7 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
     });
 
     client.on('change_state', async (state) => {
+      console.log('change_state')
       await io.to(p.phone).emit('change_state',{phone: client.info.wid.user, state});
       //await io.to(p.rooms).emit('change_state',{phone: client.info.wid.user, state});
       console.log(`${client.info.pushname} ${client.info.wid.user} cambio de estado ${state}`);
@@ -110,59 +158,72 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
     });
 
     client.on('group_join', async (value) => {
+      console.log('group_join')
       await io.to(p.phone).emit('group_join',value)
       //await io.to(p.rooms).emit('group_join',value)
       console.log(`${client.info.pushname} ${client.info.wid.user} group_join ${value}`);
     });
 
     client.on('group_leave', async (value) => {
+      console.log('group_leave')
       await io.to(p.phone).emit('group_leave',value)
       //await io.to(p.rooms).emit('group_leave',value)
       console.log(`${client.info.pushname} ${client.info.wid.user} group_leave ${value}`);
     });
 
     client.on('incoming_call', async (value) => {
+      console.log('incoming_call')
       await io.to(p.phone).emit('incoming_call',value);
       //await io.to(p.rooms).emit('incoming_call',value);
       console.log(`${client.info.pushname} ${client.info.wid.user} incoming_call ${value}`);
     });
 
     client.on('media_uploaded', async (value) => {
+      console.log('media_uploaded')
       await io.to(p.phone).emit('media_uploaded',value);
       //await io.to(p.rooms).emit('media_uploaded',value);
       console.log(`${client.info.pushname} ${client.info.wid.user} media_uploaded ${value}`);
     });
 
     client.on('message', async msg => {
-      const phone = client.info.wid.user;
-      console.log('onMessage',phone);
-      //const contact = await msg.getContact();
-      //const chat = await msg.getChat();
-      msg['on'] = `message ${client.info.wid.user}`;
-      msg['serialized'] = msg.id._serialized;
-      //if (msg.from !== 'status@broadcast'){
-        const mediadata = await saveMedia(client,msg);
-        //msg['contact'] = contact;
-        //msg['chat'] = chat;
+      try {
+        console.log('message')
+        const phone = client.info.wid.user;
+        console.log('onMessage',phone);
+        console.log('----------------------------------------------------')
+        console.log(`${client.info.pushname} ${client.info.wid.user} MESSAGE RECEIVED`);
+        console.log(`ID: ${msg.id._serialized}`);
+        //const contact = await msg.getContact();
+        //const chat = await msg.getChat();
+        msg['on'] = `message ${client.info.wid.user}`;
+        msg['serialized'] = msg.id._serialized;
+        if (msg.from !== 'status@broadcast'){
+          const mediadata = await saveMedia(client,msg);
+          //msg['contact'] = contact;
+          //msg['chat'] = chat;
+    
+          await io.to(phone).emit('message',{ msg, phone });
+          //await io.to(phone).emit('message',{ msg, contact, chat, phone });
+          //await io.to(p.rooms).emit('message',msg,mediadata);
+    
+          const ret = await saveMsg(msg);
+          procesaMsg(client,msg);
   
-        await io.to(phone).emit('message',{ msg, phone });
-        //await io.to(phone).emit('message',{ msg, contact, chat, phone });
-        //await io.to(p.rooms).emit('message',msg,mediadata);
+        } else {
+          console.log('--------------------- IGNORADO ---------------------')
+          console.log(msg.from)
+        }
   
-        const ret = await saveMsg(msg);
-        procesaMsg(client,msg);
-
-      //} else {
-      //  console.log('--------------------- IGNORADO ---------------------')
-      //}
-
-      console.log('----------------------------------------------------')
-      console.log(`${client.info.pushname} ${client.info.wid.user} MESSAGE RECEIVED`);
-      showTime(msg);
+        showTime(msg);
+          
+      } catch (error) {
+        console.log(`Error onMessage`)        
+      }
 
     })
 
     client.on('message_ack', async (msg, ack) => {
+      console.log('message_ack')
       const phone = client.info.wid.user;
       console.log('onMessageAck',phone);
       //const contact = await msg.getContact();
@@ -184,40 +245,48 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
     })
 
     client.on('message_create', async (msg) => {
-      const phone = client.info.wid.user;
-      console.log('onMessage_Create',phone);
-      //const contact = await msg.getContact();
-      //const chat = await msg.getChat();
-
-      msg['on'] = `message_create ${client.info.wid.user}`;
-      msg['serialized'] = msg.id._serialized; 
-
+      try {
+        console.log('message_create')
+        const phone = client.info.wid.user;
+        console.log('onMessage_Create',phone);
+        //const contact = await msg.getContact();
+        //const chat = await msg.getChat();
+  
+        msg['on'] = `message_create ${client.info.wid.user}`;
+        msg['serialized'] = msg.id._serialized; 
+  
+        
+        if (msg.from !== 'status@broadcast'){
+          if(msg.fromMe){
+            const mediadata = await saveMedia( client, msg );
+        
+            //msg['contact'] = await msg.getContact();
+            //msg['chat'] = await msg.getChat();
       
-      if (msg.from !== 'status@broadcast'){
-        if(msg.fromMe){
-          const mediadata = await saveMedia( client, msg );
+            await io.to(phone).emit('message_create', { msg, phone });
+            //await io.to(phone).emit('message_create', { msg, contact, chat, phone });
+            //await io.to(p.rooms).emit('message_create',msg,mediadata);
       
-          //msg['contact'] = await msg.getContact();
-          //msg['chat'] = await msg.getChat();
-    
-          await io.to(phone).emit('message_create', { msg, phone });
-          //await io.to(phone).emit('message_create', { msg, contact, chat, phone });
-          //await io.to(p.rooms).emit('message_create',msg,mediadata);
-    
-          const ret = await saveMsg(msg);
-          procesaMsg(client,msg);
+            const ret = await saveMsg(msg);
+            procesaMsg(client,msg);
+          }
+  
+        } else {
+          console.log('--------------------- IGNORADO ---------------------');
+          console.log(msg.from)
         }
-
-      } else {
-        console.log('--------------------- IGNORADO ---------------------');
+        console.log('----------------------------------------------------');
+        console.log(`${client.info.pushname} ${client.info.wid.user} message_create`);
+        showTime(msg);
+          
+      } catch (error) {
+        console.error(`Error en message_create`)        
       }
-      console.log('----------------------------------------------------');
-      console.log(`${client.info.pushname} ${client.info.wid.user} message_create`);
-      showTime(msg);
 
     });
 
     client.on('message_revoke_everyone', async (msg, revoked_msg) => {
+      console.log('message_revoke_everyone')
       //gateways[client.info.wid.user].sockets.forEach( stk => stk.emit('message_revoke_everyone',{message,revoked_msg}))
       const phone = client.info.wid.user;
       const contact = await msg.getContact();
@@ -226,7 +295,7 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
       msg['serialized'] = msg.id._serialized; 
       msg['revoked_msg'] = revoked_msg;
 
-      const ret = await saveMsg(msg)
+      //const ret = await saveMsg(msg)
 
       await io.to(phone).emit('message_revoke_everyone',{ msg, revoked_msg, contact, chat, phone });
       //await io.to(p.rooms).emit('message_revoke_everyone',{msg,revoked_msg})
@@ -236,19 +305,21 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
     })
 
     client.on('qr', async qr => {
+      console.log('qr')
       //const picUrl = await client.getProfilePicUrl(`${numero}@c.us`)
       qrSend++;
       const qrMaxRetries = client['options']?.qrMaxRetries
       console.log(qrMaxRetries);
       await io.to(p.phone).emit('qr',{qr, qrSend, qrMaxRetries, numero: client['toPhone']})
       //await io.to(p.rooms).emit('qr',{qr, qrSend, qrMaxRetries, numero: client['toPhone']})
-//      console.log(`${client.info.pushname} ${client.info.wid.user} qr=>`,qr);
+  //     console.log(`${client.info.pushname} ${client.info.wid.user} qr=>`,qr);
       console.log("qr",qr);
-      resolve(client)
+      //resolve(client)
       //reject('Error necesita leer el qr')
     })
 
     client.on('ready', async (ready) => {
+      //console.log(client.info.wid.user,'ready')
       await io.to(p.phone).emit('change_state',{phone: client.info.wid.user, state: 'CONNECTED'})
       await io.to(p.phone).emit('ready',`${client.info.pushname} ${client.info.wid.user} conected & ready`)
       //await io.to(p.rooms).emit('change_state',{phone: client.info.wid.user, state: 'CONNECTED'})
@@ -256,7 +327,7 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
       const picUrl = await client.getProfilePicUrl(client.info.wid._serialized);
       
       await wappphone.findOneAndUpdate({user: client['user'], phone: client.info.wid.user}, {activo: true, picUrl})
-      console.log(`${client.info.pushname} ${client.info.wid.user} connected & ready ${ready}`);
+      console.log(`${client.info.pushname} ${client.info.wid.user} connected & ready`);
 
       //const chats = await client.getChats();
       ////const messages = await gateways[p.number].client.searchMessages();
@@ -273,21 +344,97 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
       //Promise.all(tosave).then( (data) => {
       //  console.timeLog('gabró los mensajes')
       //})
+  
       const ruta = await wapproutes.find({phone: client.info.wid.user});
       console.log("ruta",ruta);
       //if (!ruta[0]?.phone) 
       setRoutes(client);
-      resolve(client)
+  
+    });
+
+    try {
+      await client.initialize();
+      resolve(client);
+    } catch (error) {
+      console.log('capturamos el error', error);
+      reject(error);      
+    }
+  });
+}
+
+export const newGateway = async ( skt:Socket ): Promise< Client | null > => {
+  return new Promise(async (resolve, reject) => {
+    console.log('newGateway')
+    skt.emit('menssage', 'newGateWay')
+    skt.data.sessionId = uuidv4();
+    const retries = 5;
+    let qrSend = 0
+
+    const client:Client = new Client({
+      authStrategy: new LocalAuth(
+
+        {
+          //dataPath: './sessions/',
+          clientId: skt.data.sessionId,
+        },
+      ),
+      qrMaxRetries: retries,
+      puppeteer: {
+        args: ['--no-sandbox'],
+      }
+    });
+
+    client.on('auth_failure', err =>  {
+      skt.emit('auth_failure',err)
+      console.error(err);
+      //reject(err)
+    });
+
+    client.on('authenticated', async (session) => {
+      skt.emit('authenticated','Authenticated')
+      console.log(`Authenticated`);
+
+    });
+
+    client.on('qr', async qr => {
+      const qrMaxRetries = client['options']?.qrMaxRetries
+      qrSend++;
+      console.log(qr, qrSend, qrMaxRetries)
+      skt.emit('qr',{qr, qrSend, qrMaxRetries})
+      if (qrSend > qrMaxRetries){
+        skt.emit('error', "QR no escaneado")
+        client.destroy();
+        resolve (null)
+      } 
     })
+
+    client.on('ready', async (ready) => {
+
+      skt.to(skt.data.rooms).emit('ready',`${client.info.pushname} ${client.info.wid.user} conected & ready`)
+			/*
+      const rpta = await wappphone.updateOne({ number: skt.data.phone },   // Query parameter
+				{ $set: skt.data }, 
+				{ upsert: true }    // Options
+			);
+      */
+    })
+    skt.emit('menssage', 'newGateWay initialize')
+    try {
+      await client.initialize();
+      console.log(client)
+      resolve(client)
+    } catch (error) {
+      reject(error);
+    }
   })
 }
+
 const saveMedia = (client:Client, msg:Message) => {
   return new Promise( async (resolve, reject) => {
     let mediadata:any;
     const fn = `${__dirname}/../mediaReceive/${msg.id._serialized}.json`;
 
     let existe = fs.existsSync(fn)
-    
     console.warn('saveMedia', msg.id._serialized, 'hasMedia', msg.hasMedia, 'existe', existe);
     if (!msg.hasMedia){
       console.log('Vuelve no medida data')
@@ -375,67 +522,6 @@ const showTime = (msg) => {
   }
 }
 
-export const newGateway = async ( skt:Socket ): Promise< Client | null > => {
-  return new Promise((resolve, reject) => {
-    console.log('newGateway')
-    skt.emit('menssage', 'newGateWay')
-    skt.data.sessionId = uuidv4();
-    const retries = 5;
-    let qrSend = 0
-
-    const client:Client = new Client({
-      authStrategy: new LocalAuth(
-        {
-          dataPath: './sessions/',
-          clientId: skt.data.sessionId,
-        },
-      ),
-      qrMaxRetries: retries,
-      puppeteer: {
-        args: ['--no-sandbox'],
-      }
-    });
-
-    skt.emit('menssage', 'newGateWay initialize')
-    client.initialize();
-
-    client.on('auth_failure', err =>  {
-      skt.emit('auth_failure',err)
-      console.error(err);
-      reject(err)
-    });
-
-    client.on('authenticated', async (session) => {
-      skt.emit('authenticated','Authenticated')
-      console.log(`Authenticated`);
-
-    });
-
-    client.on('qr', async qr => {
-      const qrMaxRetries = client['options']?.qrMaxRetries
-      qrSend++;
-      console.log(qr, qrSend, qrMaxRetries)
-      skt.emit('qr',{qr, qrSend, qrMaxRetries})
-      if (qrSend > qrMaxRetries){
-        skt.emit('error', "QR no escaneado")
-        client.destroy();
-        resolve (null)
-      } 
-    })
-
-    client.on('ready', async (ready) => {
-
-      skt.to(skt.data.rooms).emit('ready',`${client.info.pushname} ${client.info.wid.user} conected & ready`)
-			/*
-      const rpta = await wappphone.updateOne({ number: skt.data.phone },   // Query parameter
-				{ $set: skt.data }, 
-				{ upsert: true }    // Options
-			);
-      */
-      resolve(client)
-    })
-  })
-}
 
 export const setRoutes = async (client:Client) => {
   /**

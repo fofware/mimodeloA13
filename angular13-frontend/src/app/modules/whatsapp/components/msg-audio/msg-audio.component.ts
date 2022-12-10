@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-msg-audio',
@@ -18,6 +19,6 @@ export class MsgAudioComponent implements OnInit {
     //console.log(this.msg);
 
     let num = this.msg.id.fromMe ? this.msg._data.from : this.msg._data.to.user;
-    this.audio = this.domsanitize.bypassSecurityTrustUrl(`http://192.168.100.150:4445/media/${this.msg.id._serialized}`);
+    this.audio = this.domsanitize.bypassSecurityTrustUrl(`${environment.WAP_MEDIA}/${this.msg.id._serialized}`);
   }
 }

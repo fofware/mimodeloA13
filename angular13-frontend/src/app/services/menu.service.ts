@@ -26,7 +26,7 @@ export const menudata = [
           param: ''
         },
         {
-          title: 'Archivos',
+          title: 'Maestro de Artículos',
           icon: 'fas fa-folder fa-3x',
           permiso: 'moderator',
           target: '',
@@ -40,7 +40,8 @@ export const menudata = [
           permiso: 'moderator',
           target: '_blank',
           rel: 'noopener',
-          href: 'https://angular.io/tutorial'
+          route: 'compras',
+          param: ''
         },
         {
           title: 'Ventas',
@@ -48,7 +49,8 @@ export const menudata = [
           permiso: 'moderator',
           target: '_blank',
           rel: 'noopener',
-          href: 'https://angular.io/tutorial'
+          route: 'ventas',
+          param: ''
         },
         {
           title: 'Reportes',
@@ -113,9 +115,9 @@ export const menudata = [
     id: 'archivos',
     data:
     {
-      title: 'Archivos',
+      title: 'Maestro de Artículos',
       icon: 'fas fa-folder-open fa-4x',
-      comment: 'Archivos del Sistema',
+      comment: 'Definición de Artículos en General',
       menu: [
         {
           title: 'Fabricantes',
@@ -198,6 +200,7 @@ export const menudata = [
           route: 'presentaciones',
           param: ''
         },
+        /*
         {
           title: 'Manufacturado',
           icon: 'fas fa-barcode fa-3x',
@@ -261,9 +264,60 @@ export const menudata = [
           href: 'https://angular.io/tutorial',
           param: ''
         }
+        */
       ]
     }
   },
+  {
+    id: 'compras',
+    data:
+    {
+      title: 'Compras',
+      icon: 'fas fa-folder-open fa-4x',
+      comment: 'Archivos del Sistema de Compras',
+      menu: [
+        {
+          title: 'Proveedores',
+          icon: 'far fa-address-book fa-3x', // 'fas fa-user-alt fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: 'proveedores',
+          param: ''
+        },
+        {
+          title: 'Listas de Precios',
+          icon: 'fas fa-barcode fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: 'pepe',
+          param: ''
+        },
+      ]
+    }
+  },
+  {
+    id: 'ventas',
+    data:
+    {
+      title: 'Ventas',
+      icon: 'fas fa-folder-open fa-4x',
+      comment: 'Sistema de Ventas',
+      menu: [
+        {
+          title: 'Clientes',
+          icon: 'far fa-address-book fa-3x', // 'fas fa-user-alt fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: '/proveedores',
+          param: ''
+        },
+      ]
+    }
+  },
+
   {
     id: 'archivos1',
     data:

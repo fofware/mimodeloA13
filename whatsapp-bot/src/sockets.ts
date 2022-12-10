@@ -3,6 +3,8 @@ import phones from "./models/phones";
 import { Client } from 'whatsapp-web.js';
 import { saveMsg } from "./wappgateway";
 import fs from 'fs';
+import config from "./config";
+import jwt from "jsonwebtoken";
 
 import { newGateway, storedGateway } from "./wappgateway";
 
@@ -28,97 +30,135 @@ export default (io:any) => {
 //    socket.join(`${user._id}`)
     socket.data.previus = `${user._id}`;
   }
+/**
+ * Tengo que aprender como usar esto
+ *  
+ */
+//  io.use( async (socket, next) => {
+//    try {
+//      if (socket.handshake.query && socket.handshake.query.token){
+//        const token:any = socket.handshake.query.token;
+//        const payload = jwt.verify( token, config.jwtSecret);
+//        socket.decode = payload;
+////        setSkt(socket,payload);
+//        socket.emit('enuse',`Algo ${socket.id}`)
+//        console.log('--------------------------------------------------------')
+//        console.log(socket.id)
+//        console.log(socket.decode);
+//        console.log('--------------------------------------------------------')
+//  
+//      }      
+//
+//    } catch (error) {
+//      console.log('--------------------------------------------------------')
+//      console.log('fallo la Athentication')
+//      console.log(error)
+//      console.log('--------------------------------------------------------')
+//    }
+//  })
 
   io.on('connection', async (socket:Socket) => {
     console.log("Nueva coneccion");
-    if(socket.handshake.query.token){
-      const user = decodeToken(socket.handshake.query.token);
-      setSkt(socket,user);
+    if(socket.handshake.query && socket.handshake.query.token){
+      //const user = decodeToken(socket.handshake.query.token);
+      const token:any = socket.handshake.query.token;
+      const payload = jwt.verify( token, config.jwtSecret);
+      socket['decode'] = payload;
+
+      console.log(payload);
+      setSkt(socket,payload);
+      socket.join('5493624380337');
     } else {
       socket.join('no-authorized');
       socket.emit('no-authorized','no-authorized')
       socket.disconnect(true);
       return;
     }
-
+    
     socket.onAny((...args)=>{
+      console.warn('-------- onAny ---------');
       console.log(args);
     });
 
     socket.on('registranumero', async (token) => {
       console.log('************ Registra Celular ************')
       //console.log(socket.data);
-      const registered:Client = await newGateway(socket);
-      if (registered){
-        const dataPath = registered['authStrategy']?.dataPath;
-        const phoneExist = await phones.findOne({phone: registered.info.wid.user});
-        //console.log(phoneExist)
-        //da2e98e5-f6a7-4f47-a9d3-1584732658e8
-        if (phoneExist){
-          socket.emit('error', `El número ${registered.info.wid.user} ya está registrado en el sistema`);
-          registered.destroy();
-          console.log('aca tiene que borrar',`${dataPath}/session-${socket.data.sessionId}`);
-          fs.rmSync(`${dataPath}/session-${socket.data.sessionId}`, { recursive: true, force: true  });
-          console.log("Borró", `${dataPath}/session-${socket.data.sessionId}`);
-        } else {
-          socket.data.phone = registered.info.wid.user;
-
-          await registered.destroy();
-
-          //const oldDir = `/session-${socket.data.user}`;
-          //const newDir = `/session-${socket.data.user}_${socket.data.phone}`;
-          //console.log('old', oldDir);
-          //console.log('new', newDir);
-          //fs.renameSync(`${dataPath}${oldDir}`,`${dataPath}${newDir}`);
-          //console.log('renombró',oldDir,' a ',newDir);
-
-          socket.data.activo = true;
-          const filter = {
-            phone: socket.data.phone,
-            user: socket.data.user
+      try {
+        const registered:Client = await newGateway(socket);
+        console.log(registered);
+        if (registered){
+          const dataPath = registered['authStrategy']?.dataPath;
+          const phoneExist = await phones.findOne({phone: registered.info.wid.user});
+          console.log('phoneExist',phoneExist)
+          //da2e98e5-f6a7-4f47-a9d3-1584732658e8
+          if (phoneExist){
+            socket.emit('error', `El número ${registered.info.wid.user} ya está registrado en el sistema`);
+            registered.destroy();
+            console.log('aca tiene que borrar',`${dataPath}/session-${socket.data.sessionId}`);
+            fs.rmSync(`${dataPath}/session-${socket.data.sessionId}`, { recursive: true, force: true  });
+            console.log("Borró", `${dataPath}/session-${socket.data.sessionId}`);
+          } else {
+            socket.data.phone = registered.info.wid.user;
+  
+            await registered.destroy();
+  
+            //const oldDir = `/session-${socket.data.user}`;
+            //const newDir = `/session-${socket.data.user}_${socket.data.phone}`;
+            //console.log('old', oldDir);
+            //console.log('new', newDir);
+            //fs.renameSync(`${dataPath}${oldDir}`,`${dataPath}${newDir}`);
+            //console.log('renombró',oldDir,' a ',newDir);
+  
+            socket.data.activo = true;
+            const filter = {
+              phone: socket.data.phone,
+              user: socket.data.user
+            }
+            
+            const data = {
+              phone: socket.data.phone,
+              user: socket.data.user,
+              sessionId: socket.data.sessionId,
+              rooms: socket.data.rooms,
+              activo: true
+            }
+            
+            let ret = await phones.findOneAndUpdate({ number: socket.data.phone, user: socket.data.user },   // Query parameter
+              socket.data, 
+              {
+                new: true,
+                upsert: true,
+                rawResult: true // Return the raw result from the MongoDB driver
+              });
+  
+            ret.value instanceof phones; // true
+            // The below property will be `false` if MongoDB upserted a new
+            // document, and `true` if MongoDB updated an existing object.
+            ret.lastErrorObject.updatedExisting; // false
+            
+            console.log(socket.data);
+  
+            const nuevo:Client = await storedGateway(socket.data);
+            const chats = await nuevo.getChats();
+            const tosave = [];
+            const limit = 15000
+            for (let i = 0; i < chats.length; i++) {
+              const e = chats[i];
+              e['messages'] = await e.fetchMessages( { limit } );
+              e['messages'].map( async (m:any) =>{
+                tosave.push( saveMsg(m) );
+              })
+            }
+            const results = await Promise.all(tosave);
+            //console.log(results);
+            console.log('grabó todos los messages', results.length);
+            //console.log('aca tiene que borrar',oldDir);
+            //fs.rmSync(`${dataPath}${oldDir}`, { recursive: true, force: true  });
+            //console.log('Borró',oldDir);
           }
-          
-          const data = {
-            phone: socket.data.phone,
-            user: socket.data.user,
-            sessionId: socket.data.sessionId,
-            rooms: socket.data.rooms,
-            activo: true
-          }
-          
-          let ret = await phones.findOneAndUpdate({ number: socket.data.phone, user: socket.data.user },   // Query parameter
-            socket.data, 
-            {
-              new: true,
-              upsert: true,
-              rawResult: true // Return the raw result from the MongoDB driver
-            });
-
-          ret.value instanceof phones; // true
-          // The below property will be `false` if MongoDB upserted a new
-          // document, and `true` if MongoDB updated an existing object.
-          ret.lastErrorObject.updatedExisting; // false
-          
-          console.log(socket.data);
-
-          const nuevo:Client = await storedGateway(socket.data);
-          const chats = await nuevo.getChats();
-          const tosave = [];
-          const limit = 15000
-          for (let i = 0; i < chats.length; i++) {
-            const e = chats[i];
-            e['messages'] = await e.fetchMessages( { limit } );
-            e['messages'].map( async (m:any) =>{
-              tosave.push( saveMsg(m) );
-            })
-          }
-          const results = await Promise.all(tosave);
-          //console.log(results);
-          console.log('grabó todos los messages', results.length);
-          //console.log('aca tiene que borrar',oldDir);
-          //fs.rmSync(`${dataPath}${oldDir}`, { recursive: true, force: true  });
-          //console.log('Borró',oldDir);
         }
+      } catch (error) {
+        console.log(error);
       }
     });
 
@@ -171,7 +211,10 @@ export default (io:any) => {
     socket.onAny((eventName:string, ...args: any) => {
       console.log(`eventName:${eventName}`,args);
     });
-    
+    socket.on("disconnect", () => {
+      console.warn('Desconecto');
+    });
+      
   });
 }
 

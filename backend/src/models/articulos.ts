@@ -6,10 +6,12 @@ export interface IArticulo extends Document {
   fabricante: string;
   marca: string;
   especie: string;
-  edad: string;
+  talla: string;
   raza: string;
+  edad: string;
   name: string;
   sText: string[];
+  toFullName: string[];
   tags: string[];
   //
   d_fabricante: boolean;
@@ -18,6 +20,7 @@ export interface IArticulo extends Document {
   d_linea: boolean;
   d_especie: boolean;
   d_edad: boolean;
+  d_talla: boolean;
   d_raza: boolean;
   //
   detalles: string;
@@ -43,6 +46,7 @@ const articuloSchema = new Schema({
   marca: { ref: "Marca", type: Schema.Types.ObjectId, default: '', index: true },
   especie: { ref: "Especie", type: Schema.Types.ObjectId, default: '', index: true },
   raza: { ref: "Raza", type: Schema.Types.ObjectId, default: '', index: true },
+  talla: { ref: "Talla", type: Schema.Types.ObjectId, default: '', index: true },
   edad: { ref: "Edad", type: Schema.Types.ObjectId, default: '', index: true },
   name: { type: Schema.Types.String, trim: true, default: '', index: true },
   sText: [{ type: Schema.Types.String, trim: true, index: true }],
@@ -56,6 +60,7 @@ const articuloSchema = new Schema({
   d_especie: { type: Schema.Types.Number, default: 0 },
   d_edad: { type: Schema.Types.Number, default: 0 },
   d_raza: { type: Schema.Types.Number, default: 0 },
+  d_talla: { type: Schema.Types.Number, default: 0 },
   //
   detalles: { type: Schema.Types.String, trim: true, default: '' },
   //formula: [],
@@ -106,8 +111,8 @@ articuloSchema.virtual('fullname').get(function(){
     fullName += sep+this.edad['name'];
     sep = ' ';
   }
-  if(this.d_raza){
-    fullName += sep+this.raza['name'];
+  if(this.d_talla){
+    fullName += sep+this.talla['name'];
     sep = ' ';
   } 
   //if(this.d_rubro){

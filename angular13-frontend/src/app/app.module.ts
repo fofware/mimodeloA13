@@ -86,12 +86,12 @@ import { TestModule } from './modules/test/test.module';
     TypeaheadModule.forRoot(),
     PruebaModule,
     RecaptchaV3Module,
-    TestModule
-
+    TestModule,
+    SocketIoModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
-    Socket1Service,
+    //Socket1Service,
     Socket2Service,
     {
       provide: HTTP_INTERCEPTORS,

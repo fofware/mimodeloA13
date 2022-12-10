@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-msg-video',
@@ -32,7 +33,7 @@ export class MsgVideoComponent implements OnInit {
     //  this.video = this.domsanitize.bypassSecurityTrustUrl(`data:${this.msg.mediaData?.mimetype};base64,${this.msg.mediaData?.data}`);
     //} else {
       let num = this.msg.id.fromMe ? this.msg._data.from : this.msg._data.to.user;
-      this.video = this.domsanitize.bypassSecurityTrustUrl(`http://192.168.100.150:4445/media/${this.msg.id._serialized}`);
+      this.video = this.domsanitize.bypassSecurityTrustUrl(`${environment.WAP_MEDIA}/${this.msg.id._serialized}`);
     //}
   }
 }

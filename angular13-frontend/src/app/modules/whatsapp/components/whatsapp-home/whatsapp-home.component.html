@@ -1,4 +1,5 @@
 <div *ngIf="phoneList.length; else viewNoPhone">
+  <button (click)="registrar()">Registrar Nuevo Número</button>
   <div class="card mb-3 col-md-6" *ngFor="let item of phoneList">
     <div class="row g-0">
       <div class="col-md-4" *ngIf="isqr; else viewQr">

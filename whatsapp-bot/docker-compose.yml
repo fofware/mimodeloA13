@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  wapp:
+    container_name: wapp-bot
+    #restart: always
+    build: .
+    ports: 
+      - "4445:4445"
+    volumes:
+      - ./:/usr/src/app

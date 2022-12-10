@@ -5,7 +5,7 @@ import { authUser, decodeToken } from 'src/app/services/auth.service';
 import { Socket2Service } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 
-const ORI_API = environment.WAP_API
+const WAPP_API = environment.WAP_API
 export interface phone {
   user?: string;
   phone?: string;
@@ -36,7 +36,7 @@ export class WappService {
     const user:authUser = decodeToken(token);
     if (user._id){
       const id = user.roles[0] === 'sys_admin' ? '' : `/${user._id}`
-      this.http.get<any[]>(`${ORI_API}/phones${id}`)
+      this.http.get<any[]>(`${WAPP_API}/phones${id}`)
         .subscribe( (data:any) => {
         //console.log(data.length)
         if(data.length){
@@ -79,10 +79,11 @@ export class WappService {
     return this.phoneState.value();
   }
 
+  
   getPhones(user:authUser) {
     return new Promise((resolve, reject) => {
       const id = user.roles[0] === 'sys_admin' ? '' : `/${user._id}`
-      this.http.get<string[]>(`${ORI_API}/phones${id}`)
+      this.http.get<string[]>(`${WAPP_API}/phones${id}`)
       .subscribe( (data:any) => {
         console.log(data.length)
         if(data.length){
@@ -103,10 +104,10 @@ export class WappService {
       });
     })
   }
-
+  
   getPhoneState(num:string): Promise<string>{
     return new Promise((resolve, reject) => {
-      this.http.get<string>(`${ORI_API}/${num}/state/`).subscribe( data => {
+      this.http.get<string>(`${WAPP_API}/${num}/state/`).subscribe( data => {
         console.log('getPhoneState',data)
         resolve(data)
       })
@@ -116,17 +117,17 @@ export class WappService {
   getChats(num:string){
     //const num = '5493624683656'
     this.socket.emit('getChats', num );
-    return this.http.get(`${ORI_API}/${num}/chats`);
+    return this.http.get(`${WAPP_API}/${num}/chats`);
   }
   getContacts(num:string){
-    return this.http.get(`${ORI_API}/${num}/contacts`);
+    return this.http.get(`${WAPP_API}/${num}/contacts`);
   }
   getContac(num:string,contactId:string){
-    return this.http.get(`${ORI_API}/${num}/contact/${contactId}`);
+    return this.http.get(`${WAPP_API}/${num}/contact/${contactId}`);
   }
 
   saveContact( num:string, data:any){
-    return this.http.post(`${ORI_API}/${num}/contacts`,data);
+    return this.http.post(`${WAPP_API}/${num}/contacts`,data);
   }
 
   async waConnect(param:any) {

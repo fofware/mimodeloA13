@@ -174,8 +174,20 @@ class ProductoNameControler {
 
     let nextOffset = params.offset+params.limit;
     nextOffset = nextOffset > count ? false : params.offset+params.limit;
-    
-    const rows = await prodName.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
+    const rows = await prodName.aggregate([
+      //{ $match: filter},
+      { $lookup: {
+        from: 'precios',
+        localField: '_id',
+				foreignField: '_id',
+				as: 'precios'
+      }},
+      { $sort: params.sort  },
+      { $skip: params.offset},
+      { $limit: params.limit},
+      
+    ]);
+    //const rows = await prodName.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
     const ret = {
       url: req.headers.host+req.url,
       limit: params.limit,

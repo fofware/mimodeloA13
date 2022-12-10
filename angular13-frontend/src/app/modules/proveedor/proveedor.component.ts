@@ -7,7 +7,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProveedorComponent implements OnInit {
 
-  constructor() { }
+  breadcrumb:any = [];
+  constructor() {
+
+  }
 
   ngOnInit(): void {
   }

@@ -1,5 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
+
+const ORI_API = environment.API_URL
 
 @Component({
   selector: 'app-msg-image',
@@ -35,7 +38,7 @@ export class MsgImageComponent implements OnInit {
         num = this.msg._data.to.user
       }
 
-      this.image = this.domsanitize.bypassSecurityTrustUrl(`http://192.168.100.150:4445/media/${this.msg.id._serialized}`);
+      this.image = this.domsanitize.bypassSecurityTrustUrl(`${environment.WAP_MEDIA}/${this.msg.id._serialized}`);
     //}
   }
 }

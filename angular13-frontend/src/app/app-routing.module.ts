@@ -101,7 +101,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'proveedores',
+    path: 'compras/proveedores',
     loadChildren: () => import(`./modules/proveedor/proveedor.module`)
       .then(
         module => module.ProveedorModule
@@ -111,6 +111,7 @@ const routes: Routes = [
       roles: ['sys_admin'],
     }
   },
+  /*
   {
     path: 'private/menu',
     component: PrivateHomeComponent,
@@ -124,7 +125,7 @@ const routes: Routes = [
       roles: ['sys_admin','sys_user','client_admin','client_user','proveedor_admin','proveedor_client','revendedor_admin','revendedor_user']
     }
   },
-
+  */
   { path: '**', component: NoPageComponent }
 ];
 

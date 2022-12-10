@@ -19,8 +19,8 @@ export const art_full_name_template =
 			{ $cond: ['$name', '$name', '']},
 			{ $cond: ['$d_edad', ' ', '']},
 			{ $cond: ['$d_edad', '$edad.name', '']},
-			{ $cond: ['$d_raza', ' ', '']},
-			{ $cond: ['$d_raza', '$raza.name', '']},
+			{ $cond: ['$d_talla', ' ', '']},
+			{ $cond: ['$d_talla', '$talla.name', '']},
 			{ $cond: ['$d_rubro', ' ', '']},
 			{ $cond: ['$d_rubro', '$rubro.name', '']},
 			{ $cond: ['$d_linea', ' ', '']},
@@ -81,7 +81,7 @@ class ArticuloControler {
 			.populate('rubro')
 			.populate('linea')
 			.populate('especie')
-			.populate('raza')
+			.populate('talla')
 			.populate('edad')
 			.limit(params.limit)
 			.skip(params.offset)
@@ -119,7 +119,7 @@ class ArticuloControler {
 			'rubro.name',
 			'linea.name',
 			'especie.name',
-			'raza.name',
+			'talla.name',
 			'edad.name',
 			'name',
 			'detalles'
@@ -196,16 +196,17 @@ class ArticuloControler {
 				{
 					$unwind: "$especie"
 				},
-				{ 
+        { 
 					$lookup: {
-						from: 'razas',
-						localField: 'raza',
+						from: 'tallas',
+						localField: 'talla',
 						foreignField: '_id',
-						as: 'raza'
+						as: 'talla'
 					}
+        
 				},
 				{
-					$unwind: "$raza"
+					$unwind: "$talla"
 				},
 				{ 
 					$lookup: {
@@ -221,6 +222,7 @@ class ArticuloControler {
 				{ $match: filter },
 				{ $count: 'total'}
 			])
+      console.log('total', total);
 			count = total[0]?.total;
 		} catch (error) {
 			console.log(error);
@@ -291,14 +293,14 @@ class ArticuloControler {
 				},
 				{ 
 					$lookup: {
-						from: 'razas',
-						localField: 'raza',
+						from: 'tallas',
+						localField: 'talla',
 						foreignField: '_id',
-						as: 'raza'
+						as: 'talla'
 					}
 				},
 				{
-					$unwind: "$raza"
+					$unwind: "$talla"
 				},
 				{ 
 					$lookup: {
@@ -346,7 +348,7 @@ class ArticuloControler {
 						d_marca: 1,
 						d_name: 1,
 						d_especie: 1,
-						d_raza: 1,
+						d_talla: 1,
 						d_edad: 1,
 						d_rubro: 1,
 						d_linea: 1,
@@ -354,7 +356,7 @@ class ArticuloControler {
 						marca: '$marca.name',
 						name: 1,
 						especie: '$especie.name',
-						raza: '$raza.name',
+						talla: '$talla.name',
 						edad: '$edad.name',
 						rubro: '$rubro.name',
 						linea: '$linea.name',
@@ -371,7 +373,7 @@ class ArticuloControler {
 				},
 				{
 					//$sort: { 'fullnameM': 1 }
-					$sort: { 'fullnameM': 1, 'fabricante': 1, 'marca': 1, 'rubro': 1, 'linea': 1,'especie': 1, 'edad': 1, 'name': 1, 'raza': 1 }
+					$sort: { 'fullnameM': 1, 'fabricante': 1, 'marca': 1, 'rubro': 1, 'linea': 1,'especie': 1, 'edad': 1, 'name': 1, 'talla': 1 }
 				},
 				{ $skip: params.offset},
 				{ $limit: params.limit},
@@ -409,7 +411,7 @@ class ArticuloControler {
 					sep = ' ';
 				}
 				//if(reg.d_raza){
-					reg['fullname'] += sep+reg.raza;
+					reg['fullname'] += sep+reg.talla;
 					sep = ' ';
 				//}
 				

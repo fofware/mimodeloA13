@@ -21,6 +21,7 @@ import presentaciones from "../models/presentaciones";
 import proveedorProductos from "../models/proveedorProductos";
 import reposicion from "../models/reposicion";
 import medidas from "../models/medidas";
+import tallas from "../models/tallas";
 
 class MakeDataControler {
 
@@ -67,7 +68,7 @@ class MakeDataControler {
 
   async articulo( req: Request, res: Response){
     const rpta = {};
-    rpta['next'] = 'http://192.168.100.150:4444/make/extradata';
+    rpta['next'] = 'http://api.vta.ar/make/extradata';
 
 		try {
       const _art = await _articulo.find();
@@ -94,6 +95,7 @@ class MakeDataControler {
     await rubros.deleteMany({});
     await lineas.deleteMany({});
     await razas.deleteMany({});
+    await tallas.deleteMany({});
     await edades.deleteMany({});
     await especies.deleteMany({});
     await precio.deleteMany({});
@@ -107,6 +109,7 @@ class MakeDataControler {
       //
       {'field': 'razaTxt', 'value': 'Mini', 'newValue': 'Minis' },
       {'field': 'razaTxt', 'value': 'Minis Pequeñas', 'newValue': 'Minis,Pequeñas' },
+      {'field': 'razaTxt', 'value': 'Minis y Pequeñas', 'newValue': 'Minis,Pequeñas' },
       {'field': 'razaTxt', 'value': 'Pequeña', 'newValue': 'Pequeñas' },
       {'field': 'razaTxt', 'value': 'Medina y Grande', 'newValue': 'Medianas,Grandes' },
       {'field': 'razaTxt', 'value': 'Medianas Grandes', 'newValue': 'Medianas,Grandes' },
@@ -138,7 +141,7 @@ class MakeDataControler {
       ));
     }
 
-    const next = 'http://192.168.100.150:4444/make/articulo';
+    const next = 'http://api.vta.ar/make/articulo';
     const test = 'fabricante';
 
     let rslt = [];
@@ -376,16 +379,16 @@ class MakeDataControler {
       const e = {
         name: array[i]
       }
-      const data = await razas.updateOne(
+      const data = await tallas.updateOne(
         { name: e.name },   // Query parameter
         { $set: e },        // Set values
         { upsert: true }    // Options
       );
       data['name'] = array[i];
       console.log(data);
-      especie.push(data);
+      //especie.push(data);
     }
-    array = await razas.find();
+    array = await tallas.find();
     for (let i = 0; i < array.length; i++) {
       const e = array[i];
       const filter = {}
@@ -393,6 +396,7 @@ class MakeDataControler {
       console.log(e);
       const newValue = {
         'raza': e._id,
+        'talla': e._id,
         'razaTxt': e.name
       }
 
@@ -462,7 +466,7 @@ class MakeDataControler {
 
   async extradata(req: Request, res: Response){
     const rpta = {};
-    rpta['next'] = 'http://192.168.100.150:4444/make/presentacion';
+    rpta['next'] = 'http://api.vta.ar/make/presentacion';
 
     try {
       const _art = await _extradata.find();
@@ -480,7 +484,7 @@ class MakeDataControler {
 
   async presentacion(req: Request, res: Response){
     const rpta = {};
-    rpta['next'] = 'http://192.168.100.150:4444/make/costo';
+    rpta['next'] = 'http://api.vta.ar/make/costo';
 
     try {
       const _art = await _presentacion.find();
@@ -497,7 +501,7 @@ class MakeDataControler {
 
   async productoname(req: Request, res: Response){
     const array = await presentacion.find()
-      .populate({path: 'articulo', populate: { path: 'fabricante marca rubro linea especie edad raza'} })
+      .populate({path: 'articulo', populate: { path: 'fabricante marca rubro linea especie edad talla'} })
       .populate({path: 'relacion'});
     const ret = [];
     for (let i = 0; i < array.length; i++) {
@@ -511,7 +515,7 @@ class MakeDataControler {
         'fabricante',
         'marca',
         'especie',
-        'raza',
+        'talla',
         'edad',
         'rubro',
         'linea'
@@ -532,7 +536,7 @@ class MakeDataControler {
         //especieTxt: e.articulo.especieTxt,
         especie: e.articulo.especie,
         //razaTxt: e.articulo.razaTxt,
-        raza: e.articulo.raza,
+        talla: e.articulo.talla,
         //edadTxt: e.articulo.edadTxt,
         edad: e.articulo.edad,
         //rubroTxt: e.articulo.rubroTxt,
@@ -571,7 +575,7 @@ class MakeDataControler {
 
   async costo(req: Request, res: Response){
     const rpta = {};
-    rpta['next'] = 'http://192.168.100.150:4444/make/precio';
+    rpta['next'] = 'http://api.vta.ar/make/precio';
     try {
       const _art = await _presentacion.find();
       rpta['src'] = _art;
@@ -586,7 +590,7 @@ class MakeDataControler {
   }
   async precio(req: Request, res: Response){
     const rpta = {};
-    rpta['next'] = 'http://192.168.100.150:4444/make/productoname';
+    rpta['next'] = 'http://api.vta.ar/make/productoname';
     try {
       const _art = await _presentacion.find();
       rpta['src'] = _art;

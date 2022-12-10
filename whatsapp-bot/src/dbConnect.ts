@@ -9,8 +9,8 @@ export const connectMongodb = async () => {
     //useCreateIndex: true
   }
   try {
-    await connect(config.mongoDB.URI, mongoDBoptions);
-    console.log("MongodbAtlas Conectado")    
+    const db = await connect(config.mongoDB.URI, mongoDBoptions);
+    console.log("Mongodb Conectado to ", db.connection.host )    
   } catch (error) {
     console.log("al intentar conectar Mongodb");    
     console.log(config.mongoDB.URI)

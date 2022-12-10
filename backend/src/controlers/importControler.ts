@@ -3,7 +3,7 @@ import presentacion from "../models/_presentaciones";
 import articulo from "../models/_articulos";
 import extradata from "../models/_extradata";
 
-
+// https://cloud.mongodb.com/v2#/org/5ee13b7d8bc2bd4cbd0f76fa/projects
 import https from 'https';
 
 export const httpClient = async function (options) {
@@ -52,9 +52,11 @@ class ImportDataControler {
   }
 
   async fulldata(req: Request, res: Response){
+    /*
     await articulo.deleteMany({});
     await presentacion.deleteMany({});
     await extradata.deleteMany({});
+    */
     const qry = '/articulos/fulldata/list'
     const options = {
       host: 'firulais.net.ar',
@@ -73,7 +75,7 @@ class ImportDataControler {
       const repta = [];
       const newData = [];
       //repta.push({next: 'http://fofware.com.ar:4444/make/articulo'})
-      repta.push({next: 'http://192.168.100.150:4444/make/tablas'});
+      repta.push({next: 'http://api.vta.ar/make/tablas'});
       //repta.push(ret);
       repta.push(newData);
       const campos = [
@@ -205,6 +207,7 @@ class ImportDataControler {
             ,especieTxt: art.especie
             ,edadTxt: art.edad
             ,razaTxt: art.raza
+            ,tallaTxt: art.raza
             ,name: art.name
             ,tags: nTags
             //
@@ -215,6 +218,7 @@ class ImportDataControler {
             ,d_especie: art.d_especie
             ,d_edad: art.d_edad
             ,d_raza: art.d_raza
+            ,d_talla: art.d_raza
             //
             ,detalles: art.detalles
             ,extradata: extraData

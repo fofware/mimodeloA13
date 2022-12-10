@@ -29,7 +29,7 @@ export class MedidasComponent implements OnInit {
       offset: this.nextOffset,
       searchItem: this.searchItem
     };
-    this.apiSrv.get('/medidas',params).subscribe((data:any) => {
+    this.apiSrv.get('/tallas',params).subscribe((data:any) => {
       console.log(data);
       this.count = data.count;
       this.offset = data.offset;

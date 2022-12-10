@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-msg-ptt',
   templateUrl: './msg-ptt.component.html',
@@ -16,7 +17,7 @@ export class MsgPttComponent implements OnInit {
     //console.log(this.msg);
     //if(this.msg?.mediaData?.mimetype)
     //this.audio = this.domsanitize.bypassSecurityTrustUrl(`data:${this.msg.mediaData.mimetype};base64,${this.msg.mediaData.data}`);
-    this.audio = `http://192.168.100.150:4445/media/${this.msg.id._serialized}`;
+    this.audio = `${environment.WAP_MEDIA}/${this.msg.id._serialized}`;
 
   }
 

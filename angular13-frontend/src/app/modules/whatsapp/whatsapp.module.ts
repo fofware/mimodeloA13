@@ -9,9 +9,9 @@ import { WappclientComponent } from './components/wappclient/wappclient.componen
 import { WappconnectComponent } from './components/wappconnect/wappconnect.component';
 import { QRCodeModule } from 'angularx-qrcode';
 
-import { Socket2Service } from 'src/app/services/socket.service';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { TokenInterceptor } from 'src/app/interceptors/token.interceptor';
+//import { Socket2Service } from 'src/app/services/socket.service';
+//import { HTTP_INTERCEPTORS } from '@angular/common/http';
+//import { TokenInterceptor } from 'src/app/interceptors/token.interceptor';
 import { WhatsappWebComponent } from './components/whatsapp-web/whatsapp-web.component';
 import { WhatsappChatsComponent } from './components/whatsapp-chats/whatsapp-chats.component';
 import { WhatsappMsgsComponent } from './components/whatsapp-msgs/whatsapp-msgs.component';
@@ -27,6 +27,7 @@ import { MsgVideoComponent } from './components/msg-video/msg-video.component';
 import { MsgStickerComponent } from './components/msg-sticker/msg-sticker.component';
 import { MsgDocumentComponent } from './components/msg-document/msg-document.component';
 import { MsgAudioComponent } from './components/msg-audio/msg-audio.component';
+import { SocketIoModule } from 'ngx-socket-io';
 
 
 @NgModule({
@@ -64,8 +65,7 @@ import { MsgAudioComponent } from './components/msg-audio/msg-audio.component';
     CommonModule,
     WhatsappRoutingModule,
     QRCodeModule,
-    NgbModule
-
+    NgbModule,
   ],
   //schemas:[
   //  CUSTOM_ELEMENTS_SCHEMA,

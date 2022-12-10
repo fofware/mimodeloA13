@@ -7,7 +7,10 @@ import { AuthService } from './auth.service';
 @Injectable()
 export class Socket1Service extends Socket {
   constructor(private authService: AuthService) {
-    super( { url: environment.SKT1.URL, options: environment.SKT1.OPTIONS } );
+    super( { 
+      url: environment.SKT1.URL, 
+      options: environment.SKT1.OPTIONS 
+    } );
     const options = authService.getToken();
     if(options){
       super.on('connect', () => {
@@ -27,17 +30,23 @@ export class Socket1Service extends Socket {
 
 export class Socket2Service extends Socket {
   constructor() {
-    super( { url: environment.SKT2.URL, options: { query:{
-      token: localStorage.getItem('token'),
-    }
-   } } );
+    super( { 
+      url: environment.SKT2.URL, 
+      options: { 
+        query: {
+          token: localStorage.getItem('token'),
+        }
+      } 
+    } );
+
     super.on('connect', () => {
+      console.warn('Connect');
       this.ioSocket.onAny(async (eventName:string, ...args:any) => {
         if(
           eventName !== 'message' &&
           eventName !== 'message_create' &&
           eventName !== 'change_state'
-          ){
+        ){
           console.log('Debug,evento',eventName)
           console.log('datos', args)
         }
@@ -48,25 +57,10 @@ export class Socket2Service extends Socket {
   get(eventName:string, callback:Function ){
     super.on(eventName, callback);
   }
+
   async send(eventName:string, data:any){
     //console.log(eventName,'emit',data);
     const queviene = await super.emit(eventName,data);
     console.log('send-rpta',queviene);
   }
 }
-
-// Se pueden agregar tantos como se necesite
-//@Injectable()
-//export class Socket2Service extends Socket {
-//  constructor() {
-//    super({url: 'http://192.168.100.150:3000', options: {}});
-//  };
-//  leer(eventName:string, callback:Function ){
-//    super.on(eventName, callback);
-//  }
-//  async send(eventName:string, data:any){
-//    //console.log(eventName,'emit',data);
-//    await super.emit(eventName,data);
-//
-//  }
-//}

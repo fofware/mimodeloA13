@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NoPageComponent } from 'src/app/components/no-page/no-page.component';
+import { AuthGuard } from 'src/app/guards/auth.guard';
+import { IsLoggedGuard } from 'src/app/guards/is-logged.guard';
+import { ProveedorComponent } from '../proveedor/proveedor.component';
 import { AdminComponent } from './admin.component';
 import { ArticuloComponent } from './components/articulo/articulo.component';
 import { EdadesComponent } from './components/edades/edades.component';
@@ -73,6 +76,18 @@ const routes: Routes = [
         component: PresentacionComponent
       },
       {
+        path: 'compras',
+        loadChildren: () => import(`../../modules/compras/compras.module`)
+          .then(
+            module => module.ComprasModule
+          ),
+        canActivate: [IsLoggedGuard,AuthGuard],
+        data: {
+          roles: ['sys_admin'],
+        }
+
+      },
+          {
         path: '**',
         component: NoPageComponent
       }

@@ -4,20 +4,21 @@
 
 export const environment = {
   recaptcha: {
-    siteKey: '6LcZvsMhAAAAAMdUWL2_eBafhA7_BUAZyrQnnyyN',
+    siteKey: '6LcZvsMhAAAAAMdUWL2_eBafhA7_BUAZyrQnnyyN'
   },
   production: false,
-  WAP_API: 'http://datasrv.firulais.net.ar:4445',
-  API_URL: 'http://datasrv.firulais.net.ar:4444',
-  AUTH_URL: 'http://datasrv.firulais.net.ar:4444',
+  WAP_API: 'https://wapi1.vta.ar',
+  WAP_MEDIA: 'https://wapi1.vta.ar/media',
+  API_URL: 'https://api01.vta.ar',
+  AUTH_URL: 'https://api01.vta.ar',
   SKT1: {
     ENABLE: false,
-    URL: 'http://datasrv.firulais.net.ar:4444',
+    URL: 'https://api01.vta.ar',
     OPTIONS: {}
   },
   SKT2: {
     ENABLE: false,
-    URL: 'http://datasrv.firulais.net.ar:4445',
+    URL: 'https://wapi1.vta.ar',
     OPTIONS: {}
   },
 };

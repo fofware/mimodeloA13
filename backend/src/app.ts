@@ -28,6 +28,7 @@ import { EdadCtrl } from './controlers/edadControler';
 import { MedidaCtrl } from './controlers/medidaControler';
 import { MenuCtrl } from './controlers/menuControler';
 import { extraDataCtrl } from './controlers/extradataControler';
+import { tallaCtrl } from './controlers/tallaControler';
 
 //import { articuloCtrl } from './controlers/articuloControler';
 //import { productoCtrl } from './controlers/productoControler';
@@ -65,7 +66,7 @@ app.use(RubroCtrl.router);
 app.use(LineaCtrl.router);
 app.use(EspecieCtrl.router);
 app.use(EdadCtrl.router);
-app.use(MedidaCtrl.router);
+app.use(tallaCtrl.router);
 app.use(proveedorProductoCtrl.router);
 app.use(extraDataCtrl.router);
 app.use(MenuCtrl.router);

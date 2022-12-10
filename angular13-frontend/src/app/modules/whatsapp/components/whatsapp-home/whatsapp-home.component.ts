@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { WappService } from '../../services/wapp.service';
@@ -8,7 +8,7 @@ import { WappService } from '../../services/wapp.service';
   templateUrl: './whatsapp-home.component.html',
   styleUrls: ['./whatsapp-home.component.css']
 })
-export class WhatsappHomeComponent implements OnInit {
+export class WhatsappHomeComponent implements OnInit, OnDestroy {
   public unArray:any[] = [];
   private destroy$ = new Subject<any>();
   phoneSelected:any = {} ;
@@ -38,6 +38,7 @@ export class WhatsappHomeComponent implements OnInit {
         this.phoneSelected = res;
         //this.user = this.authService.userValue;
     });
+
     this.wappSrv.phonesList
         .pipe( takeUntil(this.destroy$) )
         .subscribe( res => {
@@ -76,8 +77,12 @@ export class WhatsappHomeComponent implements OnInit {
             this.phoneSelected = this.wappSrv.phoneValue;
             this.phoneList = this.wappSrv.phoneListValue;
         });
-  }
 
+  }
+  ngOnDestroy(): void {
+    this.destroy$.next({});
+    this.destroy$.complete();
+  }
   //ngOnInit(): void {
   //  //this.wappSrv.phone
   //  //.pipe( takeUntil(this.destroy$) )

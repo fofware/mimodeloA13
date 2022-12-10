@@ -6,6 +6,32 @@ export interface IProveedorLista extends Document {
   fchDesde: Date;
   value: number;
 };
+/**
+ * Tipos de listas
+ * 
+ * Precio 
+ * Precio1, condicion1, Precio2, condicion2, Precio(N), condicion(N)
+ * Precio, condicion1, coeficiente1, Precio(N), condicion(N), coeficiente(N)
+ * Precio1, condicionGrupo1, Precio(N), condicionGrupo(N)
+ * Precio1, condicionGrupo1, coeficiente1, Precio(N), condicionGrupo(N), coeficiente(N)
+ * Condicion es Suma de Unidades < X
+ *              Suma de Unidades > X
+ * Condicion de Gpo es Suma de Unidades de productos distintos
+ * Tentativa de fd
+ * producto, Precio, condicion, grupo , coeficiente
+ * prod1   , 10    , null     , null  , 1
+ * prod2   , 10    , <10      , null  , 1
+ * prod2   , 8     , >9       , null  , 1
+ *  
+ * prod3   , 10    , null     
+ * 
+ * 
+ * Condiciones 
+ *  cond_id
+ *  cond_proveedor
+ *  condicion <9 / >10 /
+ *  productos
+ */
 
 const proveedorListaSchema = new Schema({
   proveedorProducto: { ref: "Proveedorproducto", type: Schema.Types.ObjectId, default: null },

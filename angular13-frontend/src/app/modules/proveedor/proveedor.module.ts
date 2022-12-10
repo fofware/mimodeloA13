@@ -21,10 +21,10 @@ import { ListapreciosComponent } from './components/listaprecios/listaprecios.co
 
 @NgModule({
   declarations: [
+    ProveedorComponent,
     HomeComponent,
     FormComponent,
     ListComponent,
-    ProveedorComponent,
     MarcaComponent,
     ProductosComponent,
     ArticulosComponent,
@@ -40,6 +40,9 @@ import { ListapreciosComponent } from './components/listaprecios/listaprecios.co
     NgbModule,
     TypeaheadModule.forRoot(),
     ProgressbarModule.forRoot()
+  ],
+  exports: [
+
   ]
 })
 export class ProveedorModule { }
