@@ -1,14 +1,7 @@
-export interface ArticuloResponse {
-  url: string;
-  limit: number;
-  offset: number;
-  nextOffset: number;
-  sort: object;
-  count: number;
-  apiTime: number;
-  filter: object;
+import { apiResponse } from "./apiResponse";
+
+export interface ArticuloResponse extends apiResponse {
   rows: ArticuloFd[];
-  message: string;
 }
 
 export interface ArticuloFd {

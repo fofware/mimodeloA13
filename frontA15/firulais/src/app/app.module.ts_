@@ -1,0 +1,41 @@
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { NgbModule, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { TopMenuComponent } from './components/top-menu/top-menu.component';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
+import { AbmComponent } from './components/abm/abm.component';
+import { NgbdToastComponent } from './components/ngbd-toast/ngbd-toast.component';
+import { ApiInterceptor } from './interceptors/api.interceptor';
+import { TokenInterceptor } from './interceptors/token.interceptor';
+@NgModule({
+  declarations: [
+    AppComponent,
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    NgbModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+    TopMenuComponent,
+    NgbdToastComponent,
+    AbmComponent,
+    TypeaheadModule.forRoot()
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    },
+    {provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true}
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }

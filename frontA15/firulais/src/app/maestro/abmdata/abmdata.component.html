@@ -1,0 +1,44 @@
+<div class="container-fluid">
+  <h3 class="text-center">{{ rtData.title }}</h3>
+  <input type="text" class="form-control mt-2" [formControl]="searcher" placeholder="{{rtData.placeholder}}"/>
+<!--div *ngIf="data$ | async as mydata"-->
+<div *ngIf="listData.length; else elseBlock">
+  <div class="container-fluid">
+    <div
+      class="row justify-content-center main pt-1"
+      (scroll)="onScroll($event)"
+    >
+      <div
+        class="p-1"
+        *ngFor="let item of listData; index as i"
+        [ngClass]="
+          listData[i].selected == true
+            ? 'col-12'
+            : 'col-12 col-md-6 col-xl-4'
+        "
+      >
+        <app-abmdata-card
+          [item]="item"
+          [idx]="i"
+          [coleccion]="rtData.coleccion"
+          (onEdit)="edit($event)"
+          (onDelete)="borrar($event)"
+        ></app-abmdata-card>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<ng-template #elseBlock>
+  <div *ngIf="emptyData">Archivo Vacio</div>
+  <div *ngIf="!emptyData">No existe ningun registro con este nombre</div>
+
+  <!--form [formGroup]="form">
+    <input type="text"
+      class="form-control"
+      formControlName="name"
+    >
+  </form-->
+  <button class="btn btn-primary" (click)="nuevo()" >Agregar</button>
+  <!--button class="btn btn-secondary">Cancelar</button-->
+</ng-template>

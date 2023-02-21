@@ -19,6 +19,7 @@ export class ListapreciosComponent implements OnInit {
   limit = 50;
   searchItem = '';
   productos:any[] = [];
+  proveedorId: string = '';
 
   constructor(
     private apiSrv: ApiService,
@@ -46,8 +47,14 @@ export class ListapreciosComponent implements OnInit {
 
 
   ngOnInit(): void {
-    const proveedorId = this.router.routerState.snapshot.url.split('/')[2];
-    this.apiSrv.get(`/proveedor/${proveedorId}/productos`,{
+    this.router.routerState.snapshot.url
+    .split('/').map((value, idx, array)=> {
+      if(value === 'proveedores') {
+        this.proveedorId = array[idx+1]
+      }
+    });
+
+    this.apiSrv.get(`/proveedor/${this.proveedorId}/productos`,{
       limit: 500
     })
     .subscribe((retData:any) => {

@@ -1,0 +1,167 @@
+<div class="card my-2">
+  <!--div class="card-header d-flex justify-content-between align-items-start" >
+    <div>{{reg.fullname}}</div>
+    <div class="pb-1" style="width: 51px;">
+      <div class="btn btn-outline-primary btn-min"><i class="fa-regular fa-pen-to-square"></i></div>
+      <div class="btn btn-outline-danger btn-min ms-1"><i class="fa-solid fa-trash-can"></i></div>
+    </div>
+  </div-->
+  <div class="card-body" [ngClass]="">
+    <form [formGroup]="form" class="mb-3">
+      <!--pre><code>{{form.getRawValue() | json }}</code></pre-->
+      <!--div class="row">
+        <div class="col-6 col-lg-3 col-xl-3 px-1">
+          <div class="form-check">
+            <input type="checkbox" id="pesable" name="pesable" class="form-check-input">
+            <label for="pesable" class="form-check-label"><i class="fa fa-balance-scale fa-fw"></i></label>&nbsp; </div></div><div _ngcontent-kwa-c60="" class="col-6 col-lg-3 col-xl-3 px-1"><div _ngcontent-kwa-c60="" class="form-check"><input _ngcontent-kwa-c60="" type="checkbox" id="servicio" name="servicio" class="form-check-input ng-untouched ng-pristine ng-valid"><label _ngcontent-kwa-c60="" for="servicio" class="form-check-label"> Servicio </label>&nbsp; </div></div><div _ngcontent-kwa-c60="" class="col-6 col-lg-3 col-xl-3 px-1"><div _ngcontent-kwa-c60="" class="form-check"><input _ngcontent-kwa-c60="" type="checkbox" id="pCompra" name="pCompra" class="form-check-input ng-untouched ng-pristine ng-valid"><label _ngcontent-kwa-c60="" for="pCompra" class="form-check-label"> Compra </label>&nbsp; </div></div><div _ngcontent-kwa-c60="" class="col-6 col-lg-3 col-xl-3 px-1"><div _ngcontent-kwa-c60="" class="form-check"><input _ngcontent-kwa-c60="" type="checkbox" id="pVenta" name="pVenta" class="form-check-input ng-untouched ng-pristine ng-valid"><label _ngcontent-kwa-c60="" for="pVenta" class="form-check-label"> Venta </label>&nbsp;
+          </div>
+        </div>
+        <div class="col-6 col-lg-3 col-xl-3 px-1">
+          <input type="text" name="codigo" placeholder="Código de Barras" class="form-control form-control-sm mb-1">
+        </div>
+        <div class="col-6 col-lg-3 col-xl-3 px-1">
+          <input type="text" name="plu" placeholder="PLU" class="form-control form-control-sm mb-1">
+        </div>
+        <div class="col-12 col-lg-6 col-xl-6 px-1">
+          <input type="text" name="image" placeholder="url imagen" class="form-control form-control-sm mb-1">
+        </div>
+      </div-->
+      <!--label class="form-label">Códigos</label-->
+      <div class="row">
+        <div class="col-6 col-md-4 col-lg-3 px-1">
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text"><i class="fa-solid fa-computer"></i><!--i class="fa-regular fa-keyboard"></i--></span>
+            <input type="text" id="_id" class="form-control" formControlName="_id" placeholder="ID">
+          </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3 px-1">
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text"><i class="fa-solid fa-barcode"></i></span>
+            <input type="text" id="ean" class="form-control" formControlName="ean" placeholder="Código de Barras" formControlName="ean">
+          </div>
+        </div>
+        <!--div class="col-6 col-lg-3 col-xl-3 px-1">
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text"><i class="fa-solid fa-cash-register"></i></span>
+            <input type="text" id="plu" class="form-control" formControlName="plu" placeholder="Código Interno" formControlName="plu">
+          </div>
+        </div-->
+      </div>
+      <div class="row">
+        <div class="col-6 col-md-4 col-lg-3 col-xl-3 px-1">
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text"><i class="fa-solid fa-box"></i></span>
+            <input type="text" name="name" placeholder="Nombre" class="form-control" formControlName="name">
+          </div>
+        </div>
+        <div class="col-6 col-md-2 col-lg-2 col-xl-1 px-1">
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text">Cnt</span>
+            <input type="text" name="contiene" placeholder="Contiene" class="form-control" formControlName="contiene">
+          </div>
+        </div>
+        <div class="col-6 col-md-2 px-1">
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text">Un.</span>
+            <!--input type="text" name="unidad" placeholder="Unidad" class="form-control" formControlName="unidad"-->
+            <select name="parent" class="form-control">
+              <option value="" class="ng-star-inserted">  </option>
+              <option value="6233be6c58276dd094809c59"> Bolsa 8 Kg </option>
+              <option value="6233be6c58276dd094809c5a"> Bolsa 15 Kg </option>
+              <option value="6233be6c58276dd094809c5b"> Bolsa 21 Kg </option>
+              <option value="6233be6c58276dd094809c5c"> Pqte 1.5 Kg </option>
+              <option value="6233be6c58276dd094809c5d"> Pqte 3 Kg </option>
+            </select>
+
+          </div>
+        </div>
+        <!--div class="col-6 col-md-6 col-lg-4 col-xl-3 px-1">
+          <div class="input-group input-group-sm mb-3">
+            <select name="parent" class="form-control">
+              <option value="" class="ng-star-inserted">  </option>
+              <option value="6233be6c58276dd094809c59"> Bolsa 8 Kg </option>
+              <option value="6233be6c58276dd094809c5a"> Bolsa 15 Kg </option>
+              <option value="6233be6c58276dd094809c5b"> Bolsa 21 Kg </option>
+              <option value="6233be6c58276dd094809c5c"> Pqte 1.5 Kg </option>
+              <option value="6233be6c58276dd094809c5d"> Pqte 3 Kg </option>
+            </select>
+          </div>
+        </div-->
+      </div>
+      <!--div class="mb-3">
+        <label
+          for="name"
+          class="form-label">
+          Name
+        </label>
+        <input
+          type="text"
+          id="name"
+          class="form-control"
+          formControlName="name"
+          placeholder="PlaceHolder">
+      </div>
+      <div class="mb-3">
+        <label
+          for="contiene"
+          class="form-label">
+          Contiene
+        </label>
+        <input
+          type="text"
+          id="contiene"
+          class="form-control"
+          formControlName="contiene"
+          placeholder="PlaceHolder">
+      </div>
+      <div class="mb-3">
+        <label
+          for="unidad"
+          class="form-label">
+          Unidad
+        </label>
+        <input
+          type="text"
+          id="unidad"
+          class="form-control"
+          formControlName="unidad"
+          placeholder="PlaceHolder">
+      </div-->
+      <!--div class="row">
+        <div class="col-6">
+          <button class="btn btn-primary" (click)="addImage()">Agregar Imagen</button>
+          <div class=""
+            formArrayName="images"
+            *ngFor="let img of reg.images; let i = index">
+            <form
+              class="row g-3"
+              [formGroupName]="i">
+              <div class="row">
+                <div class="col-auto">
+                  <img *ngIf="img.value.url" src="{{ img.value.url }}" style='height: 64px; width: auto;' alt="">
+                </div>
+                <div class="col-6">
+                  <div class="">
+                    <label for="url">url</label>
+                    <input
+                      id="url"
+                      type="text"
+                      class="form-control"
+                      formControlName="url"
+                      placeholder="imagen url">
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <div class="btn btn-danger">Borra</div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div-->
+    </form>
+    <!--button (click)="cancel()" >cancel</button-->
+  </div>
+
+  <!--pre>{{reg | json}}</pre-->
+</div>

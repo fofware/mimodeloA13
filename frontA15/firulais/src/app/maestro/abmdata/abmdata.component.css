@@ -1,0 +1,10 @@
+.main {
+  /*min-height: calc(100vh - 87px);*/
+  max-height: calc(100vh - 138px);
+  overflow-y: auto;
+}
+.btn-min{
+  --bs-btn-padding-y: .0rem;
+  --bs-btn-padding-x: .3rem;
+  --bs-btn-font-size: .75rem;
+}

@@ -1,0 +1,8 @@
+<p>articulo-edit-extradata {{process}} works!</p>
+
+<div class='main' *ngIf="_artSvc.extraReady$.value">
+  <app-articulo-edit-extradata-form
+    *ngFor="let item of data | articuloEditExtradataFilter: process"
+    [reg]="item"
+  ></app-articulo-edit-extradata-form>
+</div>

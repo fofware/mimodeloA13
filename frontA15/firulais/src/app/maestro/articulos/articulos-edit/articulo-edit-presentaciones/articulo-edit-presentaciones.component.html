@@ -1,0 +1,10 @@
+<p>presentaciones</p>
+<div class="container-fluid main">
+  <div class="row">
+    <ng-container *ngFor="let item of regData;index as i">
+      <app-articulo-edit-presentaciones-form
+        [(reg)]="regData[i]"
+      ></app-articulo-edit-presentaciones-form>
+    </ng-container>
+  </div>
+</div>

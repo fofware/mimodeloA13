@@ -11,54 +11,11 @@ import { MarcaFd, MarcaResponse } from 'src/app/models/marca';
 import { ArticuloFd, ArticuloResponse } from 'src/app/models/articulo';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ProveedorProductoFd } from 'src/app/models/proveedor';
+import { prodName } from 'src/app/models/produnctoNombre';
 
 const ORI_API = environment.API_URL
 
 
-
-
-interface prodNameResponse {
-  url: string;
-  limit: number;
-  offset: number;
-  nextOffset: number;
-  sort: object;
-  count: number;
-  apiTime: number;
-  filter: object;
-  rows: prodName[];
-  message: string;
-}
-
-interface prodName {
-  _id: string;
-  articulo: any;
-  fabricante: any;
-  marca: any;
-  rubro: any;
-  linea: string;
-  especie: string;
-  edad: string;
-  raza: string;
-  contiene: number;
-  ean: string;
-
-  fullname: string;
-  art_name: string;
-  prodName: string;
-  image: string;
-  oferta: boolean;
-  oferta_desde: any;
-  oferta_hasta: any;
-  oferta_precio: number;
-  pCompra: boolean;
-  pVenta: boolean;
-  plu: number;
-  precio: number;
-  stock: number;
-  tags: string;
-  unidad: string;
-}
 
 
 interface provProduct {
@@ -78,6 +35,7 @@ interface provProduct {
   templateUrl: './productos.component.html',
   styleUrls: ['./productos.component.css']
 })
+
 export class ProductosComponent implements OnInit {
   proveedorId?: string;
   selected?: any[];
@@ -93,6 +51,7 @@ export class ProductosComponent implements OnInit {
   myForm = new UntypedFormGroup({
     marca: this.marcaCtrl
   });
+
   fabricanteSelected?: string;
   fabricanteSource$?: Observable<FabricanteFd[]>;
   fabricanteLoading?: boolean;
@@ -136,7 +95,7 @@ export class ProductosComponent implements OnInit {
         //console.log('offsetHeight',elem.offsetHeight)
         //console.log('scrollHeight',elem.scrollHeight)
         //console.log('scrollHeight',elem.scrollHeight)
-  
+
         //console.log('-----------------------------')
         if(( elem.target.offsetHeight + elem.target.scrollTop ) >=  elem.target.scrollHeight-800) {
           //console.log(elem.offsetHeight)
@@ -202,7 +161,13 @@ export class ProductosComponent implements OnInit {
       })
     );
     */
-    this.proveedorId = this.router.routerState.snapshot.url.split('/')[2];
+    console.log(this.router.routerState.snapshot.url)
+    this.router.routerState.snapshot.url
+    .split('/').map((value, idx, array)=> {
+      if(value === 'proveedores') {
+        this.proveedorId = array[idx+1]
+      }
+    });
     this.apiServ.get(`/proveedor/${this.proveedorId}/productos`,{
       limit: 500
     })

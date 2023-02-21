@@ -3,13 +3,15 @@ import { Schema, model, Document } from "mongoose";
 export interface IMarca extends Document {
   name: string;
   fabricante: object;
+  icons: [];
   images: [];
 };
 
 const marcaSchema = new Schema({
-  name: { type: Schema.Types.String, trim: true, default: '', index: true },
+  name: { type: Schema.Types.String, trim: true, default: '', index: true, unique: true },
   fabricante: { ref: "Fabricante", type: Schema.Types.ObjectId, default: null },
-  images: [{ type: Schema.Types.String, default: null}]
+  icons: { type: Schema.Types.Array, default: null},
+  images: { type: Schema.Types.Array, default: null}
 },
 { 
   strict: false,

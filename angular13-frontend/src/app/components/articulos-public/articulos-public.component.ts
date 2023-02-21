@@ -53,7 +53,6 @@ export class ArticulosPublicComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     fromEvent(this.articulosSearchInput.nativeElement, 'keyup')
     .pipe(
       // get value
@@ -96,7 +95,7 @@ export class ArticulosPublicComponent implements OnInit {
       this.count = data.count;
       this.offset = data.offset;
       this.nextOffset = data.nextOffset;
-      data.rows.map((reg:any) => { this.makeFullName(reg); })
+      //data.rows.map((reg:any) => { this.makeFullName(reg); })
       this.data = this.data.concat(data.rows);
     });
   }

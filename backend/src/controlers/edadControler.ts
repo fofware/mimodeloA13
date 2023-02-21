@@ -17,14 +17,18 @@ class EdadControlers {
 				this.list );
     this.router.get('/edades/tah',
 				//passport.authenticate('jwt', {session:false}), 
-				this.listtah );
+    		this.listtah );
+    this.router.get('/edad/:_id',
+        passport.authenticate('jwt', {session:false}), 
+        this.get );
+
     this.router.post('/edad',
         //passport.authenticate('jwt', {session:false}),
         this.add );
-    this.router.delete('/edad/:id',
+    this.router.delete('/edad/:_id',
         passport.authenticate('jwt', {session:false}), 
         this.delete );
-    this.router.put('/edad/:id',
+    this.router.put('/edad',
         passport.authenticate('jwt', {session:false}),
         this.put );
   }
@@ -44,6 +48,7 @@ class EdadControlers {
 
     const filter = makeFilter(fldsString, params);
     const count = await edades.count(filter);
+
     params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
     params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
 
@@ -124,7 +129,7 @@ class EdadControlers {
 
   async get(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
-    const ret = await edades.findById( params.id );
+    const ret = await edades.findById( params._id );
     res.status(200).json(ret)
   }
 

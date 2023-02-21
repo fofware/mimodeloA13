@@ -1,0 +1,42 @@
+<ng-template #nolistyet>
+  No hay listas cargadas para este proveedor
+</ng-template>
+<ng-template #noprodyet>
+  No hay productos registrados para este proveedor
+</ng-template>
+<div id="main">
+  <article >
+    <div>{{title}}</div>
+    <div class="lista">
+      <div *ngIf="title === 'Listas'; then thenBlock else elseBlock"></div>
+      <ng-template #thenBlock>
+        <div *ngIf="fchList.length; else nolistyet">
+          <button (click)="generar" ></button>
+          <table>
+            <tr *ngFor="let item of provProdList;index as i">
+              <td>{{i}}</td>
+              <td>{{item.fullname}} </td>
+            </tr>
+          </table>
+        </div>
+      </ng-template>
+      <ng-template #elseBlock>
+        <div *ngIf="provProdList.length; else noprodyet">
+          <table>
+            <tr *ngFor="let item of provProdList;index as i">
+              <td>{{i}}</td>
+              <td>{{item.fullname}} </td>
+            </tr>
+          </table>
+        </div>
+      </ng-template>
+    </div>
+  </article>
+  <!--nav>
+    <div class="botones">
+      <button (click)="title='Listas'">b1</button>
+      <button (click)="title='Productos'">b2</button>
+    </div>
+  </nav-->
+</div>
+<!--footer>Footer</footer-->

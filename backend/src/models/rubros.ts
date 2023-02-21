@@ -2,12 +2,14 @@ import { Schema, model, Document } from "mongoose";
 
 export interface IRubro extends Document {
   name: string;
+  icons:[];
   images: [];
 };
 
 const rubroSchema = new Schema({
-  name: { type: Schema.Types.String, trim: true, default: '', index: true },      // Gatitos Carne y Leche
-  images: [{ type: Schema.Types.String, default: null}]
+  name: { type: Schema.Types.String, trim: true, default: '', index: true, unique: true },
+  icons: { type: Schema.Types.Array, default: null},
+  images: { type: Schema.Types.Array, default: null}
 },
 { 
   strict: false,

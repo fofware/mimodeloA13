@@ -38,6 +38,7 @@ export const initAllWapp = async (app) =>{
      * Prepara array para arrancar todos juntos con promise
      */
     asyncFunctions.push(storedGateway(p));
+
   }
   
   try {
@@ -58,7 +59,48 @@ export const initAllWapp = async (app) =>{
   const totaldif = totalend.getTime()-totalini.getTime();
   console.log('termino con todos');
   console.log(totaldif);
+
   app.use(router);
+  //rewriteData();
+
+}
+const rewriteData = async () => {
+  try {
+    console.log("Va a leer");
+    let offset = 0;
+    let total = 0;
+    let data = await whatsapp.find().skip(offset).limit(10);
+    do {
+      data.map( async (m, idx) => {
+        m.serialized = m.id._serialized
+//        delete m._id;
+        //console.log('Procesa', idx, m);
+        let ret = await whatsapp.findByIdAndUpdate(
+    //      { myid: m.myid, fromMe: m.fromMe, timestamp: m.timestamp, from: m.from, to: m.to},
+          { _id: m._id},
+          m,
+          {
+            new: true,
+            upsert: true,
+            rawResult: true // Return the raw result from the MongoDB driver
+          }
+        );
+        ret.value instanceof whatsapp; // true
+        // The below property will be `false` if MongoDB upserted a new
+        // document, and `true` if MongoDB updated an existing object.
+        ret.lastErrorObject.updatedExisting; // false
+        console.log(ret.lastErrorObject);
+        total+=1;
+      })
+      offset+=10;
+      console.log('Procesados',total);
+      data = await whatsapp.find().skip(offset).limit(10);
+    } while (data.length);
+    console.log('Terminó',total);
+  } catch (error) {
+    console.log(error)
+  }
+
 }
 let io;
 /*
@@ -159,126 +201,109 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
 
     client.on('group_join', async (value) => {
       console.log('group_join')
-      await io.to(p.phone).emit('group_join',value)
+      await io.to(client.info.wid.user).emit('group_join',value)
       //await io.to(p.rooms).emit('group_join',value)
       console.log(`${client.info.pushname} ${client.info.wid.user} group_join ${value}`);
     });
 
     client.on('group_leave', async (value) => {
       console.log('group_leave')
-      await io.to(p.phone).emit('group_leave',value)
+      await io.to(client.info.wid.user).emit('group_leave',value)
       //await io.to(p.rooms).emit('group_leave',value)
       console.log(`${client.info.pushname} ${client.info.wid.user} group_leave ${value}`);
     });
 
     client.on('incoming_call', async (value) => {
       console.log('incoming_call')
-      await io.to(p.phone).emit('incoming_call',value);
+      await io.to(client.info.wid.user).emit('incoming_call',value);
       //await io.to(p.rooms).emit('incoming_call',value);
       console.log(`${client.info.pushname} ${client.info.wid.user} incoming_call ${value}`);
     });
 
     client.on('media_uploaded', async (value) => {
       console.log('media_uploaded')
-      await io.to(p.phone).emit('media_uploaded',value);
+      await io.to(client.info.wid.user).emit('media_uploaded',value);
       //await io.to(p.rooms).emit('media_uploaded',value);
       console.log(`${client.info.pushname} ${client.info.wid.user} media_uploaded ${value}`);
     });
 
     client.on('message', async msg => {
       try {
-        console.log('message')
         const phone = client.info.wid.user;
-        console.log('onMessage',phone);
         console.log('----------------------------------------------------')
         console.log(`${client.info.pushname} ${client.info.wid.user} MESSAGE RECEIVED`);
-        console.log(`ID: ${msg.id._serialized}`);
-        //const contact = await msg.getContact();
-        //const chat = await msg.getChat();
-        msg['on'] = `message ${client.info.wid.user}`;
-        msg['serialized'] = msg.id._serialized;
-        if (msg.from !== 'status@broadcast'){
+        console.log(msg.id);
+        
+        //if (msg.from !== 'status@broadcast'){
           const mediadata = await saveMedia(client,msg);
           //msg['contact'] = contact;
           //msg['chat'] = chat;
     
-          await io.to(phone).emit('message',{ msg, phone });
+          await io.to(client.info.wid.user).emit('message',{ msg, phone });
           //await io.to(phone).emit('message',{ msg, contact, chat, phone });
           //await io.to(p.rooms).emit('message',msg,mediadata);
     
-          const ret = await saveMsg(msg);
+          const ret = await saveMsg(msg,'message');
           procesaMsg(client,msg);
   
+        /*
         } else {
           console.log('--------------------- IGNORADO ---------------------')
           console.log(msg.from)
         }
-  
+        */
         showTime(msg);
-          
       } catch (error) {
         console.log(`Error onMessage`)        
       }
-
     })
 
     client.on('message_ack', async (msg, ack) => {
-      console.log('message_ack')
       const phone = client.info.wid.user;
-      console.log('onMessageAck',phone);
-      //const contact = await msg.getContact();
-      //const chat = await msg.getChat();
-
-      msg['on'] = `message_ack ${client.info.wid.user}`;
-      msg['serialized'] = msg.id._serialized; 
-      
-      //await io.to(client.info.wid.user).emit('message_ack', { msg, ack, contact, chat, phone });
+      console.log('----------------------------------------------------')
+      console.log(`${client.info.pushname} ${client.info.wid.user} MESSAGE ACK`);
+      console.log(msg.id);
       await io.to(client.info.wid.user).emit('message_ack', { msg, ack, phone });
       //await io.to(p.rooms).emit('message_ack',{msg,ack})
 
-      const ret = await saveMsg(msg)
-
+      const ret = await saveMsg(msg,'message_ack')
       const ackTxt = ['','se envio','recibió','leyó','Dio play al audio']
-      console.log('----------------------------------------------------')
-      console.log(`${client.info.pushname} ${client.info.wid.user} message_ack ${ack} ${msg.to} ${ackTxt[ack]}`);
+      //console.log('----------------------------------------------------')
+      //console.log(`${client.info.pushname} ${client.info.wid.user} message_ack ${ack} ${msg.to} ${ackTxt[ack]}`);
       showTime(msg);
     })
 
     client.on('message_create', async (msg) => {
       try {
-        console.log('message_create')
         const phone = client.info.wid.user;
-        console.log('onMessage_Create',phone);
-        //const contact = await msg.getContact();
-        //const chat = await msg.getChat();
+        console.log('----------------------------------------------------')
+        console.log(`${client.info.pushname} ${client.info.wid.user} MESSAGE_CREATE`);
+        console.log(msg.id);
+        console.log(`Message Body: ${msg.body}`)
   
-        msg['on'] = `message_create ${client.info.wid.user}`;
-        msg['serialized'] = msg.id._serialized; 
-  
-        
-        if (msg.from !== 'status@broadcast'){
-          if(msg.fromMe){
+        //if (msg.from !== 'status@broadcast'){
+          //if(msg.fromMe){
             const mediadata = await saveMedia( client, msg );
         
             //msg['contact'] = await msg.getContact();
             //msg['chat'] = await msg.getChat();
       
-            await io.to(phone).emit('message_create', { msg, phone });
+            //await io.to(client.info.wid.user).emit('message_create', { msg, phone });
             //await io.to(phone).emit('message_create', { msg, contact, chat, phone });
             //await io.to(p.rooms).emit('message_create',msg,mediadata);
       
-            const ret = await saveMsg(msg);
-            procesaMsg(client,msg);
-          }
-  
+            //const ret = await saveMsg(msg,'message_create');
+//            procesaMsg(client,msg);
+          //}
+        /*
         } else {
           console.log('--------------------- IGNORADO ---------------------');
           console.log(msg.from)
         }
-        console.log('----------------------------------------------------');
-        console.log(`${client.info.pushname} ${client.info.wid.user} message_create`);
-        showTime(msg);
-          
+        */
+        //console.log('----------------------------------------------------');
+        //console.log(`${client.info.pushname} ${client.info.wid.user} message_create`);
+        //showTime(msg);
       } catch (error) {
         console.error(`Error en message_create`)        
       }
@@ -291,21 +316,24 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
       const phone = client.info.wid.user;
       const contact = await msg.getContact();
       const chat = await msg.getChat();
-      msg['on'] = 'message_revoke_everyone';
-      msg['serialized'] = msg.id._serialized; 
-      msg['revoked_msg'] = revoked_msg;
-
-      //const ret = await saveMsg(msg)
-
-      await io.to(phone).emit('message_revoke_everyone',{ msg, revoked_msg, contact, chat, phone });
-      //await io.to(p.rooms).emit('message_revoke_everyone',{msg,revoked_msg})
+      //msg['on'] = 'message_revoke_everyone';
+      //msg['serialized'] = msg.id._serialized; 
+      //msg['revoked_msg'] = revoked_msg;
       console.log('----------------------------------------------------')
       console.log(`${client.info.pushname} ${client.info.wid.user} message_revoke_everyone`);
+      console.log(msg.id);
+
+      const ret = await saveMsg(msg,'message_revoke_everyone')
+
+      await io.to(client.info.wid.user).emit('message_revoke_everyone',{ msg, revoked_msg, contact, chat, phone });
+      //await io.to(p.rooms).emit('message_revoke_everyone',{msg,revoked_msg})
+//      console.log('----------------------------------------------------')
+//      console.log(`${client.info.pushname} ${client.info.wid.user} message_revoke_everyone`);
       showTime(msg);
     })
 
     client.on('qr', async qr => {
-      console.log('qr')
+      console.log('qr',p.phone, p._id);
       //const picUrl = await client.getProfilePicUrl(`${numero}@c.us`)
       qrSend++;
       const qrMaxRetries = client['options']?.qrMaxRetries
@@ -432,12 +460,17 @@ export const newGateway = async ( skt:Socket ): Promise< Client | null > => {
 const saveMedia = (client:Client, msg:Message) => {
   return new Promise( async (resolve, reject) => {
     let mediadata:any;
+    const d = new Date;
+    const timestamp = d.getTime()/1000;
+
+//    console.log( (d.getTime()/1000), msg.timestamp, timestamp - msg.timestamp );
+//    console.log(msg);
     const fn = `${__dirname}/../mediaReceive/${msg.id._serialized}.json`;
 
     let existe = fs.existsSync(fn)
     console.warn('saveMedia', msg.id._serialized, 'hasMedia', msg.hasMedia, 'existe', existe);
     if (!msg.hasMedia){
-      console.log('Vuelve no medida data')
+//      console.log('Vuelve no medida data')
       existe = false;
     }
     if(msg.hasMedia && !existe){
@@ -445,9 +478,14 @@ const saveMedia = (client:Client, msg:Message) => {
 //      console.log(msg);
       do {
         mediadata = {};
-        mediadata = await msg.downloadMedia();
-        veces++;
-        console.log('veces', veces, msg.id._serialized, mediadata?.data?.length);
+        try {
+          veces++;
+          mediadata = await msg.downloadMedia();
+        } catch (error) {
+          console.log('msg.downloadMedia(): Error');
+          console.log(error);
+        }
+//        console.log('veces', veces, msg.id._serialized, mediadata?.data?.length);
       } while (veces < 4 && !mediadata?.data?.length );
     
 //      console.log('veces', veces, msg.id._serialized, mediadata?.data.length);
@@ -472,23 +510,27 @@ const saveMedia = (client:Client, msg:Message) => {
           resolve({existe})
         } else {
         existe = false;
-        console.log('no leyó media', `${msg.id._serialized}`)
+//        console.log('no leyó media', `${msg.id._serialized}`)
         resolve({existe})
       }
     } else {
-      console.log('hasMedia', msg.hasMedia, 'existe', existe, 'no graba');
+      //console.log('hasMedia', msg.hasMedia, 'existe', existe, 'no graba');
       resolve({existe})
     }
   })
 } 
 
-export const saveMsg = async (m) => {
-  m['myid'] = m.id.id;
-  m['fromMe'] = m.id.fromMe;
+export const saveMsg = async (m,desde?) => {
+  //m['myid'] = m.id.id;
+  //m['fromMe'] = m.id.fromMe;
+  //const filter = m.id
+
   try {
+    m.serialized = m.id._serialized
     let ret = await whatsapp.findOneAndUpdate(
-      { myId: m.myId, fromMe: m.fromMe, timestamp: m.timestamp, from: m.from, to: m.to}, 
-      m, 
+//      { myid: m.myid, fromMe: m.fromMe, timestamp: m.timestamp, from: m.from, to: m.to},
+      { from: m.from, to: m.to, serialized: m.serialized},
+      m,
       {
         new: true,
         upsert: true,
@@ -499,8 +541,12 @@ export const saveMsg = async (m) => {
     // The below property will be `false` if MongoDB upserted a new
     // document, and `true` if MongoDB updated an existing object.
     ret.lastErrorObject.updatedExisting; // false
+    console.log(ret.lastErrorObject);
+    console.log(m.id,desde);
+    //console.log(ret.value.id, ret.value._id);
     return ret;
   } catch (error) {
+    console.log(m,desde);
     console.log(error)
   }
 
@@ -540,7 +586,7 @@ export const setRoutes = async (client:Client) => {
   })
 
   router.get(`/${num}/chats`, async (req, res) =>{
-    let limit = 10;
+    let limit = 100;
     const chats = await client.getChats();
     const contactsToRead = [];
     const picturesToRead = [];

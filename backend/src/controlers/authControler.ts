@@ -1,8 +1,14 @@
+/**
+ * Guia de actualización
+ * https://www.bezkoder.com/jwt-refresh-token-node-js-mongodb/?__cf_chl_tk=NoUAH8D4IAss7A9A4IhgrKKuSdr6cF4NQzJeFUeWsTY-1673961057-0-gaNycGzNCf0
+ */
+
 import { Request, Response, Router } from "express";
 import User, { IUser } from "../models/user";
 import { ExtractJwt } from "passport-jwt";
 import jwt from 'jsonwebtoken';
 import config from '../config';
+import  RefreshToken  from '../models/refreshToken'
 const request = require('request-promise');
 
 function createToken(user: IUser | any ) {
@@ -16,7 +22,7 @@ function createToken(user: IUser | any ) {
     nickname: user.nickname || `${user.nombre} ${user.apellido}`,
     image: '/assets/images/defuser.png',
   }, config.jwtSecret, {
-    expiresIn: 43200
+    expiresIn: config.jwtExpiration
   });
 };
 
@@ -34,7 +40,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
   */
   const userIp = req.socket.remoteAddress;
   const recaptchaToken = req.body.captcha;
-  const secretKey = '6LcZvsMhAAAAAP0yYaPkmtNZFZdpB2zzGzTTYwpb'
+  const secretKey = config.captchaKey;
   
 
   const options = {
@@ -88,7 +94,6 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
 };
 
 export const signIn = async (req: Request, res: Response): Promise<Response> => {
-  console.log(req.body);
   if (!req.body.email || !req.body.password)
     return res.status(401).json({ title: 'Datos insuficientes', text: 'Usuario y contraseña son requeridos' });
   let user = await User.findOne({ email: req.body.email });
@@ -106,14 +111,43 @@ export const signIn = async (req: Request, res: Response): Promise<Response> => 
   return res.status(200).json( token );
 };
 
-export const renew = async (req: Request, res: Response): Promise<Response> => {
-	const user = req.user;
-  const newToken = createToken(user);
-  console.log("Renovó token");
-  console.log(user);
-  return res.status(200).json( newToken );
-};
+/*
+export const refreshtoken = async (req: Request, res: Response): Promise<Response> => {
+  const { refreshToken: requestToken } = req.body;
+  if (requestToken == null) {
+    return res.status(403).json({ message: "Refresh Token is required!" });
+  }
 
+  try {
+    let refreshToken = await RefreshToken.findOne({ token: requestToken });
+
+    if (!refreshToken) {
+      res.status(403).json({ message: "Refresh token is not in database!" });
+      return;
+    }
+
+    if (RefreshToken.verifyExpiration(refreshToken)) {
+      RefreshToken.findByIdAndRemove(refreshToken._id, { useFindAndModify: false }).exec();
+      
+      res.status(403).json({
+        message: "Refresh token was expired. Please make a new signin request",
+      });
+      return;
+    }
+
+    let newAccessToken = jwt.sign({ id: refreshToken.user._id }, config.jwtSecret, {
+      expiresIn: config.jwtExpiration,
+    });
+
+    return res.status(200).json({
+      accessToken: newAccessToken,
+      refreshToken: refreshToken.token,
+    });
+  } catch (err) {
+    return res.status(500).send({ message: err });
+  }
+};
+*/
 export const emailcheck = async (req: Request, res: Response) => {
   const { email } = req.params;
   console.log(email);
@@ -125,5 +159,18 @@ export const emailcheck = async (req: Request, res: Response) => {
   }).catch( (err: any) => {
     return res.status(404).json( err );
   })
+  
 }
 
+export const nicknamecheck = async (req: Request, res: Response) => {
+  const { nickname } = req.params;
+  console.log(nickname);
+  User.findOne( { nickname })
+  .then( ( rpta: any ) => {
+    console.log(rpta);
+    if(!rpta) return res.status(200).json( { exists: false } );
+    else return res.status(200).json( { exists: true } );
+  }).catch( (err: any) => {
+    return res.status(500).json( err );
+  })
+}

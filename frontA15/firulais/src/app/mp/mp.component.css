@@ -1,0 +1,74 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+#main {
+  display: flex;
+  min-height: calc(100vh - 252px);
+  max-height: calc(100vh - 252px);
+  min-height: calc(100vh - 59px);
+  max-height: calc(100vh - 59px);
+}
+
+#main > article {
+   flex: 1;
+   max-height: calc(100vh - 59px);
+   overflow-y: scroll;
+}
+
+/*
+#main > nav,
+*/
+#main > aside {
+  flex: 0 0 30vw;
+  background: beige;
+}
+::-webkit-scrollbar {
+  width: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+#main > nav {
+  order: -1;
+  min-width: 270px;
+  max-width: 270px;
+  /*
+  max-height: calc(100vh - 252px);
+  */
+  max-height: calc(100vh - 59px);
+  background-color: #e3e3e3;
+  overflow-y: scroll;
+}
+
+.lista{
+  max-height: calc(100vh - 100px);
+  overflow-y: scroll;
+}
+
+/*
+header, footer, article, nav, aside {
+   padding: 1em;
+ }
+*/
+header, footer {
+  background: yellowgreen;
+  height: 70px;
+}

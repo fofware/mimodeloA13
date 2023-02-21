@@ -1,0 +1,64 @@
+  <!--header>Header</header-->
+  <ng-template #customItemTemplate let-model="item" let-index="index">
+    <div class="row">
+      <!--div class="col-6">{{model._id}}</div-->
+      <div class="col">{{model.fullname}}</div>
+    </div>
+  </ng-template>
+
+  <header>
+    <div class="enca">
+      Proveedor
+      <input [(ngModel)]="proveedorSelected"
+        typeaheadOptionField="name"
+        [typeahead]="proveedorSource$"
+        [typeaheadAsync]="true"
+        [typeaheadMinLength]="1"
+        [typeaheadWaitMs]="700"
+        (typeaheadOnSelect)="onProveedorSelect($event)"
+        (typeaheadOnPreview)="onProveedorPreview($event)"
+        (typeaheadLoading)="changeProveedorLoading($event)"
+        placeholder="Proveedor"
+      >
+      <div *ngIf="proveedorSelectedOption">Productos: {{productosCount}}</div>
+    </div>
+
+  </header>
+  <div id="main">
+    <article >
+      <div class="lista">
+        <app-listas-precios-nav *ngIf="proveedorSelectedOption"
+          [proveedor]="proveedorSelectedOption"
+          [title]="title"
+          (productosCountEvent)="productosCount=$event"
+        >
+        </app-listas-precios-nav>
+      </div>
+    </article>
+    <nav *ngIf="proveedorSelectedOption">
+      <div class="botones">
+        <button (click)="title='Listas'">b1</button>
+        <button (click)="title='Productos'">b2</button>
+      </div>
+    </nav>
+    <aside>
+      <div class="enca">
+        articulos
+        <input [(ngModel)]="prodNameSelected"
+          typeaheadOptionField="fullname"
+          [typeaheadItemTemplate]="customItemTemplate"
+          [typeahead]="prodNameSource$"
+          [typeaheadAsync]="true"
+          [typeaheadMinLength]="2"
+          [typeaheadWaitMs]="700"
+          (typeaheadOnSelect)="onProdNameSelect($event)"
+          (typeaheadOnPreview)="onProdNamePreview($event)"
+          (typeaheadLoading)="changeProdNameLoading($event)"
+          placeholder="ProdName"
+        >
+      </div>
+      <div class="lista">
+      </div>
+    </aside>
+  </div>
+  <!--footer>Footer</footer-->

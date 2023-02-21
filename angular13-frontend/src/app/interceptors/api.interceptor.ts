@@ -17,7 +17,7 @@ export class ApiInterceptor implements HttpInterceptor {
   enabled = false;
   constructor(
     private spinner: NgxSpinnerService,
-    private toastr: ToastrService
+    public toastr: ToastrService
     ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {

@@ -1,28 +1,20 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document, ObjectId } from "mongoose";
 
 export interface IArticulo extends Document {
-  rubro: string;
-  linea: string;
-  fabricante: string;
-  marca: string;
-  especie: string;
-  talla: string;
-  raza: string;
-  edad: string;
+  clase: String;
+  fabricante: ObjectId;
+  marca: ObjectId;
+  modelo: ObjectId;
+  especie: ObjectId;
+  talla: ObjectId;
+  edad: ObjectId;
   name: string;
+  rubro: ObjectId;
+  linea: ObjectId;
+  fullname: String;
+  showName: [],
   sText: string[];
-  toFullName: string[];
   tags: string[];
-  //
-  d_fabricante: boolean;
-  d_marca: boolean;
-  d_rubro: boolean;
-  d_linea: boolean;
-  d_especie: boolean;
-  d_edad: boolean;
-  d_talla: boolean;
-  d_raza: boolean;
-  //
   detalles: string;
   //formula: [];
   //beneficios: [];
@@ -34,38 +26,28 @@ export interface IArticulo extends Document {
   images: [];
   videos: [];
   url: string;
-  iva: number;
   //
   margen: number;
 };
 
 const articuloSchema = new Schema({
-  rubro: { ref: "Rubro", type: Schema.Types.ObjectId, default: '', index: true },
-  linea: { ref: "Linea", type: Schema.Types.ObjectId, default: '', index: true },
-  fabricante: { ref: "Fabricante", type: Schema.Types.ObjectId, default: '', index: true },
-  marca: { ref: "Marca", type: Schema.Types.ObjectId, default: '', index: true },
-  especie: { ref: "Especie", type: Schema.Types.ObjectId, default: '', index: true },
-  raza: { ref: "Raza", type: Schema.Types.ObjectId, default: '', index: true },
-  talla: { ref: "Talla", type: Schema.Types.ObjectId, default: '', index: true },
-  edad: { ref: "Edad", type: Schema.Types.ObjectId, default: '', index: true },
-  name: { type: Schema.Types.String, trim: true, default: '', index: true },
+  clase: { type: Schema.Types.String, default: 'producto', index: true},
+  fabricante: { ref: "Fabricante", type: Schema.Types.ObjectId, default: null, index: true },
+  marca: { ref: "Marca", type: Schema.Types.ObjectId, default: null, index: true },
+  modelo: { ref: "Modelo", type: Schema.Types.ObjectId, default: null, index: true },
+  especie: { ref: "Especie", type: Schema.Types.ObjectId, default: null, index: true },
+  talla: { ref: "Talla", type: Schema.Types.ObjectId, default: null, index: true },
+  edad: { ref: "Edad", type: Schema.Types.ObjectId, default: null, index: true },
+  rubro: { ref: "Rubro", type: Schema.Types.ObjectId, default: null, index: true },
+  linea: { ref: "Linea", type: Schema.Types.ObjectId, default: null, index: true },
+  name: { type: Schema.Types.String, trim: true, default: null, index: true },
+  fullname: { type: Schema.Types.String, trim: true, default: null, index: true },
+  showName: [],
   sText: [{ type: Schema.Types.String, trim: true, index: true }],
   tags: [{ type: Schema.Types.String, trim: true, index: true }],
-  toFullName:[{type: Schema.Types.String, trim: true}],
-  //
-  d_fabricante: { type: Schema.Types.Number, default: 0 },
-  d_marca: { type: Schema.Types.Number, default: 0 },
-  d_rubro: { type: Schema.Types.Number, default: 0 },
-  d_linea: { type: Schema.Types.Number, default: 0 },
-  d_especie: { type: Schema.Types.Number, default: 0 },
-  d_edad: { type: Schema.Types.Number, default: 0 },
-  d_raza: { type: Schema.Types.Number, default: 0 },
-  d_talla: { type: Schema.Types.Number, default: 0 },
   //
   detalles: { type: Schema.Types.String, trim: true, default: '' },
-  //formula: [],
-  //beneficios: [],
-  //extradata: [],
+  //
   presentaciones: [{ ref: "Presentacion", type: Schema.Types.ObjectId }],
   //
   private_web: {type: Schema.Types.Boolean, default: false, index: true },
@@ -88,42 +70,18 @@ articuloSchema.on('index', error => {
   console.log(error);
 });
 
+/*
 articuloSchema.virtual('fullname').get(function(){
   let fullName = '';
   let sep = '';
-  //if(this.d_fabricante){
-  //  fullName = this.fabricante['name'];
-  //  sep = ' ';
-  //}
-  if(this.d_marca){
-    fullName += sep+this.marca['name'];
-    sep = ' ';
-  }
-  if (this.name){
-    fullName += sep+this.name;
-    sep = ' ';
-  }
-  if(this.d_especie){
-    fullName += sep+this.especie['name'];
-    sep = ' ';
-  }
-  if(this.d_edad){
-    fullName += sep+this.edad['name'];
-    sep = ' ';
-  }
-  if(this.d_talla){
-    fullName += sep+this.talla['name'];
-    sep = ' ';
-  } 
-  //if(this.d_rubro){
-  //  fullName += sep+this.rubro['name'];
-  //  sep = ' ';
-  //} 
-  //if(this.d_linea){
-  //  fullName += sep+this.linea['name'];
-  //  sep = ' ';
-  //} 
+  this.showName.map( f => {
+    if(f === 'name')
+      fullName += sep+this[f];
+    else
+      fullName += sep+this[f].name;
+    sep =  ' ';
+  })
   return fullName;
 })
-
+*/
 export default model<IArticulo>('Articulo', articuloSchema);

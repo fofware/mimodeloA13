@@ -126,10 +126,6 @@ class ExtraDataControlers {
   }
 
   async articuloExtraData(req: Request, res: Response){
-    const fldsString = [
-      'name',
-    ];
-  
     const params = Object.assign({
       limit: 1000,
       offset: 0,
@@ -175,8 +171,12 @@ class ExtraDataControlers {
 
   async get(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
-    const ret = await extradata.findById( params.id );
-    res.status(200).json(ret)
+    try {
+      const ret = await extradata.findById( params.id );
+      res.status(200).json(ret)
+    } catch (error) {
+      res.status(400).json(error);      
+    }
   }
 
   async add(req: Request, res: Response){

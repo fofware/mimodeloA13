@@ -32,6 +32,7 @@ class PresentacionesControlers {
     this.router.put('/presentaciones/:id',
         passport.authenticate('jwt', {session:false}),
         this.put );
+    this.router.get('/presentaciones/articulo/:articulo', this.articulo)
   }
   async list(req: Request, res: Response){
     const fldsString = [
@@ -116,7 +117,37 @@ class PresentacionesControlers {
   async put(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
   }
-
+  async articulo(req: Request, res: Response){
+    const params = Object.assign({},req.query,req.params,req.body);
+    let ret = {};
+    let status = 200
+    try {
+      const rows = await presentaciones.find({articulo: new ObjectID(params.articulo)})
+        .populate({path: 'relacion'})
+        .sort({name: 1, contiene: 1, 'relacion.contiene': 1 });
+      /*
+      const rows = await presentaciones.aggregate([
+        {
+          $match: {
+            articulo: new ObjectID(params.articulo),
+          }
+        },
+        {
+					$graphLookup: {
+						 from: "presentacions",
+						 startWith: "_id",
+						 connectFromField: "relacion",
+						 connectToField: "_id",
+						 as: "presentaciones"
+					}
+			 	},
+      ])
+      */
+      res.status(200).json(rows);
+    } catch (error) {
+      console.log(error);      
+    }
+  }
 }
 
 export const presentacionCtrl = new PresentacionesControlers();

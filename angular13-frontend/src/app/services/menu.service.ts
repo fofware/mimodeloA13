@@ -291,7 +291,7 @@ export const menudata = [
           permiso: 'moderator',
           target: '',
           rel: 'noopener',
-          route: 'pepe',
+          route: 'listaprecios',
           param: ''
         },
       ]

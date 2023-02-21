@@ -1,0 +1,15 @@
+<nav class="sticky-top navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <input type="search" id="searchInput" aria-label="Search" class="form-control mr-sm-2" placeholder="Buscar por Nombre"
+    name="searchInput" #searchInput>
+  </div>
+</nav>
+<div class="container-fluid px-3 pt-2" id="articuloContainer">
+  <div class="row justify-content-center row-cols-1 row-cols-lg-2 row-cols-xxl-3">
+        <app-articulo-list-card
+          *ngFor="let articulo of data; index as i;"
+          [articulo]='articulo'
+        ></app-articulo-list-card>
+  </div>
+</div>
+

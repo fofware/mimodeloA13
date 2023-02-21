@@ -1,0 +1,18 @@
+<div class="container-fluid navbar-dark bg-primary bg-opacity-50 bg-gradient ps-4 py-2"><h4 class='mb-0'>{{(_artSvc.regData$ | async)?.fullname}}</h4></div>
+<div class="container-fluid navbar-dark bg-primary bg-opacity-25">
+  <nav class="navbar navbar-expand-lg py-0">
+    <div class="container-fluid px-0">
+      <div class="collapse navbar-collapse d-flex align-items-center">
+        <ul ngbNav [activeId]=" _aRouter.fragment | async" class="navbar-nav">
+          <li class="fs-6" [ngbNavItem]="menu.link" *ngFor="let menu of usrMenu;index as i">
+            <a ngbNavLink *ngIf="(menu.link && !menu.fragment)" [hidden]='menu.hidden || false' [routerLink]="menu.link" [state]="params" routerLinkActive="active" [innerHTML]="menu.title"></a>
+            <a ngbNavLink *ngIf="(menu.link && menu.fragment)" [hidden]='menu.hidden || false' [routerLink]="menu.link" [state]="params" [fragment]="menu.fragment" routerLinkActive="active" [innerHTML]="menu.title"></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+<div class="main">
+  <router-outlet></router-outlet>
+</div>

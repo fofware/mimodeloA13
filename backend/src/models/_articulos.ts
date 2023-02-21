@@ -13,16 +13,19 @@ export interface I_Articulo extends Document {
   especie: string;
   edad: string;
   raza: string;
+  talla: string;
   name: string;
   tags: string[];
   //
-  d_fabricante: boolean;
-  d_marca: boolean;
-  d_rubro: boolean;
-  d_linea: boolean;
-  d_especie: boolean;
-  d_edad: boolean;
-  d_raza: boolean;
+  d_fabricante: number | boolean;
+  d_marca:  number | boolean;
+  d_rubro:  number | boolean;
+  d_linea:  number | boolean;
+  d_especie:  number | boolean;
+  d_edad:  number | boolean;
+  d_raza:  number | boolean;
+  d_name:  number | boolean;
+  d_modelo:  number | boolean;
   //
   detalles: string;
   formula: [];
@@ -58,17 +61,20 @@ const _articuloSchema = new Schema({
   edad: { ref: "Edad", type: Schema.Types.ObjectId, default: null },
   edadTxt: { type: Schema.Types.String, trim: true, default: '', index: true },
   name: { type: Schema.Types.String, trim: true, default: '', index: true },
-  sText: [{ type: Schema.Types.String, trim: true, index: true }],
+  sText: [], //[{ type: Schema.Types.String, trim: true, index: true }],
   tags: [],//{ type: Schema.Types.String, trim: true, default: '', index: true }],
+  showName:[],
   //
-  d_fabricante: { type: Schema.Types.Boolean, default: false },
-  d_marca: { type: Schema.Types.Boolean, default: true },
-  d_rubro: { type: Schema.Types.Boolean, default: false },
-  d_linea: { type: Schema.Types.Boolean, default: false },
-  d_especie: { type: Schema.Types.Boolean, default: false},
-  d_edad: { type: Schema.Types.Boolean, default: false},
-  d_raza: { type: Schema.Types.Boolean, default: false},
-  d_talla: { type: Schema.Types.Boolean, default: false},
+  d_fabricante: { type: Schema.Types.Number, default: -1 },
+  d_marca: { type: Schema.Types.Number, default: -1 },
+  d_rubro: { type: Schema.Types.Number, default: -1 },
+  d_linea: { type: Schema.Types.Number, default: -1 },
+  d_especie: { type: Schema.Types.Number, default: -1},
+  d_edad: { type: Schema.Types.Number, default: -1},
+  d_raza: { type: Schema.Types.Number, default: -1},
+  d_talla: { type: Schema.Types.Number, default: -1},
+  d_modelo: { type: Schema.Types.Number, default: -1},
+  d_name: { type: Schema.Types.Number, default: -1},
   //
   detalles: { type: Schema.Types.String, trim: true, default: '' },
   formula: [],
@@ -78,8 +84,8 @@ const _articuloSchema = new Schema({
   //
   private_web: {type: Schema.Types.Boolean, default: false, index: true },
   image: { type: Schema.Types.String, trim: true, required: false },
-  images: [{ type: Schema.Types.String, trim: true, required: false }],
-  videos:[{ type: Schema.Types.String, trim: true, required: false }],
+  images: [],//[{ type: Schema.Types.String, trim: true, required: false }],
+  videos:[],//[{ type: Schema.Types.String, trim: true, required: false }],
   url: { type: Schema.Types.String, trim: true, required: false, default:'' },
   iva: { type: Schema.Types.Number, default: 0},
   margen: { type: Schema.Types.Number, default: 35},

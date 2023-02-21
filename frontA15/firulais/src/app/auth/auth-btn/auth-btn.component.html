@@ -1,0 +1,48 @@
+<div class="mx-2" ngbDropdown #myDrop="ngbDropdown"  style="color: #ededed;">
+  <button type="button" class="btn btn-primary rounded-circle position-relative"
+    id="authdropdownForm"
+    ngbDropdownToggle
+    style="
+      width: 40px;
+      height: 40px;
+      background-image: url({{_authService.userValue.image}});
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;"
+      >
+    <span *ngIf="isLogged" class="position-absolute top-0 start-100 translate-middle bg-danger badge rounded-pill mt-1">+99 <span class="visually-hidden">unread messages</span></span>
+  </button>
+
+  <div class="dropdown-menu dropdown-menu-md-start dropdown-menu-lg-end logform" ngbDropdownMenu aria-labelledby="authdropdownForm">
+    <div  *ngIf="!_authService.isLoggedValue; then viewLogin; else viewLogged" ></div>
+  </div>
+  <ng-template #viewLogin>
+    <form class="px-3 py-3">
+      <div class="mb-3">
+        <label for="exampleDropdownFormEmail1">Email address</label>
+        <input type="email" class="form-control" placeholder="email@example.com" name="username" [(ngModel)]="user.email">
+      </div>
+      <div class="mb-3">
+        <label for="exampleDropdownFormPassword1">Password</label>
+        <input type="password" class="form-control" placeholder="Password" name="password" [(ngModel)]="user.password">
+      </div>
+      <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="dropdownCheck">
+        <label class="form-check-label" for="dropdownCheck">
+          Remember me
+        </label>
+      </div>
+      <button type="submit" class="btn btn-primary" (click)="$event.stopPropagation();login(myDrop)">Sign in</button>
+    </form>
+    <div class="dropdown-divider"></div>
+    <button type="button" ngbDropdownItem [routerLink]="['/signup']">Registarse</button>
+    <button type="button" ngbDropdownItem>Forgot password?</button>
+  </ng-template>
+  <ng-template #viewLogged>
+    <!--div ngbDropdownMenu aria-labelledby="authdropdownForm" class="dropdown-menu dropdown-menu-md-start dropdown-menu-lg-end logform"-->
+      <button type="button" ngbDropdownItem (click)="$event.stopPropagation();myDrop.close;profile()">Profile</button>
+      <div class="dropdown-divider"></div>
+      <button type="button" (click)="$event.stopPropagation();myDrop.close;logout()" ngbDropdownItem>Logout</button>
+    <!--/div-->
+  </ng-template>
+</div>

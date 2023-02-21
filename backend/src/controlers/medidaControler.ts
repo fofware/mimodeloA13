@@ -21,10 +21,10 @@ class MedidaControlers {
     this.router.post('/medida',
         //passport.authenticate('jwt', {session:false}),
         this.add );
-    this.router.delete('/medida/:id',
+    this.router.delete('/medida/:_id',
         passport.authenticate('jwt', {session:false}), 
         this.delete );
-    this.router.put('/medida/:id',
+    this.router.put('/medida',
         passport.authenticate('jwt', {session:false}),
         this.put );
   }

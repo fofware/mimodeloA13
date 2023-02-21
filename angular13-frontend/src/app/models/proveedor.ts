@@ -1,15 +1,4 @@
-export interface ProveedorProductoResponse {
-  url: string;
-  limit: number;
-  offset: number;
-  nextOffset: number;
-  sort: object;
-  count: number;
-  apiTime: number;
-  filter: object;
-  rows: ProveedorProductoFd[];
-  message: string;
-}
+import { apiResponse } from "./apiResponse";
 
 export interface ProveedorProductoFd {
   _id?: string;
@@ -18,4 +7,8 @@ export interface ProveedorProductoFd {
   presentacion: any;
   codigo?: string;
   names?: string[];
+}
+
+export interface ProveedorProductoResponse extends apiResponse{
+  rows: ProveedorProductoFd[];
 }

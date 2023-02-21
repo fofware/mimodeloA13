@@ -107,12 +107,12 @@ class MakeDataControler {
       //
       {'field': 'edadTxt', 'value': 'senior', 'newValue': 'Senior' },
       //
-      {'field': 'razaTxt', 'value': 'Mini', 'newValue': 'Minis' },
-      {'field': 'razaTxt', 'value': 'Minis Pequeñas', 'newValue': 'Minis,Pequeñas' },
-      {'field': 'razaTxt', 'value': 'Minis y Pequeñas', 'newValue': 'Minis,Pequeñas' },
-      {'field': 'razaTxt', 'value': 'Pequeña', 'newValue': 'Pequeñas' },
-      {'field': 'razaTxt', 'value': 'Medina y Grande', 'newValue': 'Medianas,Grandes' },
-      {'field': 'razaTxt', 'value': 'Medianas Grandes', 'newValue': 'Medianas,Grandes' },
+      {'field': 'tallaTxt', 'value': 'Mini', 'newValue': 'Minis' },
+      {'field': 'tallaTxt', 'value': 'Minis Pequeñas', 'newValue': 'Minis,Pequeñas' },
+      {'field': 'tallaTxt', 'value': 'Minis y Pequeñas', 'newValue': 'Minis,Pequeñas' },
+      {'field': 'tallaTxt', 'value': 'Pequeña', 'newValue': 'Pequeñas' },
+      {'field': 'tallaTxt', 'value': 'Medina y Grande', 'newValue': 'Medianas,Grandes' },
+      {'field': 'tallaTxt', 'value': 'Medianas Grandes', 'newValue': 'Medianas,Grandes' },
       //
       {'field': 'tags', 'value': 'semior', 'newValue': 'senior' },
       {'field': 'tags', 'value': 'urinario', 'newValue': 'urinario' },
@@ -372,9 +372,12 @@ class MakeDataControler {
 
     //const linea = await articulo.distinct('linea');
 
+
+
+
+
     const raza = [];    
-    array = await _articulo.distinct( 'razaTxt' );
-    console.log(array);
+    array = await _articulo.distinct( 'tallaTxt' );
     for (let i = 0; i < array.length; i++) {
       const e = {
         name: array[i]
@@ -388,16 +391,16 @@ class MakeDataControler {
       console.log(data);
       //especie.push(data);
     }
+
+
     array = await tallas.find();
     for (let i = 0; i < array.length; i++) {
       const e = array[i];
       const filter = {}
-      filter['razaTxt'] = e.name;
-      console.log(e);
+      filter['tallaTxt'] = e.name;
       const newValue = {
-        'raza': e._id,
         'talla': e._id,
-        'razaTxt': e.name
+        'tallaTxt': e.name,
       }
 
       const retd = await _articulo.updateMany(
@@ -408,7 +411,10 @@ class MakeDataControler {
       console.log(retd);
     }
   
-    await medidas.insertMany(array); 
+
+
+
+    //await medidas.insertMany(array); 
 
     const edad = [];    
     array = await _articulo.distinct( 'edadTxt' );
@@ -453,7 +459,7 @@ class MakeDataControler {
       if(a.rubroTxt && a.rubroTxt !== '') a['sText'].push(a.rubroTxt);
       if(a.lineaTxt && a.lineaTxt !== '') a['sText'].push(a.lineaTxt);
       if(a.especieTxt && a.especieTxt !== '') a['sText'].push(a.especieTxt);
-      if(a.razaTxt && a.razaTxt !== '') a['sText'].push(a.razaTxt);
+      if(a.tallaTxt && a.tallaTxt !== '') a['sText'].push(a.tallaTxt);
       if(a.edadTxt && a.edadTxt !== '') a['sText'].push(a.edadTxt);
       await _articulo.updateOne({_id: a._id}, a);
     }
@@ -522,7 +528,8 @@ class MakeDataControler {
       ]
       let sText = [];
       for (let i = 0; i < names.length; i++) {
-        if(e.articulo[names[i]].name !== '') sText.push(e.articulo[names[i]].name);
+        console.log(names[i]);
+        if(e.articulo[names[i]] && e.articulo[names[i]].name !== '') sText.push(e.articulo[names[i]].name);
       }
 
       const reg = {

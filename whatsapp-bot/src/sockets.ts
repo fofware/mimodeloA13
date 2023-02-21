@@ -68,6 +68,7 @@ export default (io:any) => {
       console.log(payload);
       setSkt(socket,payload);
       socket.join('5493624380337');
+      socket.join('5493624683656');
     } else {
       socket.join('no-authorized');
       socket.emit('no-authorized','no-authorized')

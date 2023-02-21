@@ -4,6 +4,7 @@ import { NoPageComponent } from 'src/app/components/no-page/no-page.component';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { IsLoggedGuard } from 'src/app/guards/is-logged.guard';
 import { ProveedorComponent } from '../proveedor/proveedor.component';
+import { ListasPreciosComponent } from './components/listas-precios/listas-precios.component';
 import { ComprasComponent } from './compras.component';
 
 const routes: Routes = [
@@ -22,12 +23,12 @@ const routes: Routes = [
           roles: ['sys_admin'],
         }
       },
+      {
+        path: 'listaprecios',
+        component: ListasPreciosComponent
+      }
     ]
   },
-  {
-    path: 'pepe',
-    component: ProveedorComponent
-  }
   //{
   //  path: 'proveedores',
   //  loadChildren: () => import(`../../modules/proveedor/proveedor.module`)

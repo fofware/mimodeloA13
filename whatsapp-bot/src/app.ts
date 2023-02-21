@@ -27,9 +27,12 @@ if(config.public)
   app.use(express.static(path.join(__dirname,config.public)));
 app.use('/media',express.static(path.join(__dirname,'/../mediaReceive')))
 app.use(morgan('common'));
-app.use(cors({
-  origin: '*'
-}));
+
+
+app.use(cors());
+
+app.options('*', cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 //const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);

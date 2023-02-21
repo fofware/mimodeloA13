@@ -1,21 +1,12 @@
-export interface Fabricante {
-}
-export interface FabricanteResponse {
-  url: string;
-  limit: number;
-  offset: number;
-  nextOffset: number;
-  sort: object;
-  count: number;
-  apiTime: number;
-  filter: object;
+import { apiResponse } from "./apiResponse";
+
+export interface FabricanteResponse extends apiResponse {
   rows: FabricanteFd[];
-  message: string;
 }
 
 export interface FabricanteFd {
-  _id: string;
+  _id?: string;
   name: string;
-  marcas: [];
-  images: any[];
+  marcas?: [];
+  images?: string[];
 }

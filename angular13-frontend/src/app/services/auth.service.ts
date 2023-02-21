@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -50,10 +50,10 @@ export class AuthService {
   }
   private logged = new BehaviorSubject<boolean>(false);
   private loggedUsr = new BehaviorSubject<object>(this.noTken);
+  httpClient = inject(HttpClient);
+  router = inject(Router);
+  api = inject(ApiService);
   constructor(
-    private httpClient: HttpClient,
-    private router: Router,
-    private api: ApiService
   ) {
     this.decodeToken(this.getToken())
   }

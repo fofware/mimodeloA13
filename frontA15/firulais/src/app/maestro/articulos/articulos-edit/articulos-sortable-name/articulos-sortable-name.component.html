@@ -1,0 +1,39 @@
+<div class="container-fluid">
+  <div *ngIf="isLoaded" class='row'>
+    <div class="card bg-info bg-opacity-10 mb-2">
+      <bs-sortable
+        [(ngModel)]="showItems"
+        fieldName="name"
+        itemClass="sortable-item-h"
+        itemActiveClass="sortableItemActive"
+        placeholderItem="Drag here"
+        placeholderClass="placeholderStyle text-center"
+        wrapperClass="sortableWrapper-h"
+        (onChange)="onChange($event)"
+      ></bs-sortable>
+    </div>
+  </div>
+  <div *ngIf="isLoaded" class='row'>
+    <div class="card bg-secondary bg-opacity-10 mb-2">
+      <bs-sortable
+        [(ngModel)]="hidenItems"
+        fieldName="name"
+        itemClass="sortable-item-h"
+        itemActiveClass="sortableItemActive"
+        placeholderItem="Drag here"
+        placeholderClass="placeholderStyle text-center"
+        wrapperClass="sortableWrapper-h"
+      ></bs-sortable>
+    </div>
+  </div>
+
+  <!--div class='row'>
+    <div class="col-xs-6 col-6 col-md-5 col-lg-3">
+      <pre class="code-preview">model: {{ showItems | json }}</pre>
+    </div>
+    <div class="col-xs-6 col-6 col-md-5 col-lg-3">
+      <pre class="code-preview">model: {{ hidenItems | json }}</pre>
+    </div>
+  </div-->
+
+</div>

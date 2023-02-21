@@ -1,0 +1,20 @@
+<div class="card border border-primary border-opacity-25 mb-3 position-relative">
+  <div class="bg-primary bg-opacity-25 rounded-top g-0">
+    <h5 class="float-start ms-4 my-2">{{item.fullname}}</h5>
+    <button class="float-end mt-2 mx-1 btn btn-outline-danger btn-mind" (click)="borrar()" ><i class="fa-solid fa-trash-can"></i></button>
+    <button class="float-end mt-2 btn btn-outline-primary btn-min" (click)="edit()" ><i class="fa-regular fa-pen-to-square"></i></button>
+  </div>
+  <div class="row g-0">
+    <div class="col-md-3">
+      <div class="d-flex justify-content-start align-items-center">
+        <img src="{{item.images[0]}}" class="img-fluid rounded-start" alt="..." style="max-height:200px;">
+
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="card-body">
+        <h5 class="card-title">{{item._id}}</h5>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+<!--p>mp-credenciales works!</p-->
+<div class="container pb-2">
+  <form [formGroup]="form" class="mb-2">
+    <!--pre><code>{{form.getRawValue() | json }}</code></pre>
+    <pre><code>{{prod.getRawValue() | json }}</code></pre>
+    <pre><code>{{test.getRawValue() | json }}</code></pre-->
+    <div class="mb-2">
+      <label for="_id" class="form-label">
+        ID
+      </label>
+      <input type="text" id="_id" class="form-control" formControlName="_id" placeholder="Id">
+    </div>
+    <div class="mb-2">
+      <label for="user_id" class="form-label">
+        USER_ID
+      </label>
+      <input type="text" id="user_id" class="form-control" formControlName="user_id" placeholder="User Id">
+    </div>
+    <div class="mb-2">
+      <label for="client_id" class="form-label">
+        CLIENT_ID
+      </label>
+      <input type="text" id="client_id" class="form-control" formControlName="client_id" placeholder="Client Id">
+    </div>
+    <div class="mb-2">
+      <label for="client_secret" class="form-label">
+        CLIENT_SECRET
+      </label>
+      <input type="text" id="client_secret" class="form-control" formControlName="client_secret" placeholder="Client Secret">
+    </div>
+  </form>
+  <form [formGroup]="prod">
+    <div class="mb-2">
+      <label for="key" class="form-label">
+        PRODUCTION KEY
+      </label>
+      <input type="text" id="key" class="form-control" formControlName="key" placeholder="Key de Producción">
+    </div>
+    <div class="mb-2">
+      <label for="token" class="form-label">
+        PRODUCTION TOKEN
+      </label>
+      <input type="text" id="token" class="form-control" formControlName="token" placeholder="Token de Producción">
+    </div>
+  </form>
+  <form [formGroup]="test">
+    <div class="mb-2">
+      <label for="key" class="form-label">
+        TEST KEY
+      </label>
+      <input type="text" id="key" class="form-control" formControlName="key" placeholder="Test Key">
+    </div>
+    <div class="mb-2">
+      <label for="token" class="form-label">
+        TEST TOKEN
+      </label>
+      <input type="text" id="token" class="form-control" formControlName="token" placeholder="Test Token">
+    </div>
+  </form>
+  <button class="btn btn-primary" (click)="grabar()">Grabar</button>
+  <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+</div>

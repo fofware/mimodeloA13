@@ -69,7 +69,7 @@
 -->
 <input name="filtro" [(ngModel)]="filtro" placeholder="filtro" (keyup)="unsetDefaultCheck()">
 <button *ngIf="newData.length" (click)="addSelected()">Add Selected</button>
-<button *ngIf="provData.length && !newData.length"1(click)="removeSelected()">Remove Selected</button>
+<button *ngIf="provData.length && !newData.length" (click)="removeSelected()">Remove Selected</button>
 <div class="mb-2" *ngIf="max">
   <progressbar [max]="max" [value]="dynamic">
     <span class="text-nowrap">{{dynamic}} / {{max}}</span>

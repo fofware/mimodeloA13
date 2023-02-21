@@ -27,7 +27,7 @@ class LineaControlers {
     this.router.delete('/linea/:id',
         passport.authenticate('jwt', {session:false}), 
         this.delete );
-    this.router.put('/linea/:id',
+    this.router.put('/linea',
         passport.authenticate('jwt', {session:false}),
         this.put );
   }

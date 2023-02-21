@@ -53,7 +53,7 @@ class ProveedorControlers {
     let nextOffset = params.offset+params.limit;
     nextOffset = nextOffset > count ? false : params.offset+params.limit;
     
-    const data = await Proveedor.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
+    const rows = await Proveedor.find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
     const ret = {
       url: req.headers.host+req.url,
       limit: params.limit,
@@ -63,7 +63,7 @@ class ProveedorControlers {
       count,
       apiTime: new Date().getTime() - params.iniTime,
       filter,
-      data,
+      rows,
     }
     res.status(200).json(ret);
   }

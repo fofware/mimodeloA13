@@ -25,10 +25,10 @@ class MarcaControlers {
     this.router.post('/marca',
         passport.authenticate('jwt', {session:false}),
         this.add );
-    this.router.delete('/marca/:id',
+    this.router.delete('/marca/:_id',
         passport.authenticate('jwt', {session:false}), 
         this.delete );
-    this.router.put('/marca/:id',
+    this.router.put('/marca',
         passport.authenticate('jwt', {session:false}),
         this.put );
   }
@@ -61,6 +61,7 @@ class MarcaControlers {
       const count = await marcas.count(filter);
       let nextOffset = params.offset+params.limit;
       nextOffset = nextOffset > count ? false : params.offset+params.limit;
+      //const offset = nextOffset ? count : nextOffset;
       const rows = await marcas.find(filter).populate({path:'fabricante', select: 'name -_id'}).limit(params.limit).skip(params.offset).sort(params.sort);
       status = 200;
       ret = {
@@ -173,12 +174,12 @@ class MarcaControlers {
     let status = 0;
     try {
       ret['data'] = await marcas.findByIdAndDelete(params._id);
-      ret['message'] = `Registro Borrado Ok ${params._id}`
+      ret['message'] = `Registro ${params._id} Borrado Ok`
       status = 200;
     } catch (error) {
       ret['message'] = `algo andubo mal`
       ret['error'] = error;
-      status = error.number;
+      status = 500
     }
     console.log(ret)
     res.status(status).json(ret);
@@ -186,16 +187,23 @@ class MarcaControlers {
 
   async put(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
-    let status = 0;
-    let ret = {};
+    let status = 200;
+    const ret = {};
+
+    console.log('params',params);
+    
     try {
-      ret['data'] = await marcas.findByIdAndUpdate(params._id, params);
-      ret['message'] = `Update Ok`
+      let rsta = await marcas.findByIdAndUpdate(params._id, params);
+      console.log(rsta);
+
+      ret['data'] = rsta; 
+      ret['message'] = `Update Ok`;
       status = 200;
     } catch (error) {
-      status = error.number;
+      status = 500;
       ret['message'] = 'Algo anduvo mal';
       ret['error'] = error;
+      console.log(error);
     }
     res.status(status).json(ret);
   }

@@ -1,0 +1,15 @@
+<carousel (activeSlideChange)="log($event)">
+  <slide *ngFor="let articulo of data">
+    <div class="container-fluid py-5">
+      <div class="row">
+        <div class="col-1"></div>
+        <div class="col text-start text-black">
+          <app-slide-articulo-card
+            [articulo]='articulo'
+          ></app-slide-articulo-card>
+        </div>
+        <div class="col-1"></div>
+      </div>
+    </div>
+  </slide>
+</carousel>

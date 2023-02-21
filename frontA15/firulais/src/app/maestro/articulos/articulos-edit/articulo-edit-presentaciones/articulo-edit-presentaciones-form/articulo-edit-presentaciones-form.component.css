@@ -1,0 +1,15 @@
+/*
+.btn-min{
+  --bs-btn-padding-y: .0rem;
+  --bs-btn-padding-x: .3rem;
+  --bs-btn-font-size: .75rem;
+}
+*/
+.btn-min{
+  --bs-btn-padding-y: .0rem;
+  --bs-btn-padding-x: .3rem;
+}
+.btn-mind{
+  --bs-btn-padding-y: .0rem;
+  --bs-btn-padding-x: .3rem;
+}

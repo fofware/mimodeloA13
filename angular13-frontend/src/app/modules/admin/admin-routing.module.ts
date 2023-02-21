@@ -15,6 +15,7 @@ import { MarcaComponent } from './components/marca/marca.component';
 import { MedidasComponent } from './components/medidas/medidas.component';
 import { MenuesComponent } from './components/menues/menues.component';
 import { PresentacionComponent } from './components/presentacion/presentacion.component';
+import { PresentacionesComponent } from './components/presentaciones/presentaciones.component';
 import { RubroComponent } from './components/rubro/rubro.component';
 
 const routes: Routes = [
@@ -73,7 +74,7 @@ const routes: Routes = [
       },
       {
         path: 'archivos/presentaciones',
-        component: PresentacionComponent
+        component: PresentacionesComponent
       },
       {
         path: 'compras',

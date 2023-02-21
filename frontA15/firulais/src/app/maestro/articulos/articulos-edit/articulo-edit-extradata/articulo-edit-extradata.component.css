@@ -1,0 +1,5 @@
+.main {
+  /*min-height: calc(100vh - 87px);*/
+  max-height: calc(100vh - 225px);
+  overflow-y: auto;
+}

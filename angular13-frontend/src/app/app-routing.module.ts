@@ -100,17 +100,6 @@ const routes: Routes = [
       roles: ['sys_admin','client_admin'],
     }
   },
-  {
-    path: 'compras/proveedores',
-    loadChildren: () => import(`./modules/proveedor/proveedor.module`)
-      .then(
-        module => module.ProveedorModule
-      ),
-    canActivate: [IsLoggedGuard,AuthGuard],
-    data: {
-      roles: ['sys_admin'],
-    }
-  },
   /*
   {
     path: 'private/menu',

@@ -149,6 +149,7 @@ export class WappService {
     const emite = await this.socket.emit('registranumero', token);
     console.log(emite);
   }
+
   async waGetChats(){
     const emite = await this.socket.emit('getChats');
     console.warn("waGetChates",emite)

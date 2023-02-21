@@ -1,0 +1,70 @@
+<div class="card mt-2" [ngClass]="{'editform': estado=='editform'}">
+  <div class="card-header d-flex justify-content-between align-items-start" >
+    <div>{{data.name}}</div>
+    <div class="pb-1" style="width: 51px;">
+      <div class="btn btn-primary btn-min" (click)="edit()"><i class="fa-regular fa-pen-to-square"></i></div>
+      <div class="btn btn-danger btn-min ms-1" (click)="delete()"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+  </div>
+  <div class="card-body" [ngClass]="estado">
+    <form [formGroup]="form">
+      <!--pre><code>{{form.value | json }}</code></pre-->
+      <div class="mb-3">
+        <label
+          for="name"
+          class="form-label">
+          Nombre
+        </label>
+        <input
+          type="text"
+          id="name"
+          class="form-control"
+          formControlName="name"
+          placeholder="PlaceHolder">
+      </div>
+      <div class="row">
+        <div class="col-auto">
+          <button class="btn btn-primary" (click)="addImage()">Agregar Imagen</button>
+          <div class="images"
+            formArrayName="images"
+            *ngFor="let item of images; index as i">
+            <form
+              class="row g-3"
+              [formGroupName]="i">
+              <div class="col-auto">
+                <label for="url">url</label>
+                <input
+                  id="url"
+                  type="text"
+                  class="form-control"
+                  formControlName="url"
+                  placeholder="imagen url">
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="col-auto">
+          <button class="btn btn-primary" (click)="addIcon()">Agregar Icono</button>
+          <div class="icons"
+            formArrayName="icons"
+            *ngFor="let item of icons; index as i">
+            <form
+              class="row g-3"
+              [formGroupName]="i">
+              <div class="col-auto">
+                <label for="tag">icon tag</label>
+                <input
+                  id="tag"
+                  type="text"
+                  class="form-control"
+                  formControlName="tag"
+                  placeholder="icon">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </form>
+    <button (click)="cancel()" >cancel</button>
+  </div>
+</div>

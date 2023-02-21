@@ -43,6 +43,7 @@ export class SignupComponent implements OnInit {
     captcha: ['', []]
   });
   private destroy$ = new Subject<any>();
+  captchaResolved = false;
 
   constructor(
     private fb: FormBuilder,
@@ -51,7 +52,7 @@ export class SignupComponent implements OnInit {
     private alterEgoValidator: TestValidator,
     private router: Router
   ) { }
-  captchaResolved = false;
+
   ngOnInit(): void {
   }
 

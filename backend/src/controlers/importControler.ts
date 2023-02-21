@@ -197,7 +197,7 @@ class ImportDataControler {
           let sTags = art.tags?.replace(', ',',') || '';
           sTags = sTags.replace(' ,',',');
           const nTags = sTags.split(',') || [];
-  
+          art.d_name = (art.name.length ? true : false)
           const newArt = {
              _id: art._id
             ,fabricanteTxt: art.fabricante
@@ -206,7 +206,6 @@ class ImportDataControler {
             ,lineaTxt: art.linea
             ,especieTxt: art.especie
             ,edadTxt: art.edad
-            ,razaTxt: art.raza
             ,tallaTxt: art.raza
             ,name: art.name
             ,tags: nTags
@@ -217,9 +216,11 @@ class ImportDataControler {
             ,d_linea: art.d_linea
             ,d_especie: art.d_especie
             ,d_edad: art.d_edad
-            ,d_raza: art.d_raza
             ,d_talla: art.d_raza
+            ,d_modelo: false
+            ,d_name: (art.name.length ? true : false)
             //
+            ,showName:[]
             ,detalles: art.detalles
             ,extradata: extraData
             ,formula: art.formula
@@ -234,6 +235,27 @@ class ImportDataControler {
             ,iva: art.iva
             ,margen: art.margen
           }
+          const fldsOrder = [
+            'fabricante',
+            'marca',
+            'modelo',
+            'name',
+            'especie',
+            'edad',
+            'talla',
+            'rubro',
+            'linea'
+          ]
+          let order = 0;
+          fldsOrder.map( item => {
+            if (art[`d_${item}`]){
+              newArt.showName.push(item);
+              newArt[`d_${item}`] = order;
+              order++;
+            } else {
+              newArt[`d_${item}`] = -1
+            }
+          })
           newData.push(newArt);
           const rpta = await articulo.updateOne(
             { _id: newArt._id },   // Query parameter

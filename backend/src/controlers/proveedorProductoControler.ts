@@ -141,7 +141,7 @@ class ProveedorProductoControlers {
     
     const count = await ProveedorProducto
     .count(filter)
-    .populate({path: 'articulo', populate: { path: 'fabricante marca rubro linea especie edad raza' }})
+    .populate({path: 'articulo', populate: { path: 'fabricante marca rubro linea especie edad lalla' }})
     .populate({path: 'presentacion', populate: {path: 'relacion'}});
     
     params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
@@ -154,7 +154,7 @@ class ProveedorProductoControlers {
           .find(filter)
           .limit(params.limit)
           .skip(params.offset)
-          .populate({path: 'articulo', populate: { path: 'fabricante marca rubro linea especie edad raza' }})
+          .populate({path: 'articulo', populate: { path: 'fabricante marca rubro linea especie edad talla' }})
           .populate({path: 'presentacion', populate: {path: 'relacion'}})
           //.populate({path:'v_prodname', select: 'fullname -_id'})
           .sort(params.sort);

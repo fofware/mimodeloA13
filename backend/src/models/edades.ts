@@ -7,9 +7,9 @@ export interface IEdades extends Document {
 };
 
 const edadSchema = new Schema({
-  name: { type: Schema.Types.String, trim: true, default: '', index: true },
-  iconos: [{ type: Schema.Types.String, default: null}],
-  images: [{ type: Schema.Types.String, default: null}]
+  name: { type: Schema.Types.String, trim: true, default: '', index: true, unique: true },
+  iconos: { type: Schema.Types.Array, default: null},
+  images: { type: Schema.Types.Array, default: null}
 },
 { 
   strict: false,

@@ -18,6 +18,10 @@ class EspecieControlers {
     this.router.get('/especies/tah',
 				//passport.authenticate('jwt', {session:false}), 
 				this.listtah );
+    this.router.get('/especie/:_id',
+        passport.authenticate('jwt', {session:false}), 
+        this.get );
+
     this.router.post('/especie',
         //passport.authenticate('jwt', {session:false}),
         this.add );
@@ -124,7 +128,7 @@ class EspecieControlers {
 
   async get(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
-    const ret = await especies.findById( params.id );
+    const ret = await especies.findById( params._id );
     res.status(200).json(ret)
   }
 

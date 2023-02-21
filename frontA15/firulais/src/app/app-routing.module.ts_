@@ -1,0 +1,93 @@
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { AbmComponent } from './components/abm/abm.component';
+import { ArticuloListComponent } from './components/articulo-list/articulo-list.component';
+import { HomeComponent } from './components/home/home.component';
+import { NoPageComponent } from './components/no-page/no-page.component';
+import { SignInComponent } from './components/sign-in/sign-in.component';
+import { SignUpComponent } from './components/sign-up/sign-up.component';
+
+const routes: Routes = [
+  {path: '', pathMatch: 'full', redirectTo: 'home'},
+  {path: 'login', component: SignInComponent},
+  {path: 'registrarse', component: SignUpComponent},
+  {path: 'home', component: HomeComponent},
+  {
+    path: 'fabricante',
+    component: AbmComponent,
+    data: {
+      getData: 'fabricantes',
+      postData: 'fabricante',
+      placeholder: 'Fabricante',
+    }
+  },
+  {
+    path: 'marca',
+    component: AbmComponent,
+    data: {
+      getData: 'marcas',
+      postData: 'marca',
+      placeholder:'Marca',
+    }
+  },
+  {
+    path: 'rubro',
+    component: AbmComponent,
+    data: {
+      getData: 'rubros',
+      postData: 'rubro',
+      placeholder: 'Rubro'
+    }
+  },
+  {
+    path: 'linea',
+    component: AbmComponent,
+    data: {
+      getData: 'lineas',
+      postData: 'linea',
+      placeholder: 'Linea'
+    }
+  },
+  {
+    path: 'talla',
+    component: AbmComponent,
+    data: {
+      getData: 'tallas',
+      postData: 'talla',
+      placeholder: 'Talla'
+    }
+  },
+  {
+    path: 'especie',
+    component: AbmComponent,
+    data: {
+      getData: 'especies',
+      postData: 'especie',
+      placeholder: 'Especie'
+    }
+  },
+  {
+    path: 'edad',
+    component: AbmComponent,
+    data: {
+      getData: 'edades',
+      postData: 'edad',
+      placeholder: 'Edad'
+    }
+  },
+  {
+    path: 'articulos',
+    component: ArticuloListComponent
+  },
+  {
+    path: '**',
+    component: NoPageComponent
+  }
+
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }

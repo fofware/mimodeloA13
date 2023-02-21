@@ -14,21 +14,22 @@ class FabricanteControlers {
 
   config () {
     this.router.get('/fabricantes',
-				//passport.authenticate('jwt', {session:false}), 
+				passport.authenticate('jwt', {session:false}), 
 				this.list );
-    this.router.get('/fabricante/:id',
+    this.router.get('/fabricante/:_id',
         //passport.authenticate('jwt', {session:false}), 
         this.get );
     this.router.post('/fabricante',
         //passport.authenticate('jwt', {session:false}),
         this.add );
-    this.router.delete('/fabricante/:id',
+    this.router.delete('/fabricante/:_id',
         passport.authenticate('jwt', {session:false}), 
         this.delete );
-    this.router.put('/fabricante/:id',
+    this.router.put('/fabricante',
         passport.authenticate('jwt', {session:false}),
         this.put );
   }
+
   async list(req: Request, res: Response){
     const fldsString = [
       'name'
@@ -43,7 +44,7 @@ class FabricanteControlers {
     },req.query,req.params,req.body);
 
     const filter = makeFilter(fldsString, params);
-    const count = await marcas.count(filter);
+    const count = await fabricantes.count(filter);
     
     params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
     params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
@@ -65,13 +66,14 @@ class FabricanteControlers {
         apiTime: new Date().getTime() - params.iniTime,
         filter,
         rows,
-        message: 'Ok'
+        toast: { type: 'info', header:'Lista Fabricantes', message: `Se listaron ${rows.length} de ${count}`},
+        message: `Se listaron ${rows.length} de ${count}`
       }
-        
+
     } catch (error) {
       console.log(error);
       status = 400;
-      ret['message'] = 'Algo anduvo mal';
+      ret['toast'] = { header:'Algo anduvo mal', message: 'No se pudo obetenr la lista'};
       ret['error'] = error;
     }
     res.status(status).json(ret);
@@ -79,14 +81,23 @@ class FabricanteControlers {
 
   async get(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
-    const ret = await fabricantes.findById( params.id );
-    res.status(200).json(ret)
+    try {
+      const ret = await fabricantes.findById( params._id );
+
+      res.status(200).json(ret)
+        
+    } catch (error) {
+      console.log(error);      
+    }
   }
 
   async add(req: Request, res: Response){
     const update = Object.assign({},req.query,req.params,req.body);
+    console.log('-------------');
+    console.log(update);
+    console.log('-------------');
     const filter = { 
-      name: update.marca,
+      name: update.name,
     };
     try {
       let ret = await fabricantes.findOneAndUpdate(filter, update, {
@@ -113,9 +124,10 @@ class FabricanteControlers {
     let status = 0;
     try {
       ret['data'] = await fabricantes.findByIdAndDelete(params._id);
-      ret['message'] = `Registro Borrado Ok ${params._id}`
+      ret['message'] = `Registro ${params._id} Borrado Ok`
       status = 200;
     } catch (error) {
+      ret['toast'] = { type: '', header:'Algo anduvo mal', message: 'No se pudo borrar el registro'};
       ret['message'] = `algo andubo mal`
       ret['error'] = error;
       status = error.number;

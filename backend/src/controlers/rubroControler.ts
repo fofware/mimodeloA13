@@ -18,13 +18,16 @@ class RubroControlers {
     this.router.get('/rubros/tah',
 				//passport.authenticate('jwt', {session:false}), 
 				this.listtah );
+    this.router.get('/rubro/:_id',
+        passport.authenticate('jwt', {session:false}), 
+        this.get );
     this.router.post('/rubro',
         //passport.authenticate('jwt', {session:false}),
         this.add );
-    this.router.delete('/rubro/:id',
+    this.router.delete('/rubro/:_id',
         passport.authenticate('jwt', {session:false}), 
         this.delete );
-    this.router.put('/rubro/:id',
+    this.router.put('/rubro',
         passport.authenticate('jwt', {session:false}),
         this.put );
   }
@@ -124,7 +127,7 @@ class RubroControlers {
 
   async get(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
-    const ret = await rubros.findById( params.id );
+    const ret = await rubros.findById( params._id );
     res.status(200).json(ret)
   }
 

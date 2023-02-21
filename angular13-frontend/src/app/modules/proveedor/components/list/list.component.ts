@@ -11,7 +11,7 @@ import { ApiService } from '../../../../services/api.service';
 })
 export class ListComponent implements OnInit {
   public isMenuCollapsed = true;
-  
+
   proveedores:any;
   data:any[] = [];
   loading = false;
@@ -44,7 +44,7 @@ export class ListComponent implements OnInit {
       this.count = data.count;
       this.offset = data.offset;
       this.nextOffset = data.nextOffset;
-      this.data = this.data.concat(data.data);
+      this.data = this.data.concat(data.rows);
       console.log(this.data.length);
       console.log(data.apiTime);
       this.loading = false;
@@ -55,9 +55,8 @@ export class ListComponent implements OnInit {
   }
 
   gotoDynamic(item:any) {
-    //this.router.navigateByUrl('/dynamic', { state: { id:1 , name:'Angular' } });
     //console.log(item);
-    this.router.navigate(['proveedores', item._id] );
+    this.router.navigate(['admin','compras','proveedores', item._id] );
   }
 
 }

@@ -1,0 +1,28 @@
+import { Schema, model, Document } from "mongoose";
+
+export interface Ikey extends Document {
+  mode: string;
+  key: string;
+  token: string;
+}
+
+const keySchema = new Schema({
+  _id: { type: Schema.Types.ObjectId, index: true },
+  gateway: { type: Schema.Types.ObjectId, ref: 'gateway', index: true },
+  mode: { type: Schema.Types.Boolean},
+  key: { type: Schema.Types.String, trim: true},
+  token: { type: Schema.Types.String, trim: true},
+},
+{ 
+  strict: false,
+  timestamps: true,
+  versionKey: false
+});
+
+
+keySchema.on('index', error => {
+  // "_id index cannot be sparse"
+  console.log(error);
+});
+
+export default model<Ikey>('key', keySchema);

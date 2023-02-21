@@ -15,16 +15,19 @@ class TallaControlers {
     this.router.get('/tallas',
 				//passport.authenticate('jwt', {session:false}), 
 				this.list );
+    this.router.get('/talla/:_id',
+        passport.authenticate('jwt', {session:false}), 
+        this.get );
     this.router.get('/tallas/tah',
 				//passport.authenticate('jwt', {session:false}), 
 				this.listtah );
     this.router.post('/talla',
         //passport.authenticate('jwt', {session:false}),
         this.add );
-    this.router.delete('/talla/:id',
+    this.router.delete('/talla/:_id',
         passport.authenticate('jwt', {session:false}), 
         this.delete );
-    this.router.put('/talla/:id',
+    this.router.put('/talla',
         passport.authenticate('jwt', {session:false}),
         this.put );
   }
@@ -124,7 +127,7 @@ class TallaControlers {
 
   async get(req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
-    const ret = await tallas.findById( params.id );
+    const ret = await tallas.findById( params._id );
     res.status(200).json(ret)
   }
 

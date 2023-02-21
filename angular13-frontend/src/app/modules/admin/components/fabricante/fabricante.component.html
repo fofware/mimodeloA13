@@ -1,7 +1,28 @@
-<p>fabricante works!</p>
-<table>
-  <tr *ngFor="let item of data">
-    <td>{{item._id}}</td>
-    <td>{{item.name}}</td>
-  </tr>
-</table>
+<ng-template #formData >
+  <p>Formulario de datos</p>
+  <input type="text" [(ngModel)]="nombre" name="name">
+  <input type="text" [(ngModel)]="image" name="image">
+  <!--input *ngFor="let image of nuevo.images;index as i" type="text" name='image_{{i}}' name[(ngModel)]="nuevo.images[i]"-->
+</ng-template>
+<p>Fabricantes</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-6">
+      
+    </div>
+    <div class="col-6">
+      <input type="search" id="busca" aria-label="Search" class="form-control mr-sm-2" placeholder="Buscar por Nombre"
+      name="searchItem" #searchInput [(ngModel)]="searchItem">
+      <div *ngIf="data.length; else formData" id="maindata" (scroll)="onScroll($event)">
+        <table>
+          <tr *ngFor="let item of data">
+            <!--td>{{item._id}}</td-->
+            <td>{{item.name}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+

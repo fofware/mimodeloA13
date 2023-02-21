@@ -1,0 +1,81 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+#main {
+  display: flex;
+  min-height: calc(100vh - 180px);
+  max-height: calc(100vh - 180px);
+  background-color: aquamarine;
+}
+
+#main > article {
+   flex: 1;
+   max-height: calc(100vh - 180px);
+   /*
+   overflow-y: scroll;
+   */
+}
+
+
+#main > nav,
+#main > aside {
+  flex: 0 0 20vw;
+  background: beige;
+}
+::-webkit-scrollbar {
+  width: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+#main > nav {
+  order: -1;
+  min-width: 40px;
+  max-width: 40px;
+  /*
+  max-height: calc(100vh - 252px);
+  max-height: calc(100vh - 320px);
+  overflow-y: scroll;
+  */
+  background-color:burlywood;
+}
+
+.enca {
+  width: 100%;
+  height: 100px;
+  background: rgb(249, 245, 187);
+}
+
+
+.lista{
+  max-height: calc(100vh - 204px);
+  overflow-y: scroll;
+}
+
+/*
+header, footer, article, nav, aside {
+   padding: 1em;
+ }
+*/
+header, footer {
+  background-color: chocolate;
+  height: 70px;
+}

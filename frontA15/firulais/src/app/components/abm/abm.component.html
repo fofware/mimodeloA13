@@ -1,0 +1,40 @@
+<ng-template #customItemTemplate let-model="item" let-index="index">
+  <div class="row">
+    <!--div class="col-6">{{model._id}}</div-->
+    <div class="col">{{model.name}}</div>
+  </div>
+</ng-template>
+<form >
+  <input class="g-3"
+  [(ngModel)]="Selected"
+  typeaheadOptionField="name"
+  [typeahead]="Source$"
+  [typeaheadAsync]="true"
+  [typeaheadMinLength]="0"
+  [typeaheadWaitMs]="700"
+  [typeaheadScrollable]="true"
+  [typeaheadSelectFirstItem]="false"
+  [typeaheadOptionsInScrollableView]="10"
+  [typeaheadOptionsLimit]="100"
+  (typeaheadOnSelect)="onSelect($event)"
+  (typeaheadLoading)="changeLoading($event)"
+  (typeaheadNoResults)="typeaheadNoResults($event)"
+  placeholder="{{placeholder}}"
+>
+<button class="btn p-0 ms-1" *ngIf="noResult && Selected?.length" (click)="Addreg()">
+  <span>No Existe agrega?</span>
+  <i class="fa-solid fa-square-plus fa-2xl text-primary"></i>
+</button>
+
+</form>
+<div class="container-fluid main" (scroll)="onScroll($event)">
+  <div class="row d-flex justify-content-center align-items-star">
+    <div>
+      <div class="card col-xxl-2 col-lg-3 col-md-4 col-sm-6"
+        *ngFor="let item of allData"
+      >
+      {{item.name}}
+      </div>
+   </div>
+  </div>
+</div>
