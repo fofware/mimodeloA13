@@ -25,8 +25,7 @@ export class ArticulosEditComponent implements OnInit, OnDestroy {
   user:any = {};
 
   public defmenu:iTopMenu[] = [
-
-    { title: '<i class="fa-solid fa-rotate-left"></i>', link: ['..'] },
+    { title: '<i class="fa-solid fa-rotate-left"></i>', link: ['../'] },
     { title: '<i class="fa-solid fa-sliders"></i>', link: 'data' },
     //{ title: 'Nombre', link: ['name'], hidden: this.isLogged, roles: ['sys_admin', 'sys_user'] },
     { title: '<i class="fa-solid fa-boxes-packing"></i>', link: ['presentaciones'], hidden: this.isLogged, roles: ['sys_admin', 'sys_user'] },
@@ -56,54 +55,18 @@ export class ArticulosEditComponent implements OnInit, OnDestroy {
     const locationData = this._location.getState() as any;
     this.retpage = locationData.from;
     console.log(locationData);
-    /*
-    this.filesReady$
-        .pipe(takeUntil(this.destroy$))
-        .subscribe( state => this.ready = state );
-    console.log(this.ready)
-    if(!this.ready) this._artSvc.readFiles();
-    */
     this.user = this._auth.userValue;
-    //console.warn("EditService",this._editService._location.getState());
     this.setMenu();
-    //let storageData = localStorage.getItem('articulo_edit');
-    //if(storageData) storageData = JSON.parse(storageData);
-    //let locationData = (this._editService._location.getState() as any);
-    //locationData = Object.assign(locationData,storageData);
-
-    //console.log('locationData en Edit',locationData);
-    /*
-    const snapshotData:any = (this._arouter.snapshot.params)
-    console.log('snapshotData',snapshotData);
-    if(snapshotData._id){
-      this.params = snapshotData;
-      this.regData = await this._api.getP(`/articulo/maestro/${snapshotData._id}`)
-      this.ready = true
-      console.log("Editando",this.regData);
-    }
-    */
-    /*
-    if(locationData.from){
-      this.params = locationData;
-      this.regData = locationData.listData[locationData.idx];
-      this.ready = true;
-    }
-    */
-    /*
-    console.log('E IDX',this._artSvc.idx.value);
-    if(this._artSvc.idx.value > -1)
-      this.regData = this._artSvc.listData.value[this._artSvc.idx.value];
-    console.log(this.regData);
-    */
-    /*
-    console.log(this._editService.regData);
-    console.log(this._editService.regData.value);
-    console.log('Params',this.params);
-    */
-
   }
 
   ngOnDestroy(): void {
+    console.log('Sale de Editar', this._artSvc.articuloSelected$.value?.fullname)
+    if(this._artSvc.anyChanged())
+      if(this._artSvc.saveChanges())
+        this._artSvc.grabar();
+      else
+        console.warn('No graba Modificaciones');
+
     this.destroy$.next({});
     this.destroy$.complete();
   }
@@ -121,5 +84,13 @@ export class ArticulosEditComponent implements OnInit, OnDestroy {
     })
     console.log("Menu",this.usrMenu);
   }
+  grabar(){
+    this._artSvc.grabar();
+    console.log(this.retpage);
+    this._router.navigate([this.retpage]);
 
+  }
+  cancel(){
+    console.log("Cancel()");
+  }
 }

@@ -135,6 +135,15 @@ export const menudata = [
           param: 'talla'
         },
         {
+          title: 'Unidades',
+          icon: 'fas fa-cogs fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: '../',
+          param: 'unidad'
+        },
+        {
           title: 'Rubros',
           icon: 'fas fa-cogs fa-3x',
           permiso: 'moderator',

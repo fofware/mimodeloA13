@@ -1,4 +1,10 @@
-<div class="container-fluid navbar-dark bg-primary bg-opacity-50 bg-gradient ps-4 py-2"><h4 class='mb-0'>{{(_artSvc.regData$ | async)?.fullname}}</h4></div>
+<div class="container-fluid navbar-dark bg-primary bg-opacity-50 bg-gradient ps-4 py-2 position-relative">
+  <h4 class='mb-0'>{{(_artSvc.articuloSelected$ | async )?.fullname}}</h4>
+  <ng-container *ngIf="_artSvc.anyChanged()">
+    <button class="btn btn-success float-end" (click)="grabar()">Grabar</button>
+    <button class="btn btn-danger float-end" (click)="cancel()">Cancelar</button>
+  </ng-container>
+</div>
 <div class="container-fluid navbar-dark bg-primary bg-opacity-25">
   <nav class="navbar navbar-expand-lg py-0">
     <div class="container-fluid px-0">

@@ -10,8 +10,9 @@ import edad from '../models/edades';
 import talla from '../models/tallas';
 import rubro from '../models/rubros';
 import linea from '../models/lineas';
+import unidad from '../models/unidades';
 
-const files = {
+export const mfiles = {
   fabricante: fabricante,
   marca: marca,
   modelo: modelo,
@@ -19,7 +20,8 @@ const files = {
   edad: edad,
   talla: talla,
   rubro: rubro,
-  linea: linea
+  linea: linea,
+  unidad: unidad
 }
 
 class mAbmControlers {
@@ -60,20 +62,20 @@ class mAbmControlers {
       sort: { name: 1 },
       searchItem: ''
     },req.query,req.params,req.body);
-    console.log(files);
+    //console.log(mfiles);
     let status = 0;
     let ret = {}
     try {
       console.log()
       const filter = makeFilter(fldsString, params);
-      const count = await files[params.file].count(filter);
+      const count = await mfiles[params.file].count(filter);
       
       params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
       params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
   
       let nextOffset = params.offset+params.limit;
       nextOffset = nextOffset > count ? false : params.offset+params.limit;
-      const rows = await files[params.file].find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
+      const rows = await mfiles[params.file].find(filter).limit(params.limit).skip(params.offset).sort(params.sort);
       status = 200;
       ret = {
         url: req.headers.host+req.url,
@@ -105,7 +107,7 @@ class mAbmControlers {
     let status = 200;
     try {
       console.log(params);
-      ret = await files[params.file].findById( params._id );
+      ret = await mfiles[params.file].findById( params._id );
       console.log(ret);
     } catch (error) {
       console.log(error);
@@ -127,13 +129,13 @@ class mAbmControlers {
       name: params.name,
     };
     try {
-      let ret = await files[params.file].findOneAndUpdate(filter, params.data, {
+      let ret = await mfiles[params.file].findOneAndUpdate(filter, params.data, {
         new: true,
         upsert: true,
         rawResult: true // Return the raw result from the MongoDB driver
       });
 
-      ret.value instanceof files[params.file]; // true
+      ret.value instanceof mfiles[params.file]; // true
       // The below property will be `false` if MongoDB upserted a new
       // document, and `true` if MongoDB updated an existing object.
       ret.lastErrorObject.updatedExisting; // false
@@ -151,7 +153,7 @@ class mAbmControlers {
     };
     let status = 0;
     try {
-      ret['data'] = await files[params.file].findByIdAndDelete(params._id);
+      ret['data'] = await mfiles[params.file].findByIdAndDelete(params._id);
       ret['message'] = `Registro ${params._id} Borrado Ok`
       status = 200;
     } catch (error) {
@@ -169,7 +171,7 @@ class mAbmControlers {
     let status = 0;
     let ret = {};
     try {
-      ret['data'] = await files[params.file].findByIdAndUpdate(params._id, params);
+      ret['data'] = await mfiles[params.file].findByIdAndUpdate(params._id, params);
       ret['message'] = `Update Ok`
       status = 200;
     } catch (error) {
@@ -179,7 +181,6 @@ class mAbmControlers {
     }
     res.status(status).json(ret);
   }
-
 }
 
 export const mAbmCtrl = new mAbmControlers();

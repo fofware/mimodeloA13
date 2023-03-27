@@ -1,14 +1,15 @@
 <div class="contaner-fluid">
   <input type="text" class="form-control mt-2 sticky-top" [formControl]="searcher"/>
-  <div *ngIf="listData.length else elseBlock">
-    <div class="container-fluid">
+  <div *ngIf="listData.rows.length else elseBlock">
+    <div class="container-fluid" >
       <div
         class="row justify-content-center main pt-1"
+        id='scrollData'
         (scroll)="onScroll($event)"
       >
         <div
           class="p-1 col-12 col-xl-6"
-          *ngFor="let item of listData; index as i"
+          *ngFor="let item of listData.rows; index as i"
         >
           <app-list-card
             [item]="item"

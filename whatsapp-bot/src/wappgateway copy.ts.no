@@ -11,7 +11,7 @@ import { Socket } from 'socket.io';
 import fs from 'fs';
 
 import { v4 as uuidv4 } from 'uuid';
-import { WAG_Client, WAG_Clients } from './wapplib';
+import { WAG_Clients, WAG_saveMsg } from './wapplib';
 
 //export const gateways = {}
 
@@ -25,16 +25,9 @@ export const initAllWapp = async (app) =>{
   const asyncFunctions = []
   for (let index = 0; index < array.length; index++) {
     const p:any = array[index];
-    WAG_Clients[p.phone] = new WAG_Client(p,io);
-    WAG_Clients[p.phone].client.initialize();
-  }
-
-/*
-  for (let index = 0; index < array.length; index++) {
-    const p:any = array[index];
-    ////
-    //// conecta de a uno
-    ////
+    ///**
+    // * conecta de a uno
+    // */
     //try {
     //  const rst:Client = await storedGateway(p);
     //  //console.log('termio ',p.phone);
@@ -42,6 +35,9 @@ export const initAllWapp = async (app) =>{
     //  //console.log('Error ',p.phone);
     //  //console.log(error);      
     //}
+    /**
+     * Prepara array para arrancar todos juntos con promise
+     */
     asyncFunctions.push(storedGateway(p));
 
   }
@@ -68,13 +64,13 @@ export const initAllWapp = async (app) =>{
   } catch (error) {
     console.log(error);    
   }
-  */
+  
   const totalend = new Date();
   const totaldif = totalend.getTime()-totalini.getTime();
   console.log('termino con todos');
   console.log(totaldif);
   console.log('------------------------------');
-  //console.log(WAG_Clients)
+  console.log(WAG_Clients)
   app.use(router);
   //rewriteData();
 
@@ -259,7 +255,7 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
           //await io.to(phone).emit('message',{ msg, contact, chat, phone });
           //await io.to(p.rooms).emit('message',msg,mediadata);
 
-          //const ret = await WAG_saveMsg(msg,'message');
+          const ret = await WAG_saveMsg(msg,'message');
           procesaMsg(client,msg);
   
         /*
@@ -282,7 +278,7 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
       await io.to(client.info.wid.user).emit('message_ack', { msg, ack, phone });
       //await io.to(p.rooms).emit('message_ack',{msg,ack})
 
-      //const ret = await WAG_saveMsg(msg,'message_ack')
+      const ret = await WAG_saveMsg(msg,'message_ack')
       const ackTxt = ['','se envio','recibió','leyó','Dio play al audio']
       ////console.log('----------------------------------------------------')
       ////console.log(`${client.info.pushname} ${client.info.wid.user} message_ack ${ack} ${msg.to} ${ackTxt[ack]}`);
@@ -339,7 +335,7 @@ export const storedGateway = async ( p:any ): Promise <Client> => {
       //console.log(`${client.info.pushname} ${client.info.wid.user} message_revoke_everyone`);
       //console.log(msg.id);
 
-      //const ret = await WAG_saveMsg(msg,'message_revoke_everyone')
+      const ret = await WAG_saveMsg(msg,'message_revoke_everyone')
 
       await io.to(client.info.wid.user).emit('message_revoke_everyone',{ msg, revoked_msg, contact, chat, phone });
       //await io.to(p.rooms).emit('message_revoke_everyone',{msg,revoked_msg})
@@ -696,7 +692,7 @@ export const setRoutes = async (client:Client) => {
     let cuenta = 0;
     rsleer.map(msgs => {
       msgs.map( msg  => {
-//        tosave.push(WAG_saveMsg(msg));
+        tosave.push(WAG_saveMsg(msg));
       });
     });
     

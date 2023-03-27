@@ -1,81 +1,143 @@
-  <ng-container *ngIf="ready">
-    <select name="" id="">
-      <option value="Producto">Producto</option>
-      <option value="Servicio">Servicio</option>
-      <option value="Manufacturado">Manufacturado</option>
-    </select>
-    <app-articulos-typeahead-add
-      [field]="'rubro'"
-      [addUrl]="'/rubro'"
-      [readUrl]="'/rubros'"
-      [placeholder]="'Rubro'"
-      [regItem]="regData.rubro"
-      (changeValue)="changeField($event)"
-    ></app-articulos-typeahead-add>
-    <app-articulos-typeahead-add
-      [field]="'linea'"
-      [addUrl]="'/linea'"
-      [readUrl]="'/lineas'"
-      [placeholder]="'Linea'"
-      [regItem]="regData.linea"
-      (changeValue)="changeField($event)"
-    ></app-articulos-typeahead-add>
-    <app-articulos-typeahead-add
-      [field]="'fabricante'"
-      [addUrl]="'/fabricante'"
-      [readUrl]="'/fabricantes'"
-      [placeholder]="'Fabricante'"
-      [regItem]="regData.fabricante"
-      (changeValue)="changeField($event)"
-    ></app-articulos-typeahead-add>
-    <app-articulos-typeahead-add
-      [field]="'marca'"
-      [addUrl]="'/marca'"
-      [readUrl]="'/marcas'"
-      [placeholder]="'Marca'"
-      [regItem]="regData.marca"
-      (changeValue)="changeField($event)"
-    ></app-articulos-typeahead-add>
-    <app-articulos-typeahead-add
-      [field]="'modelo'"
-      [addUrl]="'/modelo'"
-      [readUrl]="'/modelos'"
-      [placeholder]="'Modelo'"
-      [regItem]="regData.modelo"
-      (changeValue)="changeField($event)"
-    ></app-articulos-typeahead-add>
-    <app-articulos-typeahead-add
-      [field]="'especie'"
-      [addUrl]="'/especie'"
-      [readUrl]="'/especies'"
-      [placeholder]="'Especie'"
-      [regItem]="regData.especie"
-      (changeValue)="changeField($event)"
-    ></app-articulos-typeahead-add>
-    <app-articulos-typeahead-add
-      [field]="'edad'"
-      [addUrl]="'/edad'"
-      [readUrl]="'/edades'"
-      [placeholder]="'Edad'"
-      [regItem]="regData.edad"
-      (changeValue)="changeField($event)"
-    ></app-articulos-typeahead-add>
-    <app-articulos-typeahead-add
-      [field]="'talla'"
-      [addUrl]="'/talla'"
-      [readUrl]="'/tallas'"
-      [placeholder]="'Talla'"
-      [regItem]="regData.talla"
-      (changeValue)="changeField($event)"
-    ></app-articulos-typeahead-add>
-    <input
-      type="text"
-      name="name"
-      [(ngModel)]="regData.name"
-    >
-    <app-articulos-sortable-name
-      [data]="regData"
-      [reset]="resetSortableSubject.asObservable()"
-      (dataChange)="dataChange($event)"
-    ></app-articulos-sortable-name>
-  </ng-container>
+<div class="container-fluid">
+  <ng-container *ngIf="_artSvc.filesReady$.value">
+    <div class="row">
+    <div class="col-6">
+        <!--form [formGroup]="fg"-->
+          <select name="" id="" class="form-control">
+            <option value="Producto">Producto</option>
+            <option value="Servicio">Servicio</option>
+            <option value="Manufacturado">Manufacturado</option>
+          </select>
+          <!--input
+            class="form-control"
+            type="text"
+            name="name"
+            formControlName="name"
+          >
+          <input type="text"
+            class="form-control"
+            name="url"
+            formControlName="url"
+          >
+          <textarea type="text"
+            class="form-control"
+            name="detalles"
+            formControlName="detalles"
+          ></textarea-->
+          <!--input [(ngModel)]="search"
+             typeaheadOptionField="login"
+             [typeahead]="suggestions$"
+             [typeaheadAsync]="true"
+             class="form-control"
+             placeholder="Enter GitHub username"-->
+
+          <!--input
+            formControlName="fabricante"
+            typeaheadOptionField="name"
+            [typeahead]="fabricanteSource$"
+            [typeaheadAsync]="true"
+            class="form-control"
+            placeholder="Fabricante"
+          -->
+          <app-articulos-typeahead-add
+            [field]="'rubro'"
+            [addUrl]="'/rubro'"
+            [readUrl]="'/rubros'"
+            [placeholder]="'Rubro'"
+            [regItem]="filesData$.value.rubro"
+            (changeValue)="changeField($event)"
+          ></app-articulos-typeahead-add>
+          <app-articulos-typeahead-add
+            [field]="'linea'"
+            [addUrl]="'/linea'"
+            [readUrl]="'/lineas'"
+            [placeholder]="'Linea'"
+            [regItem]="filesData$.value.linea"
+            (changeValue)="changeField($event)"
+          ></app-articulos-typeahead-add>
+          <app-articulos-typeahead-add
+            [field]="'fabricante'"
+            [addUrl]="'/fabricante'"
+            [readUrl]="'/fabricantes'"
+            [placeholder]="'Fabricante'"
+            [regItem]="filesData$.value.fabricante"
+            (changeValue)="changeField($event)"
+          ></app-articulos-typeahead-add>
+          <app-articulos-typeahead-add
+            [field]="'marca'"
+            [addUrl]="'/marca'"
+            [readUrl]="'/marcas'"
+            [placeholder]="'Marca'"
+            [regItem]="filesData$.value.marca"
+            (changeValue)="changeField($event)"
+          ></app-articulos-typeahead-add>
+          <app-articulos-typeahead-add
+            [field]="'modelo'"
+            [addUrl]="'/modelo'"
+            [readUrl]="'/modelos'"
+            [placeholder]="'Modelo'"
+            [regItem]="filesData$.value.modelo"
+            (changeValue)="changeField($event)"
+          ></app-articulos-typeahead-add>
+          <app-articulos-typeahead-add
+            [field]="'especie'"
+            [addUrl]="'/especie'"
+            [readUrl]="'/especies'"
+            [placeholder]="'Especie'"
+            [regItem]="filesData$.value.especie"
+            (changeValue)="changeField($event)"
+          ></app-articulos-typeahead-add>
+          <app-articulos-typeahead-add
+            [field]="'edad'"
+            [addUrl]="'/edad'"
+            [readUrl]="'/edades'"
+            [placeholder]="'Edad'"
+            [regItem]="filesData$.value.edad"
+            (changeValue)="changeField($event)"
+          ></app-articulos-typeahead-add>
+          <app-articulos-typeahead-add
+            [class]="'form-control'"
+            [field]="'talla'"
+            [addUrl]="'/talla'"
+            [readUrl]="'/tallas'"
+            [placeholder]="'Talla'"
+            [regItem]="filesData$.value.talla"
+            (changeValue)="changeField($event)"
+          ></app-articulos-typeahead-add>
+          <input
+            type="text"
+            class="form-control"
+            name="name"
+            [ngModel]="filesData$.value.name"
+            (ngModelChange)="changeName($event)"
+          >
+          <app-articulos-sortable-name
+            [data]="filesData$.value"
+            [reset]="resetSortableSubject.asObservable()"
+            (dataChange)="sortableChange($event)"
+          ></app-articulos-sortable-name>
+          <input type="text"
+            class="form-control"
+            name="url"
+            [(ngModel)]="_artSvc.articuloSelected$.value.url"
+          >
+          <textarea type="text"
+            class="form-control"
+            name="detalles"
+            [(ngModel)]="_artSvc.articuloSelected$.value.detalles"
+          ></textarea>
+        <!--/form-->
+    </div>
+    <div class="col-6 bg-info">
+      <div class="row">
+        <div class="col-6">
+          <pre><code> {{ _artSvc.articuloSelected$.value | json }}</code></pre>
+        </div>
+        <div class="col-6">
+          <pre><code> {{ _artSvc.articulo | json }}</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+</div>

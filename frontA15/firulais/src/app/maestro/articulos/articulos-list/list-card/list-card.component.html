@@ -7,13 +7,18 @@
   <div class="row g-0">
     <div class="col-md-3">
       <div class="d-flex justify-content-start align-items-center">
-        <img src="{{item.images[0]}}" class="img-fluid rounded-start" alt="..." style="max-height:200px;">
-
+        <img
+          class="img-fluid rounded-start"
+          style="max-height:200px;"
+          src="{{item.images[0]}}"
+          alt="..."
+        >
       </div>
     </div>
     <div class="col-md-9">
       <div class="card-body">
         <h5 class="card-title">{{item._id}}</h5>
+        <div class="" style="height: 145px; overflow: hidden;">{{item.detalles}}</div>
       </div>
     </div>
   </div>

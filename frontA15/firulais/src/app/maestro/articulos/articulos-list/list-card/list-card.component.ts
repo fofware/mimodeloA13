@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { maestroArticuloFd } from 'src/app/maestro/models/maestro.model.articulo';
 
 @Component({
   selector: 'app-list-card',
@@ -11,7 +12,6 @@ import { CommonModule } from '@angular/common';
 export class ListCardComponent {
   @Input() item!:any;
   @Input() idx!:number;
-  @Input() coleccion!:string;
 
   @Output() onEdit = new EventEmitter<number>()
   @Output() onDelete = new EventEmitter<number>()

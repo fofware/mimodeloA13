@@ -5,6 +5,7 @@ import articulo, { IArticulo } from '../models/articulos';
 import { makeFilter } from '../common/utils';
 import { SucursalesControler } from '../mp/controlers/sucursalesControler';
 import articulosOlds from '../models/articulosOlds';
+import { mfiles } from './mabmControlers';
 
 export const art_full_name_template = 
 { $trim: 
@@ -31,6 +32,39 @@ export const art_full_name_template =
 	}
 }
 
+const makesText = async (data: any):Promise<string[]> => {
+	const files = [
+		'fabricante',
+		'marca',
+		'modelo',
+		'especie',
+		'talla',
+		'edad',
+		'rubro',
+		'linea',
+	]
+	return new Promise(async (resolve, reject) => {
+		try {
+			let retData = []
+			const toread: any[] = [];
+			files.map( file => {
+				const id = data[file];
+				toread.push(mfiles[file].findById(id,{ _id:0, name:1 }))
+			});
+			const results = await Promise.allSettled(toread);
+			results.map( (ret:any, i) => {
+				console.log(ret);
+				if(ret.value.name && ret.value.name!=='') retData.push(ret.value.name);
+			});
+			console.log(retData);
+			resolve(retData);
+		} catch (error) {
+			console.log(error)
+			reject();      
+		}
+	});
+}
+
 class ArticuloControler {
 
 	public router: Router = Router();
@@ -51,8 +85,18 @@ class ArticuloControler {
 		this.router.get( '/articulos/full/lista', this.flista );
 		this.router.post('/articulos/lista', this.list)
 		this.router.post( '/articulos/public', this.public );
-		this.router.get( '/articulo/presentaciones/:_id', 
+		this.router.get( 
+			'/articulo/presentaciones/:_id',
 			this.presentaciones);
+    this.router.put('/articulo/update/:_id',
+      passport.authenticate('jwt', {session:false}),
+      this.modifica
+    )
+    this.router.put('/articulo/replace/:_id',
+      passport.authenticate('jwt', {session:false}),
+      this.replace
+    )
+    this.router.get('/articulo/replace/:_id', this.replace)
 		//this.router.get( '/articulos/old', this.toNew)
 	}
 
@@ -92,7 +136,23 @@ class ArticuloControler {
 		console.log(params);
 		console.log(filter);
 
-	  const rows = await articulo.find(filter)
+	  const rows = await articulo.find(filter,{
+      d_edad: 0,
+      d_especie: 0,
+      d_fabricante: 0,
+      d_linea: 0,
+      d_marca: 0,
+      d_raza: 0,
+      d_rubro: 0,
+      d_talla: 0,
+      iva: 0,
+      margen: 0,
+      private_web: 0,
+      raza: 0,
+      presentaciones: 0,
+      toFullName: 0,
+      id: 0
+    })
 			/*
 			.populate('fabricante')
 			.populate('marca')
@@ -558,12 +618,17 @@ class ArticuloControler {
 			const rows = await articulo.aggregate([
 				{ $match: filter },
 				{
+					$project:{
+						_id: 1
+					}
+				},
+				{
 					$lookup: {
 						from: 'presentacions',
 						localField: '_id',
 						foreignField: 'articulo',
-						as: 'presentaciones'
-					}
+						as: 'presentaciones',
+					},
 				},
 				{
 					$graphLookup: {
@@ -571,9 +636,31 @@ class ArticuloControler {
 						 startWith: "$presentaciones._id",
 						 connectFromField: "presentaciones.relacion",
 						 connectToField: "_id",
-						 as: "presentaciones"
-					}
+						 as: "presentaciones",
+						 
+					},
 			 	},
+				{
+					$project:{
+						raza:0,
+						iva:0,
+						margen:0,
+						d_edad:0,
+						d_especie:0,
+						d_fabricante:0,
+						d_linea:0,
+						d_marca:0,
+						d_raza:0,
+						d_rubro:0,
+						d_talla:0,
+						toFullName:0,
+						private_web:0,
+					}
+				},
+				{
+					$sort: { 'fabricante': 1, 'marca': 1, 'rubro': 1, 'linea': 1,'especie': 1, 'edad': 1, 'name': 1, 'talla': 1 }
+				}
+
 				/*
 				{
 					$sort: { 'fabricante': 1, 'marca': 1, 'rubro': 1, 'linea': 1,'especie': 1, 'edad': 1, 'name': 1, 'talla': 1 }
@@ -663,7 +750,23 @@ class ArticuloControler {
 		console.log(params);
     try {
       const rows = await articulo
-			.find(filter)
+			.find(filter, 
+				{
+					presentaciones:0,
+					raza:0,
+					toFullName:0,
+					d_talla:0,
+					d_rubro:0,
+					d_raza:0,
+					d_marca:0,
+					d_linea:0,
+					d_fabricante:0,
+					d_edad:0,
+					private_web:0,
+					iva:0,
+					margen:0,
+					d_especie:0
+				})
 			.populate('fabricante')
 			.populate('marca')
 			.populate('modelo')
@@ -674,7 +777,7 @@ class ArticuloControler {
 			.populate('edad')
 			.limit(params.limit)
 			.skip(params.offset)
-			.sort(params.sort);
+			.sort(params.sort)
       status = 200;
       ret = {
         url: req.headers.host+req.url,
@@ -720,6 +823,7 @@ class ArticuloControler {
       'tags',
 			'fabricante.name',
 			'marca.name',
+      'modelo.name',
 			'rubro.name',
 			'linea.name',
 			'especie.name',
@@ -1150,7 +1254,39 @@ class ArticuloControler {
 		}
 	}
 
+	async replace(req: Request, res: Response){
+    console.log(req.user);
+    const id = req.params._id;
+		console.log(id);
+
+    try {
+      const data = await articulo.findById(id);
+			const retData = await makesText(data);
+      res.status(200).json(retData);
+    } catch (error) {
+      console.log(error)
+      res.status(400).json("algo salio mal");
+    }
+    
+    /*
+		try {
+			const rpta = await articulo.replaceOne(
+				{ _id: req.body._id },   // Query parameter
+				{ replacement: req.body},
+				//{ $set: req.body },
+				//{ upsert: true }    // Options
+			);
+			return res.status(200).json( rpta );
+		} catch (error) {
+			return res.status(400).json(error);
+		}
+    */
+	}
+
 	async modifica( req: Request, res: Response) {
+    console.log(req.user);
+    res.status(200).json(req.user);
+    /*
 		try {
 			if ( req.body._id ) req.body._id = new ObjectID( req.body._id );
 			const rpta = await articulo.updateOne({ _id: req.body._id },   // Query parameter
@@ -1162,6 +1298,7 @@ class ArticuloControler {
 			console.log(error);
 			return res.status(500).json( error );
 		}
+    */
 	}
 }
 

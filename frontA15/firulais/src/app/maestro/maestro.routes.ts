@@ -108,6 +108,18 @@ export const MAESTRO_ROUTES: Route[] = [
         loadComponent: () => import('./abmdata/abmdata.component').then(mod => mod.AbmdataComponent),
       },
       {
+        path: 'unidad',
+        data: {
+          title: 'Unidades',
+          path: 'unidad',
+          coleccion: 'unidad',
+          getData: 'unidades',
+          postData: 'unidad',
+          placeholder: 'Unidad',
+        },
+        loadComponent: () => import('./abmdata/abmdata.component').then(mod => mod.AbmdataComponent),
+      },
+      {
         path: 'edit',
         loadComponent: () => import('./abmdata/abmdatar-form/abmdatar-form.component').then(mod => mod.AbmdatarFormComponent),
       },

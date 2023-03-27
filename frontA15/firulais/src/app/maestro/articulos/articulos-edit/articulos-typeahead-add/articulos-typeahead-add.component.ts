@@ -40,6 +40,7 @@ export class ArticulosTypeaheadAddComponent {
   //@Input() searchItem!:any;
   @Input() regItem:any;
   @Input() field!:string;
+  @Input() class!:any;
   @Output () changeValue = new EventEmitter<any>();
 
   private destroy$ = new Subject<any>();
@@ -54,7 +55,7 @@ export class ArticulosTypeaheadAddComponent {
         if(query) {
           return this._api.get(`${this.readUrl}`,
             {searchItem: query, limit: this.limit},
-            {spinner: 'false'}
+            {spinner: 'true'}
             )
             .pipe(
               map((ret:iAbmResponse) => ret && ret.rows || [])
@@ -71,33 +72,48 @@ export class ArticulosTypeaheadAddComponent {
   }
 
   typeaheadNoResults(event: boolean): void {
-    this.noResult = event;
-    console.log('No Result',event);
-    this.changeValue.emit({field:this.field, value:this.SelectedOption});
+    console.log(`No Result ${this.field}`,event);
+    console.log('selected',`'${this.Selected}'`);
+    //this.noResult = event;
+    //this.changeValue.emit({field:this.field, value:this.SelectedOption});
   }
 
   changeLoading(e: boolean): void {
+    console.log(`changeLoading ${this.field}`,e);
     this.Loading = e;
+    console.log('selected',`'${this.Selected}'`);
+    console.log(this.SelectedOption);
+
+    /*
     if(this.SelectedOption){
       this.SelectedOption = null;
     }
+    */
     //this.searchItem = this.Selected || '';
-    console.log('changeLoading',this.Loading);
   }
 
   onSelect(event: TypeaheadMatch): void {
+    console.log('onSelect',event);
+
     this.SelectedOption = event.item;
-    console.log('onSelect',this.SelectedOption);
+//    console.log('onSelect',this.SelectedOption);
     this.changeValue.emit({field:this.field, value:this.SelectedOption});
   }
 
   onPreview(event: TypeaheadMatch): void {
+    console.log('onPreview',event)
+    /*
     if (event) {
       this.PreviewOption = event.item;
     } else {
       this.PreviewOption = null;
     }
     console.log('onPreview',this.PreviewOption);
+    */
   }
+  onBlur(){
+    console.log(`onBlur`);
+    console.log(`onBlur selected '${this.Selected}'`);
 
+  }
 }

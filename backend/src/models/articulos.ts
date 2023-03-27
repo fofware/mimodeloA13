@@ -19,15 +19,15 @@ export interface IArticulo extends Document {
   //formula: [];
   //beneficios: [];
   //extradata: [];
-  presentaciones: [];
+  //presentaciones: [];
   //
-  private_web: boolean;
+  //private_web: boolean;
   image: string;
   images: [];
   videos: [];
   url: string;
   //
-  margen: number;
+  //margen: number;
 };
 
 const articuloSchema = new Schema({
@@ -48,15 +48,15 @@ const articuloSchema = new Schema({
   //
   detalles: { type: Schema.Types.String, trim: true, default: '' },
   //
-  presentaciones: [{ ref: "Presentacion", type: Schema.Types.ObjectId }],
+  //presentaciones: [{ ref: "Presentacion", type: Schema.Types.ObjectId }],
   //
-  private_web: {type: Schema.Types.Boolean, default: false, index: true },
+  //private_web: {type: Schema.Types.Boolean, default: false, index: true },
   image: { type: Schema.Types.String, trim: true, required: false },
   images: [{ type: Schema.Types.String, trim: true, required: false }],
   videos:[{ type: Schema.Types.String, trim: true, required: false }],
   url: { type: Schema.Types.String, trim: true, required: false, default:'' },
-  iva: { type: Schema.Types.Number, default: 0},
-  margen: { type: Schema.Types.Number, default: 35},
+  //iva: { type: Schema.Types.Number, default: 0},
+  //margen: { type: Schema.Types.Number, default: 35},
 },
 { 
   toJSON: { virtuals: true },

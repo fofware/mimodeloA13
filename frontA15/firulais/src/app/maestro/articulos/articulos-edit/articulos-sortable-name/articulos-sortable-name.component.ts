@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DraggableItemService, SortableModule } from 'ngx-bootstrap/sortable';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, tap } from 'rxjs';
 
 @Component({
   selector: 'app-articulos-sortable-name',
@@ -42,7 +42,9 @@ export class ArticulosSortableNameComponent implements OnInit {
 
   ngOnInit(): void {
     this.setData();
-    this.reset.subscribe(response => {
+    this.reset.pipe(
+      tap(data => console.log(data))
+    ).subscribe(response => {
       //console.log('reset',response);
       if(response && this.isLoaded){
         this.showItems = [];
@@ -109,14 +111,6 @@ export class ArticulosSortableNameComponent implements OnInit {
           */
       }
 
-      /*
-      if(itdata)
-        if(found){
-          this.showItems.push(itdata);
-        } else {
-          this.hidenItems.push(itdata);
-        }
-      */
     })
 
   }
