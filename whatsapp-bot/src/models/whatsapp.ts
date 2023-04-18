@@ -24,4 +24,16 @@ MessageSchema.on('index', error => {
   console.log(error);
 });
 
+MessageSchema.on('save', data => {
+  // "_id index cannot be sparse"
+  console.log("Save Data from Schema");
+  console.log(data);
+});
+
+MessageSchema.on('update', data => {
+  // "_id index cannot be sparse"
+  console.log("Update Data from Schema");
+  console.log(data);
+});
+
 export default model<WappMessage>('message', MessageSchema);

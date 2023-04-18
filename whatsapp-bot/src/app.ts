@@ -19,6 +19,7 @@ import { importCtrl } from './controlers/importControler';
 import whatsapp from './models/whatsapp';
 import contacts from './models/contacts';
 import { WAG_Clients } from './wapplib';
+import { WAGControler } from './controlers/whatsappControlers';
 
 
 //import { articuloCtrl } from './controlers/articuloControler';
@@ -62,124 +63,7 @@ router.get('/media/:file', (req, res) => {
   res.send(buffer);
 });
 
-router.get('/phones', async (req:Request, res:Response) => {
-  const pl = await phones.find();
-  res.status(200).json(pl);
-})
-
-router.get('/phones/:id', async (req:Request, res:Response) => {
-  const id = req.params.id;
-  const pl = await phones.find({user: id});
-  res.status(200).json(pl);
-})
-router.get(`/messages/:num`, async (req, res) =>{
-  const {num} = req.params
-  try {
-    const messages = await whatsapp.find({$or:[{from: `${num}@c.us`},{to: `${num}@c.us`}]}).sort({ timestamp: -1}).limit(200)
-    res.status(200).json(messages);
-  } catch (error) {
-    res.status(404).json('Phone not found')    
-  }
-});
-router.get(`/estados/:num`, async (req, res) =>{
-  const {num} = req.params
-  try {
-    const messages = await whatsapp.find({from: `status@broadcast`, to: `${num}@c.us`}).sort({ timestamp: -1}).limit(200)
-    res.status(200).json(messages);
-  } catch (error) {
-    res.status(404).json('Phone not found')    
-  }
-});
-router.get(`/chat/:num/:to`, async (req, res) =>{
-  const {num, to} = req.params
-  try {
-    const messages = await whatsapp.find(
-      {
-        $or:[
-          {from: `${num}@c.us`, to: `${to}@c.us`},
-          {from: `${to}@c.us`, to:`${num}@c.us`}
-        ]
-      }
-    ).sort({ timestamp: -1}).limit(200)
-    res.status(200).json(messages);
-  } catch (error) {
-    res.status(404).json('Phone not found')    
-  }
-});
-router.get(`/contacts/:num`, async (req, res) =>{
-  const {num} = req.params;
-  const {client} = WAG_Clients[num];
-  if(client){
-    const rcontactos = await client.getContacts();
-    const datArray = []
-    const contactos = rcontactos.filter(c => c.id.server !== 'lid');
-    contactos.map( async c => {
-      datArray.push(c.getAbout());
-      datArray.push(c.getChat());
-      datArray.push(c.getProfilePicUrl());
-      datArray.push(c.getFormattedNumber());
-      datArray.push(c.getCommonGroups());
-    })
-    const results = await Promise.all(datArray)
-    //console.log(results);
-    let i = 0;
-    /*
-    contactos.map(c => {
-      c['chat'] = results[0+i];
-      c['picUrl'] = results[1+i];
-      c['fNumber'] = results[2+i];
-      c['cGroups'] = results[3+i];
-      i+=4;
-    })
-    */
-    contactos.map(c => {
-      c['about'] = results[0+i];
-      c['chat'] = results[1+i];
-      c['picUrl'] = results[2+i];
-      c['fNumber'] = results[3+i];
-      c['cGroups'] = results[4+i];
-      i+=5;
-    })
-    const tosave = [];
-    /*
-    contactos.map( c => {
-      const filter = {
-        from: client.info.wid.user,
-        phone: c.id.user
-      }
-      const reg = Object.assign({}, filter, c);
-      tosave.push(contacts.findOneAndUpdate(filter,reg,{
-        new: true,
-        upsert: true
-      }))
-    })
-    const ret = await Promise.all(tosave);
-    */
-    res.status(200).json(contactos);
-  }
-/*
-  try {
-    const messages = await contacts.find(
-      {from: `${num}`}
-    ).sort({ timestamp: -1})//.limit(500)
-    res.status(200).json(messages);
-  } catch (error) {
-    res.status(404).json('Phone not found')    
-  }
-*/
-});
-
-router.get(`/test/:num`, async (req, res) =>{
-  const {num} = req.params
-  const {client} = WAG_Clients[num];
-  try {
-    const messages = await client.getChats();
-    res.status(200).json(messages);
-  } catch (error) {
-    res.status(404).json('Phone not found')    
-  }
-});
-
+app.use(WAGControler);
 app.use(importCtrl.router);
 app.use(router);
 app.disable('etag');

@@ -37,11 +37,8 @@ export class WAG_Client {
       console.log('auth_failure')
       await this.io.to(this.phone).emit('auth_failure',err);
       console.error(err);
-      //reject(null);
-      //resolve(null);
     });
     this.client.on('authenticated', async (session) => {
-      console.log('authenticated')
       console.log(`Authenticated`,this.phone);
     });
     this.client.on('change_battery', async (batteryInfo) => {
@@ -113,12 +110,12 @@ export class WAG_Client {
           const mediadata = await this.saveMedia(msg);
           //msg['contact'] = contact;
           //msg['chat'] = chat;
+          const ret = await this.saveMsg(msg,'message');
     
           await this.io.to(this.client.info.wid.user).emit('message',{ msg, phone });
           //await io.to(phone).emit('message',{ msg, contact, chat, phone });
           //await io.to(p.rooms).emit('message',msg,mediadata);
     
-          const ret = await this.saveMsg(msg,'message');
           this.procesaMsg(msg);
   
         /*
