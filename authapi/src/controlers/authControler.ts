@@ -9,7 +9,7 @@ import { ExtractJwt } from "passport-jwt";
 import jwt from 'jsonwebtoken';
 import config from '../config';
 import  RefreshToken  from '../models/refreshToken'
-const request = require('request-promise');
+//const request = require('request-promise');
 
 function createToken(user: IUser | any ) {
   return jwt.sign({ _id: user._id, 
@@ -54,10 +54,10 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     }
   }
 
-  const captchaRpta = JSON.parse(await request.get(
-    {
-        url: `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}&remoteip=${userIp}`,
-    }));
+  //const captchaRpta = JSON.parse(await request.get(
+  //  {
+  //      url: `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}&remoteip=${userIp}`,
+  //  }));
     //.then((response) => {
     //  console.log(response)
     //// If response false return error message
@@ -68,9 +68,9 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     //    return response
     //})
   console.log('-------------------')
-  console.log(captchaRpta);
-  if ( captchaRpta.score < .7 )
-    return res.status(401).json({ title: 'Hmmm....', text: 'Parece no ser humano...' })
+  //console.log(captchaRpta);
+  //if ( captchaRpta.score < .7 )
+  //  return res.status(401).json({ title: 'Hmmm....', text: 'Parece no ser humano...' })
   console.log(req.body);
   const user = {
     email: req.body.email,

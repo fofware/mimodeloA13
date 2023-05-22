@@ -19,17 +19,26 @@ export const appRoutes: Routes = [
   {
     path: 'coso',
     loadComponent: () => import('./common/header/header.component').then(mod => mod.HeaderComponent),
-    resolve: { contact: () => getContact(0) },
+    resolve: {
+      contact: async () => getContact(0),
+      numero: () => 3
+    },
   },
   {
     path: 'coso1',
     loadComponent: () => import('./common/header/header.component').then(mod => mod.HeaderComponent),
-    resolve: { contact: () => getContact(1) },
+    resolve: {
+      contact: () => getContact(1),
+      algo: () => 'asdfasdf'
+    },
   },
   {
     path: 'coso2',
     loadComponent: () => import('./common/header/header.component').then(mod => mod.HeaderComponent),
-    resolve: { contact: () => getContact(2) },
+    resolve: {
+      contact: () => getContact(2),
+      algo: () => 'asdfasdf'
+    },
   },
   {
     path: '',

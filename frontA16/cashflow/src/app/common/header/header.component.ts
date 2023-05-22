@@ -12,8 +12,14 @@ import { ActivatedRoute } from '@angular/router';
 export class HeaderComponent implements OnInit {
   data:any = inject(ActivatedRoute).snapshot.data;
   @Input({required: true}) contact!: string;
+  @Input({required: true}) algo = 'pepe';
+  @Input({required: true}) pirulo!: string;
+  @Input() numero!: number;
+
   ngOnInit(): void {
     console.log(this.data)
+    console.log(this.algo, this.contact);
+    console.log(this.numero+2);
   }
 
 }

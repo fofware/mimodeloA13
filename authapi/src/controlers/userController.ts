@@ -103,8 +103,9 @@ class UserControler {
 	}
 
 	async profile(req: Request, res: Response) {
-		//console.log(req.user);
-		const user = await User.findById(req.user['_id'],{ password: 0 });
+		console.log(req.user);
+		const usr:any = req.user;
+		const user = await User.findById(usr['_id'],{ password: 0 });
 		console.log("----------------- profile -------------------------");
 		console.log(user)
 		res.json(user);
