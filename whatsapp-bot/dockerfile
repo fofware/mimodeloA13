@@ -7,8 +7,12 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 COPY package*.json ./
+
 ENV PUPPETEER_SKIP_DOWNLOAD='true'
+
 RUN npm install
+
+RUN npm audit fix
 
 COPY . .
 

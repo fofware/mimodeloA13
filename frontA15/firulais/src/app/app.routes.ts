@@ -53,10 +53,17 @@ export const appRoutes: Routes = [
     loadChildren: () => import('./whatsapp/whatsapp.routes')
                         .then(mod => mod.WHATS_APP_ROUTE)
   },
+  /*
   {path: 'maestro',
     canMatch: [() => inject(AuthService).isLogged],
     loadChildren: () => import('./maestro/maestro.routes')
                         .then(mod => mod.MAESTRO_ROUTES)
+  },
+  */
+  {path: 'mp',
+    canMatch: [() => inject(AuthService).isLogged],
+    loadChildren: () => import('./mp/mp.routes')
+                        .then(mod => mod.MP_ROUTES)
   },
   {
     path: 'admin',
@@ -64,6 +71,14 @@ export const appRoutes: Routes = [
     loadChildren: () => import('./admin/admin.routes')
                         .then(mod => mod.ADMIN_ROUTE)
   },
+  /*
+  {
+    path: 'compras',
+    canMatch: [() => inject(AuthService).isLogged],
+    loadChildren: () => import('./compras/compras.routes')
+                        .then(mod => mod.COMPRAS_ROUTES)
+  },
+  */
   {
     path: '', redirectTo: 'home', pathMatch: 'full'
   },

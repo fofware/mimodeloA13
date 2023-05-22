@@ -15,12 +15,24 @@ export const ADMIN_ROUTE: Routes = [
         loadChildren: () => import('../maestro/maestro.routes').then( mod => mod.MAESTRO_ROUTES)
       },
       {
-        path: 'mp',
-        loadChildren: () => import('../mp/mp.routes').then( mod => mod.MP_ROUTE)
+        path: 'compras',
+        loadChildren: () => import('../compras/compras.routes').then( mod => mod.COMPRAS_ROUTES)
       },
       {
-        path: '', 
-        redirectTo: 'menu', 
+        path: 'ventas',
+        loadChildren: () => import('../ventas/ventas.routes').then( mod => mod.VENTAS_ROUTES)
+      },
+      {
+        path: 'mp',
+        loadChildren: () => import('../mp/mp.routes').then( mod => mod.MP_ROUTES)
+      },
+      {
+        path: 'finanzas',
+        loadChildren: () => import('../finanzas/finanzas.routes').then( mod => mod.FINANZAS_ROUTES)
+      },
+      {
+        path: '',
+        redirectTo: 'menu',
         pathMatch: 'full'
       }
     ]

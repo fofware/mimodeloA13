@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-export const MP_ROUTE: Routes = [
+export const MP_ROUTES: Routes = [
   {
     path: '',
     loadComponent: () => import('./mp.component').then(mod => mod.MpComponent),

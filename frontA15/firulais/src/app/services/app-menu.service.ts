@@ -2,6 +2,43 @@ import { Injectable } from '@angular/core';
 
 export const menudata = [
   {
+    id: 'finanzas',
+    data: {
+      title: 'Finanzas',
+      comment: '',
+      icon: 'fas fa-home fa-4x',
+      menu: [
+        {
+          title: 'Categorías',
+          icon: 'fas fa-cogs fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: '../',
+          param: 'categorias'
+        },
+        {
+          title: 'Cuentas',
+          icon: 'fas fa-cogs fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: 'cuentas',
+          param: ''
+        },
+        {
+          title: 'Cajas',
+          icon: 'fas fa-folder fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: '../',
+          param: 'maestro'
+        },
+      ]
+    }
+  },
+  {
     id: 'admin',
     data: {
       title: 'Administración',
@@ -39,19 +76,28 @@ export const menudata = [
           title: 'Compras',
           icon: 'fas fa-file-invoice-dollar fa-3x',
           permiso: 'moderator',
-          target: '_blank',
+          target: '',
           rel: 'noopener',
-          route: 'compras',
-          param: ''
+          route: '../',
+          param: 'compras'
         },
         {
           title: 'Ventas',
           icon: 'fas fa-cash-register fa-3x',
           permiso: 'moderator',
-          target: '_blank',
+          target: '',
           rel: 'noopener',
-          route: 'ventas',
-          param: ''
+          route: '../',
+          param: 'ventas'
+        },
+        {
+          title: 'Finanzas',
+          icon: 'fas fa-chart-line fa-3x',
+          permiso: 'moderator',
+          target: '',
+          rel: 'noopener',
+          route: '../',
+          param: 'finanzas'
         },
         {
           title: 'Reportes',

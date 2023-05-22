@@ -2495,3 +2495,5 @@ frontA15/firulais/src/assets/images/zoetis/simparica/SIMPARICA-40-A-60.png
 frontA15/firulais/src/app/maestro/articulos/articulo-edit.service.ts
 frontA15/firulais/src/environments/environment.prod.ts
 frontA15/firulais/src/environments/environment.ts
+googleapi/credenciales/firulais_sheet.json
+googleapi/credenciales/fofware_google_sheet.json
