@@ -10,7 +10,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-  data:any = inject(ActivatedRoute).snapshot.data;
+  data:any = inject(ActivatedRoute).snapshot;
   @Input({required: true}) contact!: string;
   @Input({required: true}) algo = 'pepe';
   @Input({required: true}) pirulo!: string;
