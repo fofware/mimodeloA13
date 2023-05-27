@@ -1,0 +1,50 @@
+<div class="container-fluid navbar-dark bg-primary position-relative">
+  <!--app-notify-btn></app-notify-btn>
+  <app-signin-btn
+    (newLoginEvent)="setLoginEvent($event)"
+  ></app-signin-btn-->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary py-0">
+    <div class="container-fluid">
+      <div class="d-flex align-items-center justify-content-center">
+        <img width="40" alt="Brand Logo" src="favicon.ico" />
+        <a class="navbar-brand fs-2 ms-2" routerLink="/" (click)='isMenuCollapsed = true'>Firulais</a>
+        <a class="navbar-brand fs-6"
+          href="https://wa.me/+5493624683656"
+          (click)='isMenuCollapsed = true'
+        >
+          <i class="fa-brands fa-whatsapp fa-1x"></i> +54 9 (362) 468-3656
+        </a>
+      </div>
+      <div class="d-flex">
+        <button
+          class="navbar-toggler align-self-center"
+          type="button"
+          (click)='isMenuCollapsed = !isMenuCollapsed'
+          >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+      <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse d-flex align-items-center">
+        <!--ul ngbNav [activeId]="_activatedRoute.fragment | async" class="nav-tabs">
+          <li [ngbNavItem]="link.fragment" *ngFor="let link of usrMenu">
+            <a ngbNavLink routerLink="." [fragment]="link.fragment">{{ link.title }}</a>
+          </li>
+        </ul-->
+
+        <ul ngbNav [activeId]="_activatedRoute.fragment | async" class="navbar-nav">
+          <li class="fs-6" [ngbNavItem]="menu.link" *ngFor="let menu of usrMenu">
+            <a ngbNavLink *ngIf="(menu.link && !menu.fragment)" [hidden]='menu.hidden || false' [routerLink]="menu.link" routerLinkActive="active" [innerHTML]="menu.title" (click)="isMenuCollapsed=true"></a>
+            <a ngbNavLink *ngIf="(menu.link && menu.fragment)" [hidden]='menu.hidden || false' [routerLink]="menu.link" [fragment]="menu.fragment" routerLinkActive="active" [innerHTML]="menu.title"></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="d-flex align-items-center justify-content-center">
+      <!--app-wapp-btn *ngIf="isLogged"></!--app-wapp-btn-->
+      <app-wapp-btn class="mx-2"></app-wapp-btn>
+      <app-alert-btn class="mx-2"></app-alert-btn>
+      <app-user-btn class="mx-2"></app-user-btn>
+    </div>
+  </nav>
+</div>
+

@@ -1,4 +1,5 @@
 import express from 'express';
+import { Router } from "express";
 import path from 'path'
 import morgan from 'morgan';
 import cors from 'cors';
@@ -8,6 +9,13 @@ import config from './config';
 import { userCtrl } from './controlers/userController';
 import authRoutes from './routes/authRoutes';
 const app = express();
+
+const router = Router();
+
+router.get('/', (req, res) => {
+  res.status(200).json(process.env);
+});
+
 if(config.public)
   app.use(express.static(path.join(__dirname,config.public)));
 app.use(morgan('common'));
@@ -23,4 +31,5 @@ passport.use(passportMiddelware);
 app.disable('etag');
 app.use(userCtrl.router);
 app.use(authRoutes);
+app.use(router);
 export default app;

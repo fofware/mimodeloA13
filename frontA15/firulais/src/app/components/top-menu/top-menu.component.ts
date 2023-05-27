@@ -7,7 +7,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthBtnComponent } from 'src/app/auth/auth-btn/auth-btn.component';
 import { WappBtnComponent } from 'src/app/whatsapp/wapp-btn/wapp-btn.component';
 
-
 @Component({
   selector: 'app-top-menu',
   standalone: true,
