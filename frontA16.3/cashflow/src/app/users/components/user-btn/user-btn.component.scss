@@ -1,0 +1,15 @@
+img {
+  width: 38px;
+  height: 38px;
+}
+.arriba {
+  z-index: 2000;
+}
+.dropdown-toggle::after {
+  border-top: 0;
+  z-index: 2000;
+}
+.logform {
+  width: 300px;
+  z-index: 2000;
+}

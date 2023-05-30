@@ -1,10 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbCollapse, NgbNav, NgbNavItem, NgbNavLink } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
-import { UserBtnComponent } from '../user-btn/user-btn.component';
+import { UserBtnComponent } from '../../users/components/user-btn/user-btn.component';
 import { AlertBtnComponent } from '../alert-btn/alert-btn.component';
 import { WappBtnComponent } from '../wapp-btn/wapp-btn.component';
+import { isLogged } from 'src/app/users/services/auth.service';
 
 export interface iTopMenu {
   title: string,
@@ -38,19 +39,28 @@ export interface iTopMenu {
 })
 export class TopMenuComponent {
   public isMenuCollapsed = true;
-  public isLogged = false;
+  public isLogged = isLogged;
+  public screenWidth = window.innerWidth;
+  public screenHeight = window.innerHeight;
+
   user:any = {
   };
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event?:any) {
+    this.screenWidth = window.innerWidth;
+    this.screenHeight = window.innerHeight;
+  }
 
   public defmenu:iTopMenu[] = [
     { title: '<i class="fas fa-home-lg"></i>', link: 'home' },
     //{ title: 'Marcas', link: ['marca'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user' ] },
-    { title: 'Articulos', link: ['articulos'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user'] },
+    { title: 'Articulos', link: ['articulos'] },
     //{ title: 'Productos', link: ['productos'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user'] },
-    { title: 'Aplicaciones', link: ['admin'], hidden: this.isLogged, roles: ['sys_admin', 'sys_user'] },
-    { title: 'Aplicaciones', link: ['user'], hidden: this.isLogged, roles: ['client_admin', 'client_user'] },
-    { title: 'WhatsApp', link: ['whatsapp'], hidden: this.isLogged, roles: ['sys_admin', 'sys_user'] },
-    { title: 'WhatsApp', link: ['whatsapp'], hidden: this.isLogged, roles: ['client_admin', 'client_user'] },
+    { title: 'Aplicaciones', link: ['admin'], hidden: isLogged(), roles: ['sys_admin', 'sys_user'] },
+    { title: 'Aplicaciones', link: ['user'], hidden: isLogged(), roles: ['client_admin', 'client_user'] },
+    { title: 'WhatsApp', link: ['whatsapp'], hidden: isLogged(), roles: ['sys_admin', 'sys_user'] },
+    { title: 'WhatsApp', link: ['whatsapp'], hidden: isLogged(), roles: ['client_admin', 'client_user'] },
     //{ title: 'Socket', link: ['socketdata'], roles: ['sys_admin', 'sys_user'] },
     //{ title: 'HttpData', link: ['htmldata'], roles: ['sys_admin', 'sys_user'] },
     //{ title: 'Usuarios', link: ['users'], roles: ['sys_admin', 'sys_user'] },
@@ -65,6 +75,7 @@ export class TopMenuComponent {
 
   ngOnInit(): void {
 //    this.user = this._authService.userValue;
+    this.onResize();
     this.setMenu();
   }
 
@@ -79,7 +90,6 @@ export class TopMenuComponent {
         return false;
       } return true;
     })
-    this.usrMenu = this.defmenu
     console.log("Menu",this.usrMenu);
   }
 
