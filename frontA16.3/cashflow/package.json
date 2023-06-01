@@ -21,6 +21,7 @@
     "@ng-bootstrap/ng-bootstrap": "^15.0.0",
     "@popperjs/core": "^2.11.6",
     "bootstrap": "^5.2.3",
+    "ng-recaptcha": "^12.0.1",
     "rxjs": "~7.8.0",
     "socket.io-client": "^4.6.1",
     "tslib": "^2.3.0",

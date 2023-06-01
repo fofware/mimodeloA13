@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService, isLogged, loggedUser } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { UsersService, userAlerts, userIsLogged, userLogged } from '../../services/users.service';
 
 @Component({
   selector: 'app-user-btn',
@@ -23,7 +23,7 @@ export class UserBtnComponent {
     password: ''
   }
 
-  _authService = inject(AuthService);
+  _authService = inject(UsersService);
 //  _activatedRoute = inject(ActivatedRoute);
 //  _router = inject(Router)
 
@@ -67,9 +67,12 @@ export class UserBtnComponent {
     //this._router.navigate(['/user/profile']);
   }
   get _loggedUser(){
-    return loggedUser;
+    return userLogged;
   }
   get isLogged(){
-    return isLogged;
+    return userIsLogged;
+  }
+  get alerts(){
+    return userAlerts;
   }
 }

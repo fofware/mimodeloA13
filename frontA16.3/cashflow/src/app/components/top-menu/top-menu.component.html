@@ -26,7 +26,11 @@
             <i class="fa-brands fa-whatsapp fa-1x"></i> +54 9 (362) 468-3656
           </a>
         </li>
-        <li class="fs-6" [ngbNavItem]="menu.link" *ngFor="let menu of usrMenu">
+        <!--li class="fs-6" [ngbNavItem]="menu.link" *ngFor="let menu of usrMenu">
+          <a ngbNavLink *ngIf="(menu.link && !menu.fragment)" [hidden]='menu.hidden || false' [routerLink]="menu.link" routerLinkActive="active" [innerHTML]="menu.title" (click)="isMenuCollapsed=true"></a>
+          <a ngbNavLink *ngIf="(menu.link && menu.fragment)" [hidden]='menu.hidden || false' [routerLink]="menu.link" [fragment]="menu.fragment" routerLinkActive="active" [innerHTML]="menu.title"></a>
+        </li-->
+        <li class="fs-6" [ngbNavItem]="menu.link" *ngFor="let menu of nickname">
           <a ngbNavLink *ngIf="(menu.link && !menu.fragment)" [hidden]='menu.hidden || false' [routerLink]="menu.link" routerLinkActive="active" [innerHTML]="menu.title" (click)="isMenuCollapsed=true"></a>
           <a ngbNavLink *ngIf="(menu.link && menu.fragment)" [hidden]='menu.hidden || false' [routerLink]="menu.link" [fragment]="menu.fragment" routerLinkActive="active" [innerHTML]="menu.title"></a>
         </li>

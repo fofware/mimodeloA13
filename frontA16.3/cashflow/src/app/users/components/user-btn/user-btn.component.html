@@ -1,17 +1,4 @@
 <div class="mx-2 position-relative" ngbDropdown #myDrop="ngbDropdown"  style="color: #ededed;">
-  <!--button type="button" class="btn btn-primary rounded-circle position-relative"
-    id="authdropdownForm"
-    ngbDropdownToggle
-    style="
-      width: 40px;
-      height: 40px;
-      background-image: url({{ _loggedUser().image }});
-      background-size: contain;
-      background-position: center;
-      background-repeat: no-repeat;"
-      >
-    <span *ngIf="isLogged()" class="position-absolute top-0 start-100 translate-middle bg-danger badge rounded-pill mt-1">+99 <span class="visually-hidden">unread messages</span></span>
-  </button-->
   <button
     ngbDropdownToggle
     class="btn  btn-outline-light rounded-circle position-relative"
@@ -19,9 +6,12 @@
     <img src="{{_loggedUser().image}}" alt=""
       class="position-absolute top-50 start-50 translate-middle"
     >
-    <span *ngIf="isLogged()" class="position-absolute top-0 start-100 translate-middle bg-danger badge rounded-pill mt-1">+99 <span class="visually-hidden">unread messages</span></span>
+    <span *ngIf="alerts().length" class="position-absolute top-0 start-100 translate-middle bg-danger badge rounded-pill mt-1">
+      {{alerts().length}}
+      <span class="visually-hidden">unread messages</span>
+    </span>
   </button>
-  <div class="dropdown-menu dropdown-menu-end dropdown-menu-lg-end logform" ngbDropdownMenu aria-labelledby="authdropdownForm">
+  <div class="dropdown-menu pt-0 dropdown-menu-end dropdown-menu-lg-end logform" ngbDropdownMenu aria-labelledby="authdropdownForm">
     <div  *ngIf="isLogged(); then viewLogged; else viewLogin" ></div>
   </div>
   <ng-template #viewLogin>
@@ -43,11 +33,13 @@
       <button type="submit" class="btn btn-primary" (click)="$event.stopPropagation();login(myDrop)">Sign in</button>
     </form>
     <div class="dropdown-divider"></div>
-    <button type="button" ngbDropdownItem [routerLink]="['/signup']">Registarse</button>
+    <button type="button" ngbDropdownItem [routerLink]="['user/signup']">Registarse</button>
     <button type="button" ngbDropdownItem>Forgot password?</button>
   </ng-template>
   <ng-template #viewLogged>
+    <div class="text-bg-info rounded-top p-2 mb-2"><h5>{{_loggedUser().nickname}}</h5></div>
     <!--div ngbDropdownMenu aria-labelledby="authdropdownForm" class="dropdown-menu dropdown-menu-md-start dropdown-menu-lg-end logform"-->
+      <button type="button" ngbDropdownItem (click)="$event.stopPropagation();myDrop.close;profile()">Profile</button>
       <button type="button" ngbDropdownItem (click)="$event.stopPropagation();myDrop.close;profile()">Profile</button>
       <div class="dropdown-divider"></div>
       <button type="button" (click)="$event.stopPropagation();myDrop.close;logout()" ngbDropdownItem>Logout</button>

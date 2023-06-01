@@ -12,10 +12,21 @@ export interface ResponseUser {
 }
 
 export interface User {
-  id: string;
-  email: string;
+  id?: string;
+  email?: string;
   nickname: string;
-  avatar: string;
-  nombre: string;
-  apellido: string;
+  image: string;
+  nombre?: string;
+  apellido?: string;
+  exp?: number;
+  iat?: number;
+  roles: string[];
+  subType?: string;
+  type?: string;
+}
+
+export const unknowUser: User = {
+  nickname: 'Visitante',
+  image: '/assets/images/defuser.png',
+  roles: []
 }

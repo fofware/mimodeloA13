@@ -1,0 +1,168 @@
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
+//import { userService } from '../../services/auth.service';
+import { Router } from '@angular/router';
+import { RecaptchaV3Module, ReCaptchaV3Service } from 'ng-recaptcha';
+import { eMailValidation } from '../validators/email-exists.validator';
+import { UniqueMailValidator } from '../validators/unique-mail-validator.directive';
+import { UsersService } from '../../services/users.service';
+
+@Component({
+  selector: 'app-sign-up',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RecaptchaV3Module
+  ],
+  templateUrl: './sign-up.component.html',
+  styleUrls: ['./sign-up.component.css']
+})
+
+export class SignUpComponent {
+  regexmail =  '^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$';
+  regexmail1 = `^[a-z0-9\.]+@([a-z0-9\.]+)+[a-z0-9]{2,4}$`
+  private destroy$ = new Subject<any>();
+  captchaResolved = false;
+  private fb = inject(FormBuilder);
+  private recaptchaV3Service = inject(ReCaptchaV3Service);
+  private userService = inject(UsersService);
+  private uniquemail = inject(UniqueMailValidator)
+  private router = inject(Router);
+  formParent = this.fb.group({
+    nombre: ['',
+      [
+        Validators.required,
+        Validators.minLength(3)
+      ]],
+    apellido: [''],
+    email: ['',
+      {
+        validators:[
+          Validators.required,
+          Validators.pattern(this.regexmail1),
+        ],
+        asyncValidators: [
+          this.uniquemail.validate.bind(this.uniquemail)
+        ],
+        updateOn: 'blur'
+      }
+    ],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    repassword: ['', [Validators.required, eMailValidation.MatchPassword('password')]],
+    phone: ['',[
+      Validators.minLength(10),
+      //Validators.maxLength(13),
+      Validators.pattern(`^[0-9]+$`)]],
+    captcha: ['', []]
+  });
+  //constructor() { }
+
+  ngOnInit(): void {
+    console.log("SignUp")
+  }
+
+  ngOndestroy(){
+    this.destroy$.next({});
+    this.destroy$.complete();
+  }
+
+//  ngAfterViewInit():void{
+//    setTimeout(() => {
+//      // turn off any input field
+//      document.querySelectorAll('input').forEach((element) => {
+//        element.setAttribute('autocomplete', 'off');
+//      });
+//      document.querySelectorAll('textarea').forEach((element) => element.setAttribute('autocomplete', 'off'));
+//
+//      // this code disable address fields
+//      /*
+//      document.querySelector('#address-form-google-search').setAttribute('autocomplete', 'nope');
+//      if (/Edg/.test(navigator.userAgent)) {
+//        this.setAddressFields('additional-name');
+//      } else {
+//        this.setAddressFields('nope');
+//      }
+//
+//      // other fields may still save the information by looking at name, here we randomize the name
+//      const random = Math.random();
+//      document.querySelectorAll('input').forEach((element) => {
+//        if (element.id !== 'address-form-google-search') {
+//          element.setAttribute('name', element.name + '_' + random);
+//        }
+//      });
+//      */
+//    }, 500);
+//  }
+/*
+  checkEmail(){
+    const values = this.formParent.value;
+    console.log(values)
+    //if(values.email)
+    //  this.userService.emailFind(values.email).pipe(map())
+  }
+  */
+  enviar(){
+
+    this.recaptchaV3Service
+      .execute('registerCustomer')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((token: string) => {
+        console.log(`Token [${token}] generated`);
+        this.formParent.patchValue({'captcha': token})
+        console.log("Envia", this.formParent.value);
+        this.userService.signUp(this.formParent.value).subscribe(data => {
+          console.log(data)
+          const user = {
+            email: this.formParent.value.email,
+            password: this.formParent.value.password,
+            nombre: this.formParent.value.nombre,
+            apellido: this.formParent.value.apellido,
+            phone: this.formParent.value.phone
+          }
+          this.userService.signIn(user).subscribe(res => {
+            //setTimeout(function(){
+              this.router.navigate(['/user/profile']);
+            //}, 2000);
+          })
+        })
+    });
+  }
+
+  isInvalid(fieldname:string){
+    const campo = this.formParent.get(fieldname);
+    if(campo?.touched){
+      console.log(fieldname,campo?.invalid,campo?.touched,campo?.invalid && campo?.touched);
+      console.log(campo);
+      return campo?.invalid && campo?.touched;
+    }
+    return false;
+  }
+
+  /*
+  SetDefault(){
+    const contact = {
+      name: '',
+      email: '',
+      celular: '',
+      password: '',
+      repassword: '',
+      //captcha: null
+    }
+    this.formParent.setValue(contact);
+  }
+
+  resetForm():void{
+    this.formParent.reset();
+  }
+
+  checkCaptcha(captchaResponse : any) {
+    console.log(captchaResponse)
+    this.captchaResolved = (captchaResponse && captchaResponse.length > 0) ? true : false
+  }
+  */
+
+}

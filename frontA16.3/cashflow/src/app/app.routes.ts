@@ -16,6 +16,13 @@ export const appRoutes: Routes = [
     loadComponent: () =>
       import('./components/home/home.component').then((mod) => mod.HomeComponent),
   },
+  {
+    path: 'user',
+    //canMatch: [() => inject(AuthService).isLogged],
+    loadChildren: () => import('./users/users.routes')
+                        .then(mod => mod.USERS_ROUTES)
+  },
+
   /*
   {
     path: 'coso',
