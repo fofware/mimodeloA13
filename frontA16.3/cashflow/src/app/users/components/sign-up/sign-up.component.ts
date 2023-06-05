@@ -1,13 +1,16 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { map, Subject, take, takeUntil, tap } from 'rxjs';
 //import { userService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { RecaptchaV3Module, ReCaptchaV3Service } from 'ng-recaptcha';
-import { eMailValidation } from '../validators/email-exists.validator';
-import { UniqueMailValidator } from '../validators/unique-mail-validator.directive';
+import { eMailValidation } from '../../../validators/email/email-exists.validator';
+import { UniqueMailValidator } from '../../../validators/email/unique-mail-validator.directive';
 import { UsersService } from '../../services/users.service';
+import { existWhatsAppValidator } from 'src/app/validators/whatsapp/whatsapp-exist.directive';
+import { WhatsApp, WhatsappService } from 'src/app/validators/whatsapp/whatsapp.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-sign-up',
@@ -19,7 +22,8 @@ import { UsersService } from '../../services/users.service';
     RecaptchaV3Module
   ],
   templateUrl: './sign-up.component.html',
-  styleUrls: ['./sign-up.component.css']
+  styleUrls: ['./sign-up.component.css'],
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class SignUpComponent {
@@ -30,8 +34,14 @@ export class SignUpComponent {
   private fb = inject(FormBuilder);
   private recaptchaV3Service = inject(ReCaptchaV3Service);
   private userService = inject(UsersService);
-  private uniquemail = inject(UniqueMailValidator)
+  private uniquemail = inject(UniqueMailValidator);
+  private existWapp = inject(existWhatsAppValidator);
+  public wappSvc = inject(WhatsappService);
   private router = inject(Router);
+  modalService = inject(NgbModal)
+  isWapp = false;
+  wappPic = ''
+  wapp:WhatsApp = {isWhatsapp: false}
   formParent = this.fb.group({
     nombre: ['',
       [
@@ -44,6 +54,7 @@ export class SignUpComponent {
         validators:[
           Validators.required,
           Validators.pattern(this.regexmail1),
+
         ],
         asyncValidators: [
           this.uniquemail.validate.bind(this.uniquemail)
@@ -53,16 +64,42 @@ export class SignUpComponent {
     ],
     password: ['', [Validators.required, Validators.minLength(6)]],
     repassword: ['', [Validators.required, eMailValidation.MatchPassword('password')]],
-    phone: ['',[
-      Validators.minLength(10),
-      //Validators.maxLength(13),
-      Validators.pattern(`^[0-9]+$`)]],
+    phone: ['',
+      {
+        validators:[
+          Validators.minLength(10),
+          //Validators.maxLength(13),
+          Validators.pattern(`^[0-9]+$`)
+        ],
+        /*
+        asyncValidators: [
+          this.existWapp.validate.bind(this.existWapp)
+        ]
+        */
+      }
+    ],
     captcha: ['', []]
   });
   //constructor() { }
 
   ngOnInit(): void {
     console.log("SignUp")
+  }
+
+  checkWapp(number:any){
+    console.log('CheckWapp',this.formParent.value.phone);
+    this.wappSvc.exist(`${this.formParent.value.phone}`)
+      .pipe(
+        takeUntil(this.destroy$),
+        tap(value => console.log(value)),
+        map(value => {
+          this.wapp = value;
+        })
+     ).subscribe();
+  }
+
+  open( content: any){
+    this.modalService.open(content, { centered: true, size: 'xl' })
   }
 
   ngOndestroy(){
@@ -135,8 +172,8 @@ export class SignUpComponent {
   isInvalid(fieldname:string){
     const campo = this.formParent.get(fieldname);
     if(campo?.touched){
-      console.log(fieldname,campo?.invalid,campo?.touched,campo?.invalid && campo?.touched);
-      console.log(campo);
+      //console.log(fieldname,campo?.invalid,campo?.touched,campo?.invalid && campo?.touched);
+      //console.log(campo);
       return campo?.invalid && campo?.touched;
     }
     return false;

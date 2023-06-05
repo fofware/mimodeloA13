@@ -1,14 +1,33 @@
+<ng-template #content let-modal>
+	<div class="modal-header  pb-1">
+		<h4 class=" flex-grow-1 modal-title text-center">{{wapp.user?.name || wapp.user?.shortName || wapp.user?.pushname}}</h4>
+
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body text-center pt-2">
+    <div class="fs-5">{{wapp.formatedNumber}}</div>
+    <img src="{{wapp.picUrl}}" alt="" style="width: 100%;">
+
+	</div>
+	<div class="modal-footer">
+    <div>{{wapp.about}}</div>
+		<!--button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button-->
+	</div>
+</ng-template>
 <div class="container">
-    <div class="d-flex justify-content-center align-items-centerc">
+    <div class="d-flex justify-content-center align-items-center">
       <div class="col-6 mt-5">
         <div class="card">
           <h3 class="card-header">Registro de usuario</h3>
           <div class="card-body">
 
-            <form class="need-validation" [formGroup]="formParent" autocomplete="off">
+            <form class="need-validation" [formGroup]="formParent" autocomplete="off" [ariaAutoComplete]="false" [autocomplete]="false">
               <div class="mb-3 form-field">
                 <label class="form-label">Nombres</label>
-                <input type="text" class="form-control" placeholder="Ej: Juan" formControlName="nombre"
+                <input type="text"
+                  class="form-control"
+                  placeholder="Ej: Juan"
+                  formControlName="nombre"
                   [ngClass]="{'is-invalid': isInvalid('nombre')}" />
                 <div class="invalid-feedback">
                 <!--
@@ -41,13 +60,50 @@
                 </div>
               </div>
               <div class="mb-3 form-field">
+                <label class="form-label">Nro Celular</label>
+                <ng-container *ngIf="wapp.isWhatsapp">
+                  <i class="fa-brands fa-whatsapp fa-1x mx-2"></i>
+                  <img class="rounded-circle"
+                    src="{{wapp.picUrl}}"
+                    style="width: 40px;"
+                    alt="" (click)="open(content)">
+                </ng-container>
+                <input type="text"
+                  class="form-control"
+                  placeholder="Ej: 5493624683356"
+                  formControlName="phone"
+                  (blur)="checkWapp(formParent.get('phone'))"
+                  [ngClass]="{ 'is-invalid': isInvalid('phone') }" />
+                <div class="invalid-feedback">
+                  <!--
+                para debug
+              {{formParent.get('phone')?.errors | json}}
+              {{formParent.get('phone')?.errors | json}}
+              -->
+                  <ul>
+                    <li *ngIf="formParent.get('phone')?.errors?.['minlength']">Deben ser
+                      {{formParent.get('phone')?.errors?.['minlength'].requiredLength}} números y tiene
+                      {{formParent.get('phone')?.errors?.['minlength'].actualLength}}</li>
+                    <li *ngIf="formParent.get('phone')?.errors?.['maxlength']">Deben ser
+                      {{formParent.get('phone')?.errors?.['maxlength'].requiredLength}} números y tiene
+                      {{formParent.get('phone')?.errors?.['maxlength'].actualLength}}</li>
+                    <li *ngIf="formParent.get('phone')?.errors?.['pattern']">Deben ser sólo números y tiene
+                      {{formParent.get('phone')?.errors?.['pattern'].actualValue}}</li>
+
+                  </ul>
+                </div>
+              </div>
+              <div class="mb-3 form-field">
                 <label class="form-label">Email address</label>
                 <input type="email"
+                  name="email"
                   class="form-control"
                   placeholder="Ej: name@example.com"
                   formControlName="email"
                   [ngClass]="{ 'is-invalid': isInvalid('email') }"
-                  autocomplete="new-email"
+                  autocomplete="off"
+                  [autocomplete]="formParent"
+                  [ariaAutoComplete]="formParent"
                 />
                 <div class="invalid-feedback">
                 <!--
@@ -67,15 +123,20 @@
               </div>
               <div class="mb-3 form-field">
                 <label class="form-label">Clave</label>
-                <input type="password" class="form-control" placeholder="Escriba una clave" formControlName="password"
+                <input type="password"
+                  class="form-control"
+                  placeholder="Escriba una clave"
+                  formControlName="password"
                   [ngClass]="{ 'is-invalid': isInvalid('password') }"
-                  autocomplete="new-password"
+                  autocomplete="off"
+                  [autocomplete]="formParent"
+                  [ariaAutoComplete]="formParent"
                 />
                 <div class="invalid-feedback">
                   <!--
-              para debug
-              {{formParent.get('email')?.errors | json}}
-              -->
+                    para debug
+                    {{formParent.get('email')?.errors | json}}
+                  -->
                   <ul>
                     <li *ngIf="formParent.get('password')?.errors?.['required']">No puede quedar en blanco y deben ser
                       al menos seis caracteres</li>
@@ -87,8 +148,12 @@
               </div>
               <div class="mb-3 form-field">
                 <label class="form-label">Vuelva a escribir la clave</label>
-                <input type="password" class="form-control" placeholder="Escriba nuevamente la clave"
-                  formControlName="repassword" [ngClass]="{ 'is-invalid': isInvalid('repassword') }" />
+                <input type="password"
+                  class="form-control"
+                  placeholder="Escriba nuevamente la clave"
+                  formControlName="repassword"
+                  [ngClass]="{ 'is-invalid': isInvalid('repassword') }"
+                   />
                 <div class="invalid-feedback">
                   <!--
               para debug
@@ -98,29 +163,6 @@
                     <li *ngIf="formParent.get('repassword')?.errors?.['required']">No puede quedar en blanco y debe
                       coincidir con la clave</li>
                     <li *ngIf="formParent.get('repassword')?.errors?.['matchPassword']">Debe cpincidir con la clave</li>
-                  </ul>
-                </div>
-              </div>
-              <div class="mb-3 form-field">
-                <label class="form-label">Nro Celular</label>
-                <input type="text" class="form-control" placeholder="Ej: 5493624683356" formControlName="phone"
-                  [ngClass]="{ 'is-invalid': isInvalid('phone') }" />
-                <div class="invalid-feedback">
-                  <!--
-                para debug
-              {{formParent.get('phone')?.errors | json}}
-              {{formParent.get('phone')?.errors | json}}
-              -->
-                  <ul>
-                    <li *ngIf="formParent.get('phone')?.errors?.['minlength']">Deben ser
-                      {{formParent.get('phone')?.errors?.['minlength'].requiredLength}} números y tiene
-                      {{formParent.get('phone')?.errors?.['minlength'].actualLength}}</li>
-                    <li *ngIf="formParent.get('phone')?.errors?.['maxlength']">Deben ser
-                      {{formParent.get('phone')?.errors?.['maxlength'].requiredLength}} números y tiene
-                      {{formParent.get('phone')?.errors?.['maxlength'].actualLength}}</li>
-                    <li *ngIf="formParent.get('phone')?.errors?.['pattern']">Deben ser sólo números y tiene
-                      {{formParent.get('phone')?.errors?.['pattern'].actualValue}}</li>
-
                   </ul>
                 </div>
               </div>

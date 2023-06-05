@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TopMenuComponent } from './components/top-menu/top-menu.component';
 import { RouterOutlet } from '@angular/router';
+import { NgbdToastComponent } from './components/ngbd-toast/ngbd-toast.component';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,8 @@ import { RouterOutlet } from '@angular/router';
   imports: [
     CommonModule,
     RouterOutlet,
-    TopMenuComponent
+    TopMenuComponent,
+    NgbdToastComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']

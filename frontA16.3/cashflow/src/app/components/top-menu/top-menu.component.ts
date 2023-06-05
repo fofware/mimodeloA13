@@ -1,4 +1,4 @@
-import { Component, inject, signal, HostListener, computed } from '@angular/core';
+import { Component, inject, signal, HostListener, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbCollapse, NgbNav, NgbNavItem, NgbNavLink } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
@@ -75,7 +75,7 @@ const defmenu:iTopMenu[] = [
   templateUrl: './top-menu.component.html',
   styleUrls: ['./top-menu.component.scss']
 })
-export class TopMenuComponent {
+export class TopMenuComponent implements OnInit {
   public isMenuCollapsed = true;
   public screenWidth = window.innerWidth;
   public screenHeight = window.innerHeight;

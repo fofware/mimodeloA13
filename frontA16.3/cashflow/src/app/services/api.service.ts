@@ -1,9 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { catchError, EMPTY, Observable, retry, throwError } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ToastService } from './toast.service';
-const ORI_API = environment.API_URL
 
 export interface iToast {
   animation?: boolean,
@@ -19,15 +17,21 @@ export interface iToast {
 export class ApiService {
   http = inject(HttpClient);
   toast = inject(ToastService);
+  ORI_API!:string;
+  
+  public set value (v : string) {
+    this.ORI_API = v;
+  }
+  
   get(fileName:string, data?:any, _headers={spinner: 'true'}, retError=false): Observable<any> {
     if(retError)
-      return this.http.get(`${ORI_API}${fileName}`, {params: data, headers: _headers })
+      return this.http.get(`${this.ORI_API}/${fileName}`, {params: data, headers: _headers })
         .pipe(catchError( (err) => {
           this.processError(err)
           return err
         }));
     else
-      return this.http.get(`${ORI_API}${fileName}`, {params: data, headers: _headers })
+      return this.http.get(`${this.ORI_API}/${fileName}`, {params: data, headers: _headers })
         .pipe(catchError( (err:HttpErrorResponse) => {
           this.processError(err)
           return EMPTY
@@ -48,13 +52,13 @@ export class ApiService {
   post(fileName:string, data?:any, _headers={spinner: 'true'}, retError=false): Observable<any> {
     console.log("service",data)
     if(retError)
-      return this.http.post(`${ORI_API}${fileName}`, data, {headers: _headers})
+      return this.http.post(`${this.ORI_API}/${fileName}`, data, {headers: _headers})
         .pipe(catchError( (err) => {
           this.processError(err)
           return err
         }));
     else
-      return this.http.post(`${ORI_API}${fileName}`, data, {headers: _headers})
+      return this.http.post(`${this.ORI_API}/${fileName}`, data, {headers: _headers})
         .pipe(catchError( (err:HttpErrorResponse) => {
           this.processError(err)
           return EMPTY
@@ -76,13 +80,13 @@ export class ApiService {
   put(fileName:string, data?:any, _headers={spinner: 'true'}, retError=false): Observable<any> {
     //console.log("service",fileName,data);
     if(retError)
-      return this.http.put(`${ORI_API}${fileName}`, data)
+      return this.http.put(`${this.ORI_API}/${fileName}`, data)
       .pipe(catchError( (err) => {
         this.processError(err)
         return err
       }));
     else
-      return this.http.put(`${ORI_API}${fileName}`, {params: data, headers: _headers })
+      return this.http.put(`${this.ORI_API}/${fileName}`, {params: data, headers: _headers })
         .pipe(catchError( (err:HttpErrorResponse) => {
           this.processError(err)
           return EMPTY
@@ -104,13 +108,13 @@ export class ApiService {
   delete(fileName:string, data?:any, _headers={spinner: 'true'}, retError= false): Observable<any>{
     console.log("service", fileName,)
     if(retError)
-      return this.http.delete(`${ORI_API}${fileName}`,{params: data, headers: _headers })
+      return this.http.delete(`${this.ORI_API}/${fileName}`,{params: data, headers: _headers })
         .pipe(catchError( err => {
           this.processError(err)
           return err;
         }));
     else
-      return this.http.delete(`${ORI_API}${fileName}`,{params: data, headers: _headers })
+      return this.http.delete(`${this.ORI_API}/${fileName}`,{params: data, headers: _headers })
       .pipe(catchError( (err:HttpErrorResponse) => {
         this.processError(err)
         return EMPTY

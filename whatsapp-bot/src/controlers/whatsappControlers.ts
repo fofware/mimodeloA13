@@ -15,6 +15,30 @@ WAGControler.get('/phones',
   res.status(200).json(pl);
 })
 
+WAGControler.get('/info/:srvclient/:contact',
+  async (req:Request, res:Response) => {
+  const {srvclient,contact} = req.params;
+  console.log(srvclient, contact);
+  //console.log(WAG_Clients);
+  const {client} = WAG_Clients[srvclient];
+  //console.log('WAppClient',client);
+  try {
+    const cuser = await client.getNumberId(contact);
+    if (cuser){
+      const user = await client.getContactById(`${cuser._serialized}`);
+      const about = await user.getAbout();
+      const picUrl = await client.getProfilePicUrl(`${cuser._serialized}`);
+      const formatedNumber = await client.getFormattedNumber(`${cuser._serialized}`);
+      res.status(200).json({isWhatsapp: true, user, about, picUrl, formatedNumber});
+    } else {
+      res.status(200).json({isWhatsapp: false});
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+})
+
 WAGControler.get('/phones/:id', async (req:Request, res:Response) => {
   const id = req.params.id;
   const pl = await phones.find({user: id});
