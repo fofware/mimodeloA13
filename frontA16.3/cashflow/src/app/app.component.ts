@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TopMenuComponent } from './components/top-menu/top-menu.component';
 import { RouterOutlet } from '@angular/router';
 import { NgbdToastComponent } from './components/ngbd-toast/ngbd-toast.component';
+import { ToastContainerComponent } from './components/toast-container/toast-container.component';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,7 @@ import { NgbdToastComponent } from './components/ngbd-toast/ngbd-toast.component
     CommonModule,
     RouterOutlet,
     TopMenuComponent,
-    NgbdToastComponent
+    ToastContainerComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']

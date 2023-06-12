@@ -15,35 +15,111 @@ WAGControler.get('/phones',
   res.status(200).json(pl);
 })
 
-WAGControler.get('/info/:srvclient/:contact',
+WAGControler.get('/phones/:id', async (req:Request, res:Response) => {
+  const id = req.params.id;
+  const pl = await phones.find({phone: id});
+  res.status(200).json(pl);
+})
+
+WAGControler.get('/info/:contact',
   async (req:Request, res:Response) => {
-  const {srvclient,contact} = req.params;
-  console.log(srvclient, contact);
-  //console.log(WAG_Clients);
-  const {client} = WAG_Clients[srvclient];
-  //console.log('WAppClient',client);
-  try {
-    const cuser = await client.getNumberId(contact);
-    if (cuser){
-      const user = await client.getContactById(`${cuser._serialized}`);
-      const about = await user.getAbout();
-      const picUrl = await client.getProfilePicUrl(`${cuser._serialized}`);
-      const formatedNumber = await client.getFormattedNumber(`${cuser._serialized}`);
-      res.status(200).json({isWhatsapp: true, user, about, picUrl, formatedNumber});
-    } else {
-      res.status(200).json({isWhatsapp: false});
+  let {contact} = req.params;
+  
+  contact = contact.replace('+','');
+  if(contact.length < 10){
+    res.status(200).json({isWhatsapp: false});
+    return;
+  }
+
+  contact = contact.length === 10 ? `549${contact}` : contact;
+  console.log('busca', contact);
+const srvs = [];
+  const clientes = [];
+  /*
+  for (const key in WAG_Clients) {
+    if (Object.prototype.hasOwnProperty.call(WAG_Clients, key)) {
+      const {client} = WAG_Clients[key];
+      clientes.push(client);
+      srvs.push(client.getState());
     }
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
+  }
+  const srvsConnected = await Promise.allSettled(srvs);
+  console.log(srvsConnected);
+  const getinfo = [];
+  for (let index = 0; index < srvsConnected.length; index++) {
+    const element = srvsConnected[index];
+    if(element.status === 'fulfilled' && element.value === 'CONNECTTED'){
+      getinfo.push(clientes[index].client.getNumberId(contact))
+    }
+  }
+  */
+  for (const key in WAG_Clients) {
+    if (Object.prototype.hasOwnProperty.call(WAG_Clients, key)) {
+      const element = WAG_Clients[key];
+      const {client} = WAG_Clients[key];
+      console.log(key, await client.getState());
+
+      try {
+        const cuser = await client.getNumberId(contact);
+        if (cuser){
+          const user = await client.getContactById(`${cuser._serialized}`);
+          //const about = await user.getAbout();
+          //const picUrl = await client.getProfilePicUrl(`${cuser._serialized}`);
+          //const formatedNumber = await client.getFormattedNumber(`${cuser._serialized}`);
+          //res.status(200).json({isWhatsapp: true, user, about, picUrl, formatedNumber});
+          res.status(200).json({isWhatsapp: true, user});
+        } else {
+          res.status(200).json({isWhatsapp: false});
+        }
+        break;
+      } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+      }
+    }
   }
 })
 
-WAGControler.get('/phones/:id', async (req:Request, res:Response) => {
-  const id = req.params.id;
-  const pl = await phones.find({user: id});
-  res.status(200).json(pl);
+WAGControler.get('/info/:contact/extra',
+  async (req:Request, res:Response) => {
+  let {contact} = req.params;
+  
+  contact = contact.replace('+','');
+  if(contact.length < 10){
+    res.status(200).json({isWhatsapp: false});
+    return;
+  }
+
+  contact = contact.length === 10 ? `549${contact}` : contact;
+  console.log('busca', contact);
+  const srvs = [];
+  const clientes = [];
+  for (const key in WAG_Clients) {
+    if (Object.prototype.hasOwnProperty.call(WAG_Clients, key)) {
+      const element = WAG_Clients[key];
+      const {client} = WAG_Clients[key];
+      console.log(key, await client.getState());
+
+      try {
+        const cuser = await client.getNumberId(contact);
+        if (cuser){
+          const user = await client.getContactById(`${cuser._serialized}`);
+          const about = await user.getAbout();
+          const picUrl = await client.getProfilePicUrl(`${cuser._serialized}`);
+          const formatedNumber = await client.getFormattedNumber(`${cuser._serialized}`);
+          res.status(200).json({isWhatsapp: true, user, about, picUrl, formatedNumber});
+        } else {
+          res.status(200).json({isWhatsapp: false});
+        }
+        break;
+      } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+      }
+    }
+  }
 })
+
 WAGControler.get(`/messages/:num`, async (req, res) =>{
   const {num} = req.params
   try {

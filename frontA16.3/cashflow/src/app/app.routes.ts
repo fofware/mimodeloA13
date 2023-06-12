@@ -17,6 +17,13 @@ export const appRoutes: Routes = [
       import('./components/home/home.component').then((mod) => mod.HomeComponent),
   },
   {
+    path: 'toast',
+    //canMatch: [() => inject(AuthService).isLogged],
+    loadComponent: () => import('./test/ngbd-toast-global/ngbd-toast-global.component')
+                        .then(mod => mod.NgbdToastGlobal)
+  },
+
+  {
     path: 'user',
     //canMatch: [() => inject(AuthService).isLogged],
     loadChildren: () => import('./users/users.routes')

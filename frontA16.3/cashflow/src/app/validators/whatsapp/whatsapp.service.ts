@@ -43,13 +43,27 @@ export interface WhatsApp {
   providedIn: 'root'
 })
 export class WhatsappService {
-  private URL = environment.WAP_API;
-  private NUM = environment.WAP_NUM;
+  private WAPPURL = environment.WAP_API;
+  private AUTHURL = environment.AUTH_URL;
 
   _httpClient = inject(HttpClient);
 
   exist(number:string) {
-    console.log(`${this.URL}/info/${this.NUM}/${number}`)
-    return this._httpClient.get<WhatsApp>(`${this.URL}/info/${this.NUM}/${number}`)
+    console.log(`${this.WAPPURL}/info/${number}`)
+    return this._httpClient.get<WhatsApp>(`${this.WAPPURL}/info/${number}`)
+  }
+
+  extraInfo(number:string){
+    console.log(`${this.WAPPURL}/info/${number}/extra`)
+    return this._httpClient.get<WhatsApp>(`${this.WAPPURL}/info/${number}/extra`)
+  }
+
+  registrado(number:string) {
+    console.log(`${this.AUTHURL}/phone/${number}`)
+    return this._httpClient.get<WhatsApp>(`${this.WAPPURL}/phone/${number}`)
+  }
+  isBot(number:string){
+    console.log(`${this.WAPPURL}/phones/${number}`)
+    return this._httpClient.get<WhatsApp>(`${this.WAPPURL}/phones/${number}`)
   }
 }

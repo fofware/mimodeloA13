@@ -1,11 +1,8 @@
 import { Injectable, TemplateRef } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ToastService {
-
-  toasts: any[] = [];
+	toasts: any[] = [];
 
 	show(textOrTpl: string | TemplateRef<any>, options: any = {}) {
 		this.toasts.push({ textOrTpl, ...options });
@@ -18,5 +15,4 @@ export class ToastService {
 	clear() {
 		this.toasts.splice(0, this.toasts.length);
 	}
-
 }

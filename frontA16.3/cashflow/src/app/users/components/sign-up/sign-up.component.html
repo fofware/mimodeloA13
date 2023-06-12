@@ -1,14 +1,18 @@
 <ng-template #content let-modal>
 	<div class="modal-header  pb-1">
-		<h4 class=" flex-grow-1 modal-title text-center">{{wapp.user?.name || wapp.user?.shortName || wapp.user?.pushname}}</h4>
-
+		<h4 class=" flex-grow-1 modal-title text-center">{{wapp.user?.name || wapp.user?.shortName || wapp.user?.pushname || wapp.formatedNumber }}</h4>
 		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
 	</div>
 	<div class="modal-body text-center pt-2">
-    <div class="fs-5">{{wapp.formatedNumber}}</div>
-    <img src="{{wapp.picUrl}}" alt="" style="width: 100%;">
-
-	</div>
+    <!--div class="fs-5">{{wapp.formatedNumber}}</div-->
+    <div style="width: 100%;
+      height: 100%;
+      background-position: center;
+      background-image: url('{{wapp.picUrl}}');
+      background-size: contain;
+      background-repeat: no-repeat;">
+    </div>
+  </div>
 	<div class="modal-footer">
     <div>{{wapp.about}}</div>
 		<!--button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button-->
@@ -20,8 +24,7 @@
         <div class="card">
           <h3 class="card-header">Registro de usuario</h3>
           <div class="card-body">
-
-            <form class="need-validation" [formGroup]="formParent" autocomplete="off" [ariaAutoComplete]="false" [autocomplete]="false">
+            <form class="need-validation" [formGroup]="formParent">
               <div class="mb-3 form-field">
                 <label class="form-label">Nombres</label>
                 <input type="text"
@@ -31,8 +34,8 @@
                   [ngClass]="{'is-invalid': isInvalid('nombre')}" />
                 <div class="invalid-feedback">
                 <!--
-                  para debug
-                  {{formParent.get('name')?.errors | json}}
+                para debug
+                {{formParent.get('name')?.errors | json}}
                 -->
                   <ul>
                     <li *ngIf="formParent.get('nombre')?.errors?.['required']">El campo no puede quedar vacio</li>
@@ -48,8 +51,8 @@
                   [ngClass]="{'is-invalid': isInvalid('apellido')}" />
                 <div class="invalid-feedback">
                 <!--
-                  para debug
-                  {{formParent.get('apellido')?.errors | json}}
+                para debug
+                {{formParent.get('apellido')?.errors | json}}
                 -->
                   <ul>
                     <li *ngIf="formParent.get('apellido')?.errors?.['required']">El campo no puede quedar vacio</li>
@@ -67,19 +70,21 @@
                     src="{{wapp.picUrl}}"
                     style="width: 40px;"
                     alt="" (click)="open(content)">
+                  <span class="mx-1">{{wapp.user?.number}}</span>
                 </ng-container>
                 <input type="text"
                   class="form-control"
                   placeholder="Ej: 5493624683356"
                   formControlName="phone"
-                  (blur)="checkWapp(formParent.get('phone'))"
-                  [ngClass]="{ 'is-invalid': isInvalid('phone') }" />
+                  (blur)="wapp.isWhatsapp=false;checkWapp(formParent.get('phone'))"
+                  [ngClass]="{ 'is-invalid': isInvalid('phone') }"
+                  />
                 <div class="invalid-feedback">
                   <!--
-                para debug
-              {{formParent.get('phone')?.errors | json}}
-              {{formParent.get('phone')?.errors | json}}
-              -->
+                  para debug
+                  {{formParent.get('phone')?.errors | json}}
+                  {{formParent.get('phone')?.errors | json}}
+                  -->
                   <ul>
                     <li *ngIf="formParent.get('phone')?.errors?.['minlength']">Deben ser
                       {{formParent.get('phone')?.errors?.['minlength'].requiredLength}} números y tiene
@@ -93,30 +98,55 @@
                   </ul>
                 </div>
               </div>
+
               <div class="mb-3 form-field">
-                <label class="form-label">Email address</label>
-                <input type="email"
-                  name="email"
+                <label class="form-label">mierda</label>
+                <input type="text"
+                  name="mierda"
                   class="form-control"
                   placeholder="Ej: name@example.com"
-                  formControlName="email"
-                  [ngClass]="{ 'is-invalid': isInvalid('email') }"
-                  autocomplete="off"
-                  [autocomplete]="formParent"
-                  [ariaAutoComplete]="formParent"
+                  formControlName="mierda"
+                  [ngClass]="{ 'is-invalid': isInvalid('mierda') }"
                 />
                 <div class="invalid-feedback">
-                <!--
+                  <!--
                   para debug
                   {{formParent.get('email')?.errors | json}}
-
                   <li>{{formParent.get('email')?.errors | json}}</li>
-                -->
+                  -->
                   <ul>
-                    <li *ngIf="formParent.get('email')?.errors?.['required']">El campo no puede quedar vacio</li>
-                    <li *ngIf="formParent.get('email')?.errors?.['pattern']">
+                    <li *ngIf="formParent.get('mierda')?.errors?.['required']">El campo no puede quedar vacio</li>
+                    <li *ngIf="formParent.get('mierda')?.errors?.['pattern']">
+                      {{formParent.get('mierda')?.errors?.['pattern'].actualValue}} no parece ser un e-Mail real</li>
+                    <li *ngIf="formParent.get('mierda')?.errors?.['uniqueMail']">Este e-Mail ya se encuentra
+                      registrado</li>
+                  </ul>
+                </div>
+              </div>
+
+
+
+              <div class="mb-3 form-field">
+                <label class="form-label">Email address</label>
+                <input type="text"
+                  name="newemail"
+                  class="form-control"
+                  placeholder="Ej: name@example.com"
+                  formControlName="nemail"
+                  [ngClass]="{ 'is-invalid': isInvalid('email') }"
+                  autocomplete="new-email"
+                />
+                <div class="invalid-feedback">
+                  <!--
+                  para debug
+                  {{formParent.get('email')?.errors | json}}
+                  <li>{{formParent.get('email')?.errors | json}}</li>
+                  -->
+                  <ul>
+                    <li *ngIf="formParent.get('nemail')?.errors?.['required']">El campo no puede quedar vacio</li>
+                    <li *ngIf="formParent.get('nemail')?.errors?.['pattern']">
                       {{formParent.get('email')?.errors?.['pattern'].actualValue}} no parece ser un e-Mail real</li>
-                    <li *ngIf="formParent.get('email')?.errors?.['uniqueMail']">Este e-Mail ya se encuentra
+                    <li *ngIf="formParent.get('nemail')?.errors?.['uniqueMail']">Este e-Mail ya se encuentra
                       registrado</li>
                   </ul>
                 </div>
@@ -126,23 +156,20 @@
                 <input type="password"
                   class="form-control"
                   placeholder="Escriba una clave"
-                  formControlName="password"
-                  [ngClass]="{ 'is-invalid': isInvalid('password') }"
-                  autocomplete="off"
-                  [autocomplete]="formParent"
-                  [ariaAutoComplete]="formParent"
+                  formControlName="mypassword"
+                  [ngClass]="{ 'is-invalid': isInvalid('mypassword') }"
                 />
                 <div class="invalid-feedback">
                   <!--
-                    para debug
-                    {{formParent.get('email')?.errors | json}}
+                  para debug
+                  {{formParent.get('email')?.errors | json}}
                   -->
                   <ul>
-                    <li *ngIf="formParent.get('password')?.errors?.['required']">No puede quedar en blanco y deben ser
+                    <li *ngIf="formParent.get('mypassword')?.errors?.['required']">No puede quedar en blanco y deben ser
                       al menos seis caracteres</li>
-                    <li *ngIf="formParent.get('password')?.errors?.['minlength']">Deben ser al menos
-                      {{formParent.get('password')?.errors?.['minlength'].requiredLength}} caracteres y tiene
-                      {{formParent.get('password')?.errors?.['minlength'].actualLength}}</li>
+                    <li *ngIf="formParent.get('mypassword')?.errors?.['minlength']">Deben ser al menos
+                      {{formParent.get('mypassword')?.errors?.['minlength'].requiredLength}} caracteres y tiene
+                      {{formParent.get('mypassword')?.errors?.['minlength'].actualLength}}</li>
                   </ul>
                 </div>
               </div>
@@ -156,9 +183,9 @@
                    />
                 <div class="invalid-feedback">
                   <!--
-              para debug
-                <li>{{formParent.get('repassword')?.errors | json}}</li>
-              -->
+                  para debug
+                  <li>{{formParent.get('repassword')?.errors | json}}</li>
+                  -->
                   <ul>
                     <li *ngIf="formParent.get('repassword')?.errors?.['required']">No puede quedar en blanco y debe
                       coincidir con la clave</li>

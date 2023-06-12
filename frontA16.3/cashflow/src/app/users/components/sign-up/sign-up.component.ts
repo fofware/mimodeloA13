@@ -1,7 +1,7 @@
 import { Component, inject, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { map, Subject, take, takeUntil, tap } from 'rxjs';
+import { filter, map, Subject, take, takeUntil, tap } from 'rxjs';
 //import { userService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { RecaptchaV3Module, ReCaptchaV3Service } from 'ng-recaptcha';
@@ -22,7 +22,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
     RecaptchaV3Module
   ],
   templateUrl: './sign-up.component.html',
-  styleUrls: ['./sign-up.component.css'],
+  styleUrls: ['./sign-up.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 
@@ -49,7 +49,20 @@ export class SignUpComponent {
         Validators.minLength(3)
       ]],
     apellido: [''],
-    email: ['',
+    mierda:['',
+      {
+        validators:[
+          Validators.required,
+          Validators.pattern(this.regexmail1),
+        ],
+        asyncValidators: [
+          this.uniquemail.validate.bind(this.uniquemail)
+        ],
+        updateOn: 'blur'
+      }
+    ],
+    nemail: ['',
+        /*
       {
         validators:[
           Validators.required,
@@ -61,15 +74,16 @@ export class SignUpComponent {
         ],
         updateOn: 'blur'
       }
+        */
     ],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    mypassword: ['', [Validators.required, Validators.minLength(6)]],
     repassword: ['', [Validators.required, eMailValidation.MatchPassword('password')]],
     phone: ['',
       {
         validators:[
           Validators.minLength(10),
           //Validators.maxLength(13),
-          Validators.pattern(`^[0-9]+$`)
+          Validators.pattern(`^[\+0-9]+$`)
         ],
         /*
         asyncValidators: [
@@ -88,18 +102,38 @@ export class SignUpComponent {
 
   checkWapp(number:any){
     console.log('CheckWapp',this.formParent.value.phone);
-    this.wappSvc.exist(`${this.formParent.value.phone}`)
+    const sphone = `${this.formParent.value.phone}`;
+    if(sphone.length<10) return;
+    this.wappSvc.exist(sphone)
       .pipe(
         takeUntil(this.destroy$),
         tap(value => console.log(value)),
         map(value => {
           this.wapp = value;
+          if(value.user?.number)
+            this.wappExta(value.user?.number);
+          /*
+          if(value?.user?.number){
+            const pn = value.user.number
+            this.formParent.patchValue({phone: pn})
+          }
+          */
         })
-     ).subscribe();
+     )
+     .subscribe();
+  }
+
+  wappExta(number:string){
+    this.wappSvc.extraInfo(number)
+      .pipe(
+        takeUntil(this.destroy$),
+        tap(value => console.log(value)),
+        map(value => this.wapp = value)
+      ).subscribe();
   }
 
   open( content: any){
-    this.modalService.open(content, { centered: true, size: 'xl' })
+    this.modalService.open(content, { centered: true, fullscreen: true, scrollable: true })
   }
 
   ngOndestroy(){
@@ -154,8 +188,8 @@ export class SignUpComponent {
         this.userService.signUp(this.formParent.value).subscribe(data => {
           console.log(data)
           const user = {
-            email: this.formParent.value.email,
-            password: this.formParent.value.password,
+            email: this.formParent.value.nemail,
+            password: this.formParent.value.mypassword,
             nombre: this.formParent.value.nombre,
             apellido: this.formParent.value.apellido,
             phone: this.formParent.value.phone
