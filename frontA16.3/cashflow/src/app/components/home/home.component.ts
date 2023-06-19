@@ -5,6 +5,7 @@ import { MasterdataService } from 'src/app/services/masterdata.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastContainerComponent } from '../toast-container/toast-container.component';
+import { catchError, map, take, tap } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -12,20 +13,33 @@ import { ToastContainerComponent } from '../toast-container/toast-container.comp
   imports: [
     CommonModule,
     NgbTooltipModule,
-    ToastContainerComponent
+//    ToastContainerComponent
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
+
 export class HomeComponent implements OnInit, OnDestroy {
   masterData = inject(MasterdataService);
   midata:any;
   toastService = inject(ToastService);
 
   ngOnInit(): void {
-    this.midata = this.masterData.get('cosas');
+    this.readData();
   }
 
+  readData(){
+    try {
+      this.masterData.get('lineas').pipe(
+        take(1),
+        map(
+          data => this.midata = data
+        )
+      ).subscribe();
+    } catch (error) {
+      console.log(error);
+    }
+  }
   get loggedUser() {
     return userLogged;
   }
@@ -42,6 +56,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
 	showDanger(dangerTpl:any) {
 		this.toastService.show(dangerTpl, { classname: 'bg-danger text-light', delay: 15000 });
+	}
+
+	showWarning() {
+		this.toastService.show('Soy un warning', { classname: 'bg-danger text-light', delay: 15000 });
 	}
 
 	ngOnDestroy(): void {

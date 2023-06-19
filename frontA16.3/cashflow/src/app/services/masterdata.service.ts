@@ -10,4 +10,5 @@ export class MasterdataService extends ApiService{
     super();
     this.ORI_API = 'https://api.vta.ar'
   }
+
 }

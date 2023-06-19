@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { catchError, EMPTY, Observable, retry, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, EMPTY, Observable, retry, throwError } from 'rxjs';
 import { ToastService } from './toast.service';
+import { NgbdToastComponent } from '../components/ngbd-toast/ngbd-toast.component';
 
 export interface iToast {
   animation?: boolean,
@@ -16,23 +17,25 @@ export interface iToast {
 
 export class ApiService {
   http = inject(HttpClient);
-  toast = inject(ToastService);
+  toastr = inject(ToastService);
   ORI_API!:string;
-  
+
   public set value (v : string) {
     this.ORI_API = v;
   }
-  
+
   get(fileName:string, data?:any, _headers={spinner: 'true'}, retError=false): Observable<any> {
     if(retError)
       return this.http.get(`${this.ORI_API}/${fileName}`, {params: data, headers: _headers })
-        .pipe(catchError( (err) => {
+        .pipe(
+          catchError( (err) => {
           this.processError(err)
           return err
         }));
     else
       return this.http.get(`${this.ORI_API}/${fileName}`, {params: data, headers: _headers })
-        .pipe(catchError( (err:HttpErrorResponse) => {
+        .pipe(
+          catchError( (err:HttpErrorResponse) => {
           this.processError(err)
           return EMPTY
         }));
@@ -150,26 +153,22 @@ export class ApiService {
     const text = !res.error.text || res.error.text === '' ? `${res.message}` : res.error.text;
     switch (res.status) {
       case 401:
-        message = text;
+        //message = 'No autorisado';
         options.delay = 10000;
-
       break;
       case 404:
-        message = 'Página No Existe';
-        /*
-        this.toastr.warning(
-          text,
-          title,
+        //message = 'Página No Existe';
+        //options.header = `Error(${res.status}) ${res.url}`;
+        this.toastr.danger('danger', options);
+          /*
           {
             closeButton: true,
             disableTimeOut: true
-          }
-        ).onTap.pipe(take(1)).subscribe((algo) => {
+          }*/
+        /*.onTap.pipe(take(1)).subscribe((algo) => {
           console.log(algo);
           console.log("Cerro");
-        });
-        */
-        console.log(message)
+        });*/
         break;
       case 500:
         console.log(res.status,res.statusText);
@@ -199,11 +198,11 @@ export class ApiService {
             console.log("Cerro");
           })
         */
-        message = 'Salio por default '+ text;
+        message = 'Salio por default ';//+ text;
         break;
     }
     console.log('resStatus',res.status,res.statusText);
-    this.toast.show(message, options)
+    //this.toastr.show(message, options)
     return EMPTY
   }
 }

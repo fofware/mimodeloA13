@@ -11,10 +11,10 @@ import { tokenInterceptor } from './interceptors/token.interceptor';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(appRoutes, withComponentInputBinding()),
-    //importProvidersFrom(BrowserModule, NgbModule),
     importProvidersFrom(BrowserModule, NgbModule, BrowserAnimationsModule),
     provideAnimations(),
     provideHttpClient(withInterceptors([apiInterceptor,tokenInterceptor])),
 
   ]
 };
+

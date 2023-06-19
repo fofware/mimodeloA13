@@ -8,8 +8,7 @@
 </ng-template>
 <p>home works!</p>
 <pre>{{loggedUser() | json }}</pre>
-<pre>{{midata | async | json }}</pre>
-<app-toast-container></app-toast-container>
+<pre>{{ midata | json }}</pre>
 
 <div class="buttons">
 	<button class="btn btn-primary" (click)="showStandard()" ngbTooltip="Will disappear in 5s">Standard toast</button
@@ -17,5 +16,7 @@
 	<button class="btn btn-success" (click)="showSuccess()" ngbTooltip="Will disappear in 10s">Success toast</button
 	>&nbsp;
 	<button class="btn btn-danger" (click)="showDanger(dangerTpl)" ngbTooltip="Will disappear in 15s">Danger toast</button
+  >&nbsp;
+  <button class="btn btn-dangert" (click)="showWarning()" ngbTooltip="Will disappear in 15s">Warning toast</button
   >&nbsp;
 </div>

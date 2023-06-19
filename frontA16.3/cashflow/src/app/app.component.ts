@@ -12,7 +12,8 @@ import { ToastContainerComponent } from './components/toast-container/toast-cont
     CommonModule,
     RouterOutlet,
     TopMenuComponent,
-    ToastContainerComponent
+    ToastContainerComponent,
+    NgbdToastComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']

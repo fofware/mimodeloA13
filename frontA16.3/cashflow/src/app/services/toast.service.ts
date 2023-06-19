@@ -7,7 +7,15 @@ export class ToastService {
 
   toasts: any[] = [];
 
-	show(textOrTpl: string | TemplateRef<any>, options: any = {}) {
+  warning(textOrTpl: string | TemplateRef<any>, options: any = {}) {
+    this.toasts.push({ textOrTpl, classname: 'bg-warning', delay: 10000, ...options })
+  }
+
+  danger(textOrTpl: string | TemplateRef<any>, options: any = {}) {
+    this.toasts.push({ textOrTpl, class:'bg-success', classname: 'bg-danger', delay: 10000, ...options })
+  }
+
+  show(textOrTpl: string | TemplateRef<any>, options: any = {}) {
 		this.toasts.push({ textOrTpl, ...options });
 	}
 
