@@ -4,8 +4,7 @@ import { ExtractJwt } from "passport-jwt";
 import jwt from 'jsonwebtoken';
 import config from '../config';
 import passport from "passport";
-import { ObjectID } from 'bson'
-
+import { ObjectId } from 'bson';
 
 /*
 export const list = async ( req: Request, res: Response ) =>{
@@ -78,6 +77,7 @@ export const buscar = async ( req: Request, res: Response ) => {
 }
 
 */
+
 class UserControler {
 
 	public router: Router = Router();
@@ -118,7 +118,7 @@ class UserControler {
 
 	async import(req: Request, res: Response) {
 		try {
-      if ( req.body._id ) req.body._id = new ObjectID( req.body._id );
+      if ( req.body._id ) req.body._id = new ObjectId( req.body._id );
 			const newReg = await User.updateOne(
 								{ _id: req.body._id, email: req.body.email },   // Query parameter
 								{ $set: req.body }, 

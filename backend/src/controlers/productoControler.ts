@@ -1,6 +1,5 @@
 import { Request, Response, Router } from 'express';
 import producto, { IProducto } from '../models/producto';
-import { ObjectID } from 'bson'
 import passport from "passport";
 import articulos from '../models/articulos'
 import ProductoName from '../models/productoname'

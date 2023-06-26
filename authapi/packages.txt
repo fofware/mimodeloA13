@@ -1,0 +1,4 @@
+npm init --y
+npm i bcrypt cors dotenv express https jsonwebtoken mongoose morgan passport passport-jwt uuid socket.io
+npm install typescript tsc-watch @types/bcrypt @types/cors @types/express @types/jsonwebtoken @types/morgan @types/passport @types/passport-jwt -D
+npx tsc --init

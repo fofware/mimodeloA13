@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import config from '../config';
 import passport from "passport";
 import { makeAggregate, makeFilter } from "../common/utils";
-import { ObjectID } from 'bson'
+import { ObjectId } from 'bson'
 
 class PresentacionesControlers {
 
@@ -122,14 +122,14 @@ class PresentacionesControlers {
     let ret = {};
     let status = 200
     try {
-      const rows = await presentaciones.find({articulo: new ObjectID(params.articulo)})
+      const rows = await presentaciones.find({articulo: new ObjectId(params.articulo)})
         .populate({path: 'relacion'})
         .sort({name: 1, contiene: 1, 'relacion.contiene': 1 });
       /*
       const rows = await presentaciones.aggregate([
         {
           $match: {
-            articulo: new ObjectID(params.articulo),
+            articulo: new ObjectId(params.articulo),
           }
         },
         {

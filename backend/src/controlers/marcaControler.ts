@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 import passport from "passport";
 import { makeFilter } from "../common/utils";
 import marcas from "../models/marcas";
-import { ObjectID } from 'bson'
+import { ObjectId } from 'bson'
 
 class MarcaControlers {
 

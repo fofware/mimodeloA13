@@ -5,7 +5,6 @@ import jwt from 'jsonwebtoken';
 import config from '../config';
 import passport from "passport";
 import { makeAggregate, makeFilter } from "../common/utils";
-import { ObjectID } from 'bson'
 
 class ProductoNameControler {
 

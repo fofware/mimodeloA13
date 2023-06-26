@@ -1,0 +1,4 @@
+npm i bcrypt cors dotenv express jsonwebtoken mongoose morgan passport passport-jwt qr-image socket.io uuid whatsapp-web.js
+npm ? qrcode-terminal
+npm i -D @types/cors @types/express @types/jsonwebtoken @types/passport @types/passport-jwt @types/qr-image tsc-watch typescript
+npm ? -D @types/qrcode-terminal

@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   readData(){
     try {
-      this.masterData.get('lineas').pipe(
+      this.masterData.get('users/list').pipe(
         take(1),
         map(
           data => this.midata = data

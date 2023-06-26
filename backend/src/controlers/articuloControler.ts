@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { ObjectID } from 'bson'
+import { ObjectId } from 'bson'
 import passport from "passport";
 import articulo, { IArticulo } from '../models/articulos';
 import { makeFilter } from '../common/utils';
@@ -611,7 +611,7 @@ class ArticuloControler {
 	async presentaciones( req: Request, res: Response){
     const params = Object.assign({},req.query,req.params,req.body);
 		const filter = {
-			_id: new ObjectID(params._id)
+			_id: new ObjectId(params._id)
 		}
 		console.log(filter);
 		try {
@@ -1226,7 +1226,7 @@ class ArticuloControler {
 
 	async import( req: Request, res: Response ){
 		try {
-			if ( req.body._id ) req.body._id = new ObjectID( req.body._id );
+			if ( req.body._id ) req.body._id = new ObjectId( req.body._id );
 			const newReg = await articulo
 			.updateOne({ _id: req.body._id },   // Query parameter
 				{ $set: req.body }, 
@@ -1241,7 +1241,7 @@ class ArticuloControler {
 
 	async add( req: Request, res: Response ){
 		try {
-			if ( req.body._id ) req.body._id = new ObjectID( req.body._id );
+			if ( req.body._id ) req.body._id = new ObjectId( req.body._id );
 			const newReg = await articulo.updateOne({ _id: req.body._id },   // Query parameter
 																							{ $set: req.body }, 
 																							{ upsert: true }    // Options
@@ -1288,7 +1288,7 @@ class ArticuloControler {
     res.status(200).json(req.user);
     /*
 		try {
-			if ( req.body._id ) req.body._id = new ObjectID( req.body._id );
+			if ( req.body._id ) req.body._id = new ObjectId( req.body._id );
 			const rpta = await articulo.updateOne({ _id: req.body._id },   // Query parameter
 				{ $set: req.body }, 
 				{ upsert: true }    // Options

@@ -13,7 +13,10 @@ const app = express();
 const router = Router();
 
 router.get('/', (req, res) => {
-  res.status(200).json(process.env);
+  res.status(200).json({message: 'index'});
+});
+router.get('/algo', (req, res) => {
+  res.status(200).json({process, message: 'Anda'});
 });
 
 if(config.public)
@@ -29,7 +32,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());
 passport.use(passportMiddelware);
 app.disable('etag');
-app.use(userCtrl.router);
-app.use(authRoutes);
+//app.use(userCtrl.router);
+//app.use(authRoutes);
 app.use(router);
 export default app;
