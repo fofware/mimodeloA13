@@ -9,13 +9,19 @@ import { ExtractJwt } from "passport-jwt";
 import jwt from 'jsonwebtoken';
 import config from '../config';
 import  RefreshToken  from '../models/refreshToken'
-const request = require('request-promise');
+import { requestPromise } from "../common/httpClient-promise";
+
+//import * as request from 'request-promise'
+//const request = require('request-promise');
 
 function createToken(user: IUser | any ) {
   return jwt.sign({ _id: user._id, 
     email: user.email,
     apellido: user.apellido,
     nombre: user.nombre,
+    site:[],
+    menu:[],
+    accounts:[],
     roles: user.roles,
     phone: user.phone,
     group: user.group,
@@ -43,6 +49,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
   const secretKey = config.captchaKey;
   
 
+  /*
   const options = {
     host: 'firulais.net.ar',
     path: `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}&remoteip=${userIp}`,
@@ -53,11 +60,18 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       'Content-Type': 'application/json; charset=UTF-8'
     }
   }
-
+  */
+  const options = {
+    url: `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}&remoteip=${userIp}`,
+    method: 'GET'
+  }
+  const captchaRpta = JSON.parse( await requestPromise(options));
+  /*
   const captchaRpta = JSON.parse(await request.get(
     {
         url: `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}&remoteip=${userIp}`,
     }));
+
     //.then((response) => {
     //  console.log(response)
     //// If response false return error message
@@ -67,8 +81,10 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     //// otherwise continue handling/saving form data
     //    return response
     //})
+  */
   console.log('-------------------')
   console.log(captchaRpta);
+  console.log('-------------------')
   if ( captchaRpta.score < .7 )
     return res.status(401).json({ title: 'Hmmm....', text: 'Parece no ser humano...' })
   console.log(req.body);
@@ -102,6 +118,10 @@ export const signIn = async (req: Request, res: Response): Promise<Response> => 
   const isMatch = await user.comparePassword(req.body.password);
   if (!isMatch)
     return res.status(401).json({ title: 'No Autorizado', text: 'Contraseña y/o Usuario ivalidos' });
+    let fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+    let fromUrl = req.headers.origin; // req.headers.referer
+    console.log(`******** ${fromUrl} ********`);
+    console.log(fromUrl);
   const token = createToken(user);
   console.log(user);
   delete user.__v ;

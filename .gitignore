@@ -113,17 +113,27 @@ sessions/
 .env
 mediaSend/
 angular13-frontend/src/assets/images/
-whatsapp-bot/.wwebjs_auth/
-whatsapp-bot/sessions copy/
 copia/
 pepe/
+
 whatsapp-bot/html/mediaReceive/
 whatsapp-bot/html/sessions/
 whatsapp-bot/html/mediaSend/
+whatsapp-bot/.wwebjs_auth/
+whatsapp-bot/sessions copy/
 
-wappapi/mediaReceive/
+whatsapp-bot/.wwebjs_auth/
+whatsapp-bot/.wwebjs_cache/
+whatsapp-bot/mediaReceive/
+whatsapp-bot/mediaSend/
+whatsapp-bot/sessions/
+
 wappapi/.wwebjs_auth/
+wappapi/.wwebjs_cache/
+wappapi/mediaReceive/
+wappapi/mediaSend/
 wappapi/sessions/
+
 frontA15/firulais/src/assets/images/100889483_154337539568785_5346487165368926208_n.jpg
 frontA15/firulais/src/assets/images/aristocats_marie.png
 frontA15/firulais/src/assets/images/arrozsaborizado.jpg
