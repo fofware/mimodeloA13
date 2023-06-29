@@ -10,14 +10,13 @@ body {
   display: flex;
   min-height: calc(100vh - 252px);
   max-height: calc(100vh - 252px);
-  min-height: calc(100vh - 60px);
-  max-height: calc(100vh - 60px);
+  min-height: calc(100vh - 59px);
+  max-height: calc(100vh - 59px);
 }
 
 #main > article {
    flex: 1;
-   max-height: calc(100vh - 60px);
-   background-color: darksalmon;
+   max-height: calc(100vh - 59px);
    overflow-y: scroll;
 }
 
@@ -26,10 +25,10 @@ body {
 */
 #main > aside {
   flex: 0 0 30vw;
-  background: rgb(241, 241, 79);
+  background: beige;
 }
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 2px;
 }
 
 /* Track */
@@ -49,30 +48,18 @@ body {
 
 #main > nav {
   order: -1;
-  min-width: 300px;
-  max-width: 540px;
+  min-width: 270px;
+  max-width: 270px;
   /*
   max-height: calc(100vh - 252px);
   */
-  max-height: calc(100vh - 60px);
+  max-height: calc(100vh - 59px);
+  background-color: #e3e3e3;
   overflow-y: scroll;
 }
 
-.enca-menu {
-  width: 100%;
-  height: 60px;
-  background-color: cadetblue;
-}
-.enca-page {
-  width: 100%;
-  height: 60px;
-  background-color: blue;
-}
-
-
 .lista{
-  max-height: calc(100vh - 60px);
-  background-color:chocolate ;
+  max-height: calc(100vh - 100px);
   overflow-y: scroll;
 }
 

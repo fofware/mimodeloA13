@@ -1,0 +1,7 @@
+<nav class="nav flex-column p-2">
+  <ul ngbNav [activeId]="route.params | async" class="nav-pills" orientation="vertical">
+    <li [ngbNavItem]="link.param" *ngFor="let link of links">
+      <a ngbNavLink [routerLink]="[link.param ]" routerLinkActive="active">{{ link.title }}</a>
+    </li>
+  </ul>
+</nav>
