@@ -11,13 +11,12 @@ const getContact = (param:number): string => {
 }
 
 export const appRoutes: Routes = [
-  /*
   {
     path: 'home',
     loadComponent: () =>
       import('./components/home/home.component').then((mod) => mod.HomeComponent),
   },
-  */
+
   {path: 'mp',
     //canMatch: [() => inject(AuthService).isLogged],
     loadChildren: () => import('./mp/mp.routes')
@@ -32,7 +31,7 @@ export const appRoutes: Routes = [
   },
 
   {
-    path: 'home',
+    path: 'users',
     //canMatch: [() => inject(AuthService).isLogged],
     loadChildren: () => import('./users/users.routes')
                         .then(mod => mod.USERS_ROUTES)

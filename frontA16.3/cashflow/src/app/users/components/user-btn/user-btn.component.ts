@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { UsersService, userAlerts, userIsLogged, userLogged } from '../../services/users.service';
 
@@ -25,7 +25,7 @@ export class UserBtnComponent {
 
   _authService = inject(UsersService);
 //  _activatedRoute = inject(ActivatedRoute);
-//  _router = inject(Router)
+  _router = inject(Router)
 
 //  @Output() newLoginEvent = new EventEmitter<boolean>()
 
@@ -55,6 +55,8 @@ export class UserBtnComponent {
       const token:any = res;
       myDrop.close();
       //this._router.navigate([`/${user.group}`],)
+      //this._router.navigate([`/users/`],)
+      this._router.navigateByUrl(`users`)
     })
 
   }

@@ -133,6 +133,6 @@ export class AuthService {
   }
 
   profile(): void {
-    this.router.navigate(['/private/profile']);
+    this.router.navigate(['/users/']);
   }
 }
