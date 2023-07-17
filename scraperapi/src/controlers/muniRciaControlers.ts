@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, json } from "express";
 import puppeteer, { ElementHandle, Page } from "puppeteer"
-const wt = 2000;
+const wt = 3500;
 
-const cargaTablas = ( page:Page ): Promise<any> => {
+const cargaTablas = ( page:Page, tabla = 'table#Grid1ContainerTbl > tbody > tr' ): Promise<any> => {
   return new Promise( async (resolve, reject) => {
     try {
-      const trs = await page.$$eval('table#Grid1ContainerTbl > tbody > tr', trs => {
+      const trs = await page.$$eval(tabla, trs => {
         return trs.map( tr => {
           const tds = tr.querySelectorAll('td');
           return [... tds].map( td => {
@@ -14,12 +14,12 @@ const cargaTablas = ( page:Page ): Promise<any> => {
           })
         })
       });
+      //console.log('trs',trs);
       const data = trs.map( linea => {
         const data = {};
         for (let i = 0; i < linea.length; i++) {
           const e = linea[i];
 
-          
           if(e.id){
             e.id = (e.id.split('_'))[1];
             e.value = e.value.trim().replace(',','.');
@@ -39,8 +39,8 @@ const cargaTablas = ( page:Page ): Promise<any> => {
       })
       resolve(data);
     } catch (error) {
-      console.log(error)
-      reject()
+      console.log("CargaTablas",error)
+      reject(null)
     }
 
   })
@@ -48,17 +48,7 @@ const cargaTablas = ( page:Page ): Promise<any> => {
 }
 
 const vehiculoData = ( page:Page): Promise<any> => {
-  const veiculos = [
-    'span_vVEHCHAPA',
-    'span_vCATEGORIA',
-    'span_vMARCA',
-    'span_vMODELO',
-    'span_vNOMBRE',
-    'span_vCUIT',
-    'span_vTIPOCNT',
-    'span_vCODLINKPGO'
-  ]
-
+  
   return new Promise( async (resolve, reject) => {
     try {
       const data = {
@@ -70,12 +60,12 @@ const vehiculoData = ( page:Page): Promise<any> => {
         cuit: await page.$eval('span#span_vCUIT', v => v.textContent),
         tipo: await page.$eval('span#span_vTIPOCNT', v => v.textContent),
         cod_link: await page.$eval('span#span_vCODLINKPGO', v => v.textContent),
-        patente: await cargaTablas(page)
+        patente: await cargaTablas(page,'table#Grid1ContainerTbl > tbody > tr')
       }
       resolve(data);
     } catch (error) {
-      console.log(error)
-      reject()
+      console.log("VehiculoData",error)
+      reject(null)
     }
   })
 }
@@ -89,7 +79,7 @@ const getLinks = async (element:ElementHandle<HTMLDivElement>): Promise<any> => 
       })
       resolve(options)      
     } catch (error) {
-      console.log(error);
+      console.log("getLinks",error);
       reject([])
     }
   });
@@ -101,16 +91,6 @@ const getLinksPagos = async (element:ElementHandle<HTMLDivElement>): Promise<any
         return options.map( option => {
           const id = option.id.split('_')[1];
           return {
-            /*
-            CONCEPTO: await element.$eval(`#span_CONCEPTO_${id}`, v => v.textContent),
-            VEPEMIANO: await element.$eval(`#span_VEPEMIANO_${id}`, v => v.textContent),
-            VTOVEP: await element.$eval(`#span_VTOVEP_${id}`, v => v.textContent),
-            VEPEMINRO: await element.$eval(`#span_VEPEMINRO_${id}`, v => v.textContent),
-            VEPORDBOL: await element.$eval(`#span_VEPORDBOL_${id}`, v => v.textContent),
-            IMPORTEPESOS: await element.$eval(`#span_IMPORTEPESOS_${id}`, v => v.textContent),
-            USUARIO: await element.$eval(`#span_USUARIO_${id}`, v => v.textContent),
-            RED: await element.$eval(`#span_RED_${id}`, v => v.textContent),
-            */
             click: option.id,
             display: option.style.display
           }
@@ -132,36 +112,36 @@ const getLinksPagos = async (element:ElementHandle<HTMLDivElement>): Promise<any
 
       resolve(options)      
     } catch (error) {
-      console.log(error);
+      console.log("getLinksPagos",error);
       reject([])
     }
   });
 }
 
-const inmuebleData = async (page:Page, options, rdata) => {
+const inmuebleData = async (page:Page, options) => {
   return new Promise( async (resolve, reject) => {
     try {
     const retPage = page.url();
-
-    for (let i = 0; i < options.length; i++) {
-      console.log(options[i].id);
+    const rdata = [];
+    for (let i = 0; i < options.length; i++){
+      //console.log(options[i].id);
       if (options[i].display === '' ){
         const element = `img#${options[i].id}`;
         await page.click(element);
         await new Promise( r => setTimeout(r, wt));
         const data = {
-        nombre: await page.$eval('span#span_vNOMBRE', v => v.textContent),
-        nro_doc: await page.$eval('span#span_vNRODOC', v => v.textContent),
-        cuit: await page.$eval('span#span_vCNTCUIT', v => v.textContent),
-        contribuyente_tipo: await page.$eval('span#span_vCNTTIPO', v => v.textContent),
-        domicilio: await page.$eval('span#span_vDOMICILIO', v => v.textContent),
-        calle: '',
-        altura: '',
-        nomenclatura: await page.$eval('span#span_vVNOMEN', v => v.textContent),
-        unidad: await page.$eval('span#span_vVUNI', v => v.textContent),
-        padron: await page.$eval('span#span_INMPADRON', v => v.textContent),
-        inmobiliario: [],
-        tasa: []
+          nombre: await page.$eval('span#span_vNOMBRE', v => v.textContent),
+          nro_doc: await page.$eval('span#span_vNRODOC', v => v.textContent),
+          cuit: await page.$eval('span#span_vCNTCUIT', v => v.textContent),
+          contribuyente_tipo: await page.$eval('span#span_vCNTTIPO', v => v.textContent),
+          domicilio: await page.$eval('span#span_vDOMICILIO', v => v.textContent),
+          calle: '',
+          altura: '',
+          nomenclatura: await page.$eval('span#span_vVNOMEN', v => v.textContent),
+          unidad: await page.$eval('span#span_vVUNI', v => v.textContent),
+          padron: await page.$eval('span#span_INMPADRON', v => v.textContent),
+          inmobiliario: [],
+          tasa: []
         }
         console.log('Lee InmoData')
         data['inmobiliario'] = await cargaTablas(page);
@@ -177,10 +157,10 @@ const inmuebleData = async (page:Page, options, rdata) => {
         await new Promise( r => setTimeout(r, wt));
       }
     }
-      resolve(true)
+      resolve(rdata)
     } catch (error) {
-      console.log(error);
-      reject(false);      
+      console.log("inmuebleData",error);
+      reject(null);      
     }
   })
 }
@@ -194,6 +174,11 @@ const indusGetTributo = async (page:Page, tabla ) => {
         const row = {}
         const items = [... tds].map( td => {
           const e = td.querySelector('span');
+          if(e){
+            e.id = e?.id.replace(/^[a-zA-Z]*_/,'');
+            e.id = e?.id.replace(/_[0-9]*$/,'');
+          }
+
           return {id: e?.id.trim(), value: e?.textContent.trim(), display: td.style.display.trim()}
         })
         for (let i = 0; i < items.length; i++) {
@@ -208,13 +193,14 @@ const indusGetTributo = async (page:Page, tabla ) => {
 
   });
 }
-const industriaData = async (page:Page, options, retData ) => {
+const industriaData = async (page:Page, options ) => {
   return new Promise( async (resolve, reject ) => {
+    const retData = [];
     try {
       const retPage = `${page.url()}`;
 
       for (let i = 0; i < options.length; i++) {
-        console.log(options[i].id);
+        //console.log(options[i].id);
         if (options[i].display === '' ){
           const element = `img#${options[i].id}`;
           await page.click(element);
@@ -256,122 +242,27 @@ const industriaData = async (page:Page, options, retData ) => {
             ]
           }
           retData.push(idata);
-          console.log(retPage);
+          //console.log(retPage);
           page.goto(retPage);
           page.waitForNavigation()
           await new Promise( r => setTimeout(r, wt));
         }
       }
-      resolve(true);
+      resolve(retData);
     } catch (error) {
-      
+      console.log("industriaData",error);
+      reject([]);
     }
   })
 }
-/*
-const inmoData = ( page:Page): Promise<any> => {
-  const inmo = [
-    'span_vNOMBRE',
-    'span_vNRODOC',
-    'span_vCNTCUIT',
-    'span_vCNTTIPO',
-    'span_vDOMICILIO',
-    'span_vVNOMEN',
-    'span_vVUNI',
-    'span_INMPADRON'
-  ]
 
-  const tasas = [
-    'span_vNOMBRE',
-    'span_vNRODOC',
-    'span_vCNTCUIT',
-    'span_vCNTTIPO',
-    'vVCALLE',
-    'vVALTU',
-    'vVNOMEN',
-    'vVUNI',
-    'INMPADRON'
-  ]
-
-
+const doLink = async (page:Page,options,func) => {
   return new Promise( async (resolve, reject) => {
-    try {
-      const data = {
-        nombre: await page.$eval('span#span_vNOMBRE', v => v.textContent),
-        nro_doc: await page.$eval('span#span_vNRODOC', v => v.textContent),
-        cuit: await page.$eval('span#span_vCNTCUIT', v => v.textContent),
-        contribuyente_tipo: await page.$eval('span#span_vCNTTIPO', v => v.textContent),
-        domicilio: await page.$eval('span#span_vDOMICILIO', v => v.textContent),
-        calle: await page.$eval('span#span_vCALLE', v => v.textContent),
-        altura: await page.$eval('span#span_vVALTU', v => v.textContent),
-        nomenclatura: await page.$eval('span#span_vVNOMEN', v => v.textContent),
-        unidad: await page.$eval('span#_', v => v.textContent),
-        padron: await page.$eval('span#span_INMPADRON', v => v.textContent),
-        rows: await cargaTablas(page)
-      }
-      resolve(data);
-    } catch (error) {
-      console.log(error)
-      reject()
-    }
-  })
-}
-*/
-/*
-const tasaData = ( page:Page): Promise<any> => {
-  const inmo = [
-    'span_vNOMBRE',
-    'span_vNRODOC',
-    'span_vCNTCUIT',
-    'span_vCNTTIPO',
-    'span_vDOMICILIO',
-    'span_vVNOMEN',
-    'span_vVUNI',
-    'span_INMPADRON'
-  ]
-
-  const tasas = [
-    'span_vNOMBRE',
-    'span_vNRODOC',
-    'span_vCNTCUIT',
-    'span_vCNTTIPO',
-    'span_vVCALLE',
-    'span_vVALTU',
-    'span_vVNOMEN',
-    'span_vVUNI',
-    'span_INMPADRON'
-  ]
-
-
-  return new Promise( async (resolve, reject) => {
-    try {
-      const data = {
-        nombre: await page.$eval('span#span_vNOMBRE', v => v.textContent),
-        nro_doc: await page.$eval('span#span_vNRODOC', v => v.textContent),
-        cuit: await page.$eval('span#span_vCNTCUIT', v => v.textContent),
-        contribuyente_tipo: await page.$eval('span#span_vCNTTIPO', v => v.textContent),
-        calle: await page.$eval('span#span_vCALLE', v => v.textContent),
-        altura: await page.$eval('span#span_vVALTU', v => v.textContent),
-        nomenclatura: await page.$eval('span#span_vVNOMEN', v => v.textContent),
-        unidad: await page.$eval('span#_', v => v.textContent),
-        padron: await page.$eval('span#span_INMPADRON', v => v.textContent),
-        rows: await cargaTablas(page)
-      }
-      resolve(data);
-    } catch (error) {
-      console.log(error)
-      reject()
-    }
-  })
-}
-*/
-const doLink = async (page:Page,options,data,func) => {
-  return new Promise( async (resolve, reject) => {
+    const data = [];
     try {
       const retPage = page.url();
-
       for (let i = 0; i < options.length; i++) {
-        console.log(options[i].id);
+        //console.log(options[i].id);
         if (options[i].display === '' ){
           const element = `img#${options[i].id}`;
           await page.click(element);
@@ -382,48 +273,186 @@ const doLink = async (page:Page,options,data,func) => {
           await new Promise( r => setTimeout(r, wt));
         }
       }
-      resolve(true);
+      resolve(data);
     } catch (error) {
-      console.log(error);
+      console.log("doLink",error);
       reject(false);
     }
   });
 }
+const getVehiculosData = async (page:Page) => {
+  return new Promise( async (resolve, reject) => {
+    try {
+      //const retData = [];
+      const vehi = await page.$('div#GridvehiculosContainerTbl');
+      const options = await getLinks(vehi);
+      const retData = await doLink( page,options, vehiculoData)
+  
+      resolve(retData)
+    } catch (error) {
+      console.log("getVehiculosData",error);
+      reject()    
+    }
+  })
+}
+
+const getInmueblesData = async (page:Page) => {
+  return new Promise( async (resolve, reject) => {
+    try {
+      const inmu = await page.$('div#GridinmobiliContainerTbl');
+      const optinmu = await getLinks(inmu);
+      const retData = await inmuebleData(page,optinmu)
+      resolve(retData)
+    } catch (error) {
+      console.log("getInmueblesData",error);
+      reject()    
+    }
+  })
+}
+
+const getIndustriaComercio = async (page:Page) => {
+  return new Promise( async (resolve, reject) => {
+    try {
+      const indus = await page.$('div#GridindustriaContainerTbl');
+      const optind = await getLinks(indus);
+      const retData = await industriaData(page, optind);
+      resolve(retData);
+    } catch (error) {
+      console.log("getIndustriaComercio", error)
+      reject([])
+    }
+  })
+}
+const getPagos = async (page:Page) => {
+  return new Promise ( async (resolve, reject) => {
+    try {
+      const pagos = await page.$('div#GridvepContainerDiv');
+      await new Promise( r => setTimeout(r, wt));
+      const optpagos = await getLinksPagos(pagos);
+      const retPage = `${page.url()}`;
+      for (let i = 0; i < optpagos.length; i++) {
+        const el = optpagos[i];
+        await page.click(`#${el.click}`);
+        await new Promise( r => setTimeout(r, wt));
+        const link = await page.$eval('iframe#gxp0_ifrm', v => v.src);
+        el['url'] = link;
+    
+        page.goto(link)
+        await new Promise( r => setTimeout(r, wt));
+        el['referencia'] = await page.$eval('#span_VARPADRON', v => v.textContent);
+        el['detalle'] = await cargaTablas(page,'#GridbolvarContainerTbl > tbody > tr');
+        page.goto(retPage);
+        await new Promise( r => setTimeout(r, wt));
+      }
+      resolve(optpagos)
+    } catch (error) {
+      console.log("getPagos",error)
+      reject(null)
+    }
+  })
+}
+export const loginMuniRcia = (page:Page) => {
+  return new Promise( async (resolve, reject ) => {
+    try {
+      /**
+       * Login
+       */
+      await page.goto(`https://mrpagos.resistencia.gob.ar/MRPAGOS/servlet/com.mr.login`);
+      console.log(`${page.url()}`);
+      console.log('Logueando')
+      await page.focus('input#vCNTCUIT');
+      await page.keyboard.type('20161192741');
+      await page.focus('input#vPASS');
+      await page.keyboard.type('tamara01');
+      
+      let retData = {};
+      const [response] = await Promise.all([
+        page.waitForNavigation({waitUntil: ['networkidle2']}),
+        page.click('input#BUTTON1'),
+      ]);
+      await new Promise( r => setTimeout(r, wt));
+      resolve(true);        
+    } catch (error) {
+      reject(false);
+    }
+  })  
+}
+
+export const web_munirciaInmuebles = async (req:Request, res:Response, next: NextFunction ): Promise<any> => {
+  res.status(200).json(await munirciaInmuebles());
+}
+
+export const munirciaInmuebles = async (): Promise<any> => {
+  let retData = {};
+  try {
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      //slowMo: 1200
+    });
+    const page = await browser.newPage();
+
+    if (await loginMuniRcia(page)){
+      retData['inmuebles'] = await getInmueblesData(page);
+    } else {
+      retData['error'] = 'No se pudo loguear';
+    }
+    await browser.close();
+    return retData;
+  } catch (error) {
+    console.log(error);
+    retData['error'] = JSON.stringify(error);
+  }
+} 
+export const web_munirciaVehiculos = async (req:Request, res:Response, next: NextFunction ): Promise<any> => {
+  res.status(200).json(await munirciaVehiculos());
+}
+
+export const munirciaVehiculos = async (): Promise<any> => {
+  try {
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      //slowMo: 1200
+    });
+    const page = await browser.newPage();
+    let retData = {};
+
+    if (await loginMuniRcia(page)){
+      retData['vehiculos'] = await getVehiculosData(page);
+    } else {
+      retData['error'] = 'No se pudo loguear';
+    }
+
+    await browser.close();
+    return retData;
+  } catch (error) {
+    console.log(error);    
+  }
+} 
 
 export const munircia = async (req:Request, res:Response, next: NextFunction ): Promise<any> => {
   try {
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: 'new',
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
       //slowMo: 1200
     });
     const page = await browser.newPage();
     
     /*
-    await page.setViewport({
-      width: 1280,
-      height: 960,
-      deviceScaleFactor: 1,
+    page.on('requestfailed', request => {
+      console.log(`url: ${request.url()}, errText: ${request.failure().errorText}, method: ${request.method()}`)
     });
     */
-    await page.goto(`https://mrpagos.resistencia.gob.ar/MRPAGOS/servlet/com.mr.login`);
-    /**
-     * Login
-     */
-    console.log(`${page.url()}`);
-    await page.focus('input#vCNTCUIT');
-    await page.keyboard.type('20161192741');
-    await page.focus('input#vPASS');
-    await page.keyboard.type('tamara01');
-    let retData = {
-      vehiculos: [],
-      inmuebles: [],
-      industria: [],
-    };
-    const [response] = await Promise.all([
-      page.waitForNavigation({waitUntil: ['networkidle2']}),
-      page.click('input#BUTTON1'),
-    ]);
+    /*
+    page.on('console', msg => {
+      console.log('Logger:', msg.type());
+      console.log('Logger:', msg.text());
+      console.log('Logger:', msg.location());
+
+    });
+    */
     /**
      * Tablas...
      * GridvehiculosContainerDiv - GridvehiculosContainerTbl - Vehiculos
@@ -444,48 +473,16 @@ export const munircia = async (req:Request, res:Response, next: NextFunction ): 
     // espero un tiempo
     // posible solucion
     // https://stackoverflow.com/questions/71503214/puppeteer-waitforresponse-timeout-but-page-onresponse-finds-response
-    await new Promise( r => setTimeout(r, 1500));
-    console.log(`${page.url()}`);
-  
-    //Vehiculos
-    const vehi = await page.$('div#GridvehiculosContainerTbl');
-    const options = await getLinks(vehi);
-    await doLink( page,options, retData.vehiculos, vehiculoData)
-    //Inmuebles
-    const inmu = await page.$('div#GridinmobiliContainerTbl');
-    const optinmu = await getLinks(inmu);
-    await inmuebleData(page,optinmu,retData.inmuebles)
-
-    const indus = await page.$('div#GridindustriaContainerTbl');
-    const optind = await getLinks(indus);
-    await industriaData(page, optind, retData.industria);
-
-    
-    // Pagos
-    const pagos = await page.$('div#GridvepContainerDiv');
-    await new Promise( r => setTimeout(r, wt));
-    const optpagos = await getLinksPagos(pagos);
-    for (let i = 0; i < optpagos.length; i++) {
-      const el = optpagos[i];
-      await page.click(`#${el.click}`);
-      await new Promise( r => setTimeout(r, wt));
-      const link = await page.$eval('iframe#gxp0_ifrm', v => v.src);
-      el['url'] = link;
-      await page.click('#gxp0_cls')
-      await new Promise( r => setTimeout(r, wt));
+    let retData = {};
+    if (await loginMuniRcia(page)){
+      retData['vehiculos'] = await getVehiculosData(page);
+      retData['inmuebles'] = await getInmueblesData(page);
+      retData['industria'] = await getIndustriaComercio(page);
+      retData['pagos'] = await getPagos(page);
+    } else {
+      retData['error'] = 'No se pudo loguear';
     }
-    retData['pagos'] = optpagos;
-    /*
-    const pagos = await page.$$eval('img[src="/MRPAGOS/static/Resources/CreditCard32.png"]', options => {
-      return options.map(option => {
-        //if (option.style.display === '') 
-        return {id: option.id, display: option.style.display}
-      });
-    });
-    console.log(options);
-    */
-    
-    await new Promise( r => setTimeout(r, wt));
+
     await browser.close();
     res.status(200).json(retData);
   } catch (error) {
