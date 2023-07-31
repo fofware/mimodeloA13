@@ -5,6 +5,7 @@ import cors from 'cors';
 import passport from 'passport';
 import passportMiddelware from './middlewares/passport';
 import config from './config';
+
 import { userCtrl } from './controlers/userController';
 import { articuloCtrl } from './controlers/articuloControler';
 import { productoCtrl } from './controlers/productoControler';

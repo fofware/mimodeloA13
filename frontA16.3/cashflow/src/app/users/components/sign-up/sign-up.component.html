@@ -99,7 +99,7 @@
                 </div>
               </div>
 
-              <div class="mb-3 form-field">
+              <!--div class="mb-3 form-field">
                 <label class="form-label">mierda</label>
                 <input type="text"
                   name="mierda"
@@ -108,13 +108,13 @@
                   formControlName="mierda"
                   [ngClass]="{ 'is-invalid': isInvalid('mierda') }"
                 />
-                <div class="invalid-feedback">
+                <div class="invalid-feedback"-->
                   <!--
                   para debug
                   {{formParent.get('email')?.errors | json}}
                   <li>{{formParent.get('email')?.errors | json}}</li>
                   -->
-                  <ul>
+                  <!--ul>
                     <li *ngIf="formParent.get('mierda')?.errors?.['required']">El campo no puede quedar vacio</li>
                     <li *ngIf="formParent.get('mierda')?.errors?.['pattern']">
                       {{formParent.get('mierda')?.errors?.['pattern'].actualValue}} no parece ser un e-Mail real</li>
@@ -122,17 +122,17 @@
                       registrado</li>
                   </ul>
                 </div>
-              </div>
+              </div-->
 
 
 
               <div class="mb-3 form-field">
                 <label class="form-label">Email address</label>
                 <input type="text"
-                  name="newemail"
+                  name="email"
                   class="form-control"
                   placeholder="Ej: name@example.com"
-                  formControlName="nemail"
+                  formControlName="email"
                   [ngClass]="{ 'is-invalid': isInvalid('email') }"
                   autocomplete="new-email"
                 />

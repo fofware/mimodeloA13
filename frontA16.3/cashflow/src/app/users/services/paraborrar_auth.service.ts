@@ -17,6 +17,7 @@ export interface authUser {
   grupo?: string;
   type?: string;
   subType?: string;
+  menu?: [];
   roles: string[];
   iat: number;
   exp: number;
@@ -60,6 +61,8 @@ export class AuthService {
   }
 
   decodeToken(token:any = null){
+    console.log(token);
+
     if (token && token !== null ) {
       const jwtToken = JSON.parse(decodeURIComponent(atob(token.split('.')[1]).split('').map(function(c) {
           return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
@@ -72,6 +75,7 @@ export class AuthService {
         jwtToken['subType'] = type[1];
         //this.loggedUsr.next(jwtToken);
         isLogged.set(true);
+        console.log(jwtToken);
         return jwtToken;
       }
       localStorage.removeItem('token');
@@ -86,6 +90,7 @@ export class AuthService {
       .post(this.URL + '/signin', user)
       .pipe(
         map( (res:any) => {
+          console.log(res);
           //this.saveToken(res);
           loggedUser.set(this.decodeToken(res));
           //this._socket.connect();

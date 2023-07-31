@@ -11,17 +11,230 @@ import config from '../config';
 import  RefreshToken  from '../models/refreshToken'
 import { requestPromise } from "../common/httpClient-promise";
 
-//import * as request from 'request-promise'
-//const request = require('request-promise');
+export interface iMenuData {
+  name:string;
+  title?: string;
+  icon?: string;
+  comment?: string;
+  links: iMenuLink[];
+}
+export interface iMenuLink {
+  icon?:string;
+  title: string,
+  link: string | string[],
+  fragment?: string,
+  roles?: string[],
+  hidden?: boolean,
+  outlet?: string,
+  state?:any,
+  target?:string,
+  href?:string,
+  rel?:string,
+}
+
+const menuData:iMenuData[] = [
+  { 
+    name: 'topMenu',
+    title: 'Top Menu',
+    icon: 'fas fa-cogs fa-4x',
+    comment: '',
+    links: [
+      { 
+        title: 'Home', 
+        icon: '<i class="fas fa-home-lg"></i>', 
+        link: 'home'
+      },
+      //{ title: 'Marcas', link: ['marca'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user' ] },
+      { 
+        title: 'Articulos', 
+        link: ['articulos'] 
+      },
+      //{ title: 'Productos', link: ['productos'], roles: ['visitante','client_admin', 'client_user','sys_admin', 'sys_user'] },
+    
+      { 
+        title: 'Aplicaciones', 
+        link: ['users'], 
+        roles: ['sys_admin', 'sys_user'] 
+      },
+      { 
+        title: 'Aplicaciones', 
+        link: ['users'], 
+        roles: ['client_admin', 'client_user'] 
+      },
+      { 
+        title: 'Sistema', 
+        link: ['system'], 
+        roles: ['sys_admin'] 
+      },
+      { 
+        title: 'WhatsApp', 
+        link: ['whatsapp'], 
+        roles: ['sys_admin', 'sys_user'] 
+      },
+      { 
+        title: 'WhatsApp', 
+        link: ['whatsapp'], 
+        roles: ['client_admin', 'client_user'] 
+      },
+      //{ title: 'Socket', link: ['socketdata'], roles: ['sys_admin', 'sys_user'] },
+      //{ title: 'HttpData', link: ['htmldata'], roles: ['sys_admin', 'sys_user'] },
+      //{ title: 'Usuarios', link: ['users'], roles: ['sys_admin', 'sys_user'] },
+      //{ title: 'Proveedores', link: ['proveedores'], roles: ['proveedor_admin', 'proveedor_user','sys_admin', 'sys_user'] },
+      //{ title: 'Temporal', link: ['temp'], roles: ['sys_admin', 'sys_user']},
+    ]
+  },
+  {
+    name: 'usersHome',
+    title: 'Usuario',
+    icon: 'fas fa-cogs fa-4x',
+    comment: 'Puesta a punto el sistema',
+    links: [
+      { 
+        title: 'Home',
+        icon: '<i class="fas fa-home-lg"></i>',
+        link: ['home']
+      },
+      { 
+        title: 'Menues',
+        icon:'<i class="fa-solid fa-bars"></i>',
+        link: ['menues'],
+        roles: ['sys_admin']
+      },
+      { 
+        title: 'Contactos',
+        icon:'<i class="fa-regular fa-address-book fa-lg"></i>',
+        link: ['contactos'],
+        roles: ['sys_admin','client_admin','cliente_editor']
+      },
+      { 
+        title: 'Proveedores',
+        icon:'<i class="fa-solid fa-store"></i>',
+        link: ['proveedores'],
+        roles: ['sys_admin']
+      },
+      { 
+        title: 'Clientes',
+        icon:'<i class="fa-solid fa-truck-field-un"></i>',
+        link: ['clientes'],
+        roles: ['sys_admin']
+      },
+      { 
+        title: 'Mascotas',
+        icon:'<i class="fa-solid fa-paw"></i>',
+        link: ['mascotas'],
+        roles: ['sys_admin','client_admin']
+      },
+      { 
+        title: 'Vehículos',
+        icon:'<i class="fa-solid fa-truck-field-un"></i>',
+        link: ['vehiculos'],
+        roles: ['sys_admin','client_admin']
+      },
+      { 
+        title: 'Configuraciones',
+        icon:'<i class="fa-solid fa-sliders"></i>',
+        link: ['settings'],
+        //roles: ['sys_admin','client_admin']
+      }
+    ]
+  },
+  {
+    name: 'system',
+    title: 'Sistemas',
+    icon: 'fas fa-cogs fa-4x',
+    comment: 'Habilitación e Integración de Sistemas',
+    links: [
+      { 
+        title: 'Home',
+        icon: '<i class="fas fa-home-lg"></i>',
+        link: ['home']
+      },
+      { 
+        title: 'Menues',
+        icon:'<i class="fa-solid fa-bars"></i>',
+        link: ['menues'],
+        roles: ['sys_admin']
+      },
+      { 
+        title: 'Contactos',
+        icon:'<i class="fa-regular fa-address-book fa-lg"></i>',
+        link: ['..','contactos'],
+        roles: ['sys_admin','client_admin','cliente_editor']
+      },
+      { 
+        title: 'Proveedores',
+        icon:'<i class="fa-solid fa-store"></i>',
+        link: ['proveedores'],
+        roles: ['sys_admin']
+      },
+      { 
+        title: 'Clientes',
+        icon:'<i class="fa-solid fa-truck-field-un"></i>',
+        link: ['clientes'],
+        roles: ['sys_admin']
+      },
+      { 
+        title: 'Mascotas',
+        icon:'<i class="fa-solid fa-paw"></i>',
+        link: ['mascotas'],
+        roles: ['sys_admin','client_admin']
+      },
+      { 
+        title: 'Vehículos',
+        icon:'<i class="fa-solid fa-truck-field-un"></i>',
+        link: ['vehiculos'],
+        roles: ['sys_admin','client_admin']
+      },
+      { 
+        title: 'Configuraciones',
+        icon:'<i class="fa-solid fa-sliders"></i>',
+        link: ['settings'],
+        //roles: ['sys_admin','client_admin']
+      }
+    ]
+  }
+
+]
+
+const setMenu = async (user, defmenu:iMenuLink[]): Promise<iMenuLink[]> => {
+  return new Promise( (resolve, reject) => {
+    try {
+      //console.log('SetMenu for ',user);
+      const usrMenu:iMenuLink[] = defmenu.filter( (item:iMenuLink) => {
+        if (item.roles?.length){
+          for (let ir:number = 0; ir < item.roles.length; ir++) {
+            const rol = item.roles[ir];
+            const roles:string[] | undefined = user?.roles;
+            if (rol && roles) {
+              //console.log(item.title, roles,rol,roles.indexOf(rol))
+              if(roles.indexOf(rol) > -1) return true;
+            }
+          }
+          return false;
+        }
+        console.log(item.title, item.roles)
+        return true;
+      })
+      //usrMenu.map( it => delete(it.roles))
+      //console.log(usrMenu);
+      resolve(usrMenu);
+    } catch (error) {
+      const retvalue: iMenuLink[] = []
+      reject( retvalue );
+    }
+  })
+}
 
 function createToken(user: IUser | any ) {
-  return jwt.sign({ _id: user._id, 
+  //const menu:iMenuLink[] = await setMenu(user);
+  return jwt.sign({
+    _id: user._id,
     email: user.email,
     apellido: user.apellido,
     nombre: user.nombre,
-    site:[],
-    menu:[],
-    accounts:[],
+    site: [],
+    menu: user.menu,
+    accounts: [],
     roles: user.roles,
     phone: user.phone,
     group: user.group,
@@ -118,19 +331,42 @@ export const signIn = async (req: Request, res: Response): Promise<Response> => 
   const isMatch = await user.comparePassword(req.body.password);
   if (!isMatch)
     return res.status(401).json({ title: 'No Autorizado', text: 'Contraseña y/o Usuario ivalidos' });
-    let fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-    let fromUrl = req.headers.origin; // req.headers.referer
-    console.log(`******** ${fromUrl} ********`);
-    console.log(fromUrl);
-  const token = createToken(user);
-  console.log(user);
+  let fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+  let fromUrl = req.headers.origin; // req.headers.referer
   delete user.__v ;
   delete user.password;
   user.password = null;
   user.__v = null
+  //user['menu'] = await setMenu(user);
+  //console.log(user);
+  const token = createToken(user);
   return res.status(200).json( token );
 };
 
+export const getmenu = async (req: Request, res: Response): Promise<Response> => {
+  const {id} = req.params;
+  //console.log("GetMenu",id,req.user)
+  const menuIdx = menuData.findIndex(m => m.name === id);
+  const menu = await setMenu(req.user, menuData[menuIdx].links);
+  return res.status(200).json(menu);
+}
+export const fullmenu = async (req: Request, res: Response): Promise<Response> => {
+  const {id} = req.params;
+  //console.log("GetMenu",id,req.user)
+  const menuIdx = menuData.findIndex(m => m.name === id);
+  const menu = menuData[menuIdx]
+  menu.links = await setMenu(req.user, menuData[menuIdx].links);
+  return res.status(200).json(menu);
+}
+
+/*
+export const getvmenu = async ( req: Request, res: Response): Promise<Response> => {
+  const {id} = req.params;
+  console.log("GetVMenu",id,req.user)
+  const menu = await setMenu(req.user, menuData[id].options);
+  return res.status(200).json(menu);
+}
+*/
 /*
 export const refreshtoken = async (req: Request, res: Response): Promise<Response> => {
   const { refreshToken: requestToken } = req.body;

@@ -16,6 +16,12 @@ export const appRoutes: Routes = [
     loadComponent: () =>
       import('./components/home/home.component').then((mod) => mod.HomeComponent),
   },
+  {
+    path: 'system',
+    //canMatch: [() => inject(AuthService).isLogged],
+    loadChildren: () => import('./system/system.routes')
+                      .then(mod => mod.SYSTEM_ROUTES)
+  },
 
   {path: 'mp',
     //canMatch: [() => inject(AuthService).isLogged],

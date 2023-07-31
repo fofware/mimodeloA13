@@ -4,7 +4,6 @@ import { Request, Response, NextFunction } from "express";
 import puppeteer, { ElementHandle, Page } from "puppeteer"
 const wt = 1500;
 
-
 const listaClients = ( page:Page, tabla = 'table#Grid1ContainerTbl > tbody > tr' ): Promise<any> => {
   return new Promise( async (resolve, reject) => {
     try {
@@ -13,7 +12,9 @@ const listaClients = ( page:Page, tabla = 'table#Grid1ContainerTbl > tbody > tr'
           const tds = tr.querySelectorAll('td');
           return [... tds].map( td => {
             const e = td.querySelector('span');
-            return {id: e?.id, value: e?.textContent, display: td.style.display}
+            const a = e?.querySelector('a');
+            const value = a ? a.href : e?.textContent.trim();
+            return {id: e?.id, value}
           })
         })
       });
@@ -25,7 +26,8 @@ const listaClients = ( page:Page, tabla = 'table#Grid1ContainerTbl > tbody > tr'
 
           if(e.id){
             e.id = (e.id.split('_'))[1];
-            e.value = e.value.trim().replace(',','.');
+            //e.value = e.value.trim().replace(',','.');
+            /*
             let value:any;//
             const fch  = e.value.split('/');
             if (fch.length === 3){
@@ -36,21 +38,82 @@ const listaClients = ( page:Page, tabla = 'table#Grid1ContainerTbl > tbody > tr'
               value = isNaN(parseFloat(e.value)) ? e.value : Number(e.value);
             }
             data[e.id] = value;
+            */
+            data[e.id] = e.value;
           }
         }
         return data;
       })
       resolve(data);
     } catch (error) {
-      console.log("CargaTablas",error)
+      console.log("listaClients",error)
       reject(null)
     }
-
   })
-
 }
 
-const cargaTablas = ( page:Page, tabla = 'table#Grid1ContainerTbl > tbody > tr' ): Promise<any> => {
+const selectClient = async (page:Page, client:ElementHandle<HTMLAnchorElement>) => {
+  return new Promise<any>(async (resolve, reject) => {
+    try {
+      /**
+       * Select Cliente
+       */
+      console.log(`${page.url()}`);
+      const [response] = await Promise.all([
+        page.waitForNavigation({waitUntil: ['networkidle2']}),
+        client.click()
+      ]);
+      await new Promise( r => setTimeout(r, wt));
+      const W0018SOC_APELLI = await page.$eval('span#span_W0018SOC_APELLI', e => e.textContent);
+
+      const data = {W0018SOC_APELLI,  ...(await cargaTablas(page, 'table#GridContainerTbl > tbody > tr'))};
+      resolve(data);
+    } catch (error) {
+      console.log(error);
+      reject(false)
+    }
+  });
+}
+
+const getFields = ( page:Page, tabla = 'table#Grid1ContainerTbl > tbody > tr' ): Promise<any> => {
+  return new Promise( async (resolve, reject) => {
+    try {
+      const trs = await page.$$eval(tabla, trs => {
+        return trs.map( tr => {
+          const tds = tr.querySelectorAll('td');
+          return [... tds].map( (td, idx) => {
+            const e = td.querySelector('span');
+            
+            const a = td?.querySelector('a');
+            const inp = td?.querySelector('input');
+            const img = td?.querySelector('img');
+            
+            let id = e?.id  || a?.id || inp?.id || img?.id || `desconocido_${idx}`
+            let value = e?.textContent  || a?.href || inp?.value || img?.src || `desconocido_${idx}`;
+            id = id.replace(/_[0-9]*$/,'').replace(/^[a-zA-Z]*_/,'');
+            value = value.trim()
+            console.log(id, value);
+            return { id, value }
+          })
+        })
+      });
+      const data = trs.map( linea => {
+        const data = {};
+        for (let i = 0; i < linea.length; i++) {
+          const e = linea[i];
+          data[e.id] = e.value;
+        }
+        return data;
+      });
+      resolve(data);
+    } catch (error) {
+      console.log("getFields",error)
+      reject(null)
+    }
+  })
+}
+
+const cargaTablas = ( page:Page, tabla = 'table#GridContainerTbl > tbody > tr' ): Promise<any> => {
   return new Promise( async (resolve, reject) => {
     try {
       const trs = await page.$$eval(tabla, trs => {
@@ -58,14 +121,31 @@ const cargaTablas = ( page:Page, tabla = 'table#Grid1ContainerTbl > tbody > tr' 
         const regs = trs.map( tr => {
           const tds = tr.querySelectorAll('td');
           const row = {}
-          const items = [... tds].map( td => {
+          const items = [... tds].map( (td, i) => {
             const e = td.querySelector('span');
+            let id = `cargaTablas_${i}`;
+            let value = '';
             if(e){
-              e.id = e?.id.replace(/^[a-zA-Z]*_/,'');
+
+              e.id = e?.id.replace(/^[a-zA-Z]*_+/,'');
               e.id = e?.id.replace(/_[0-9]*$/,'');
+              id = e.id;
+              value = e.textContent.trim();
+              const img = e.querySelector('img');
+              if(img && id === `cargaTablas_${i}`) id = img?.id.replace(/_[0-9]*$/,'');
+
             }
-  
-            return {id: e?.id.trim(), value: e?.textContent.trim(), display: td.style.display.trim()}
+            const a = td.querySelector('a');
+            if(a){
+              const img = a.querySelector('img');
+              value = a.href;
+              if(img){
+                if(id === `cargaTablas_${i}`) id = img?.id
+                id = id.replace(/_[0-9]*$/,'');
+              }
+            }
+            //const value = a ? a?.href : e?.textContent.trim();
+            return {id, value}
           })
           for (let i = 0; i < items.length; i++) {
             const e = items[i];
@@ -82,8 +162,123 @@ const cargaTablas = ( page:Page, tabla = 'table#Grid1ContainerTbl > tbody > tr' 
     }
 
   })
-
 }
+
+const saldos = async (page:Page, link:string) => {
+  return new Promise ( async (resolve, reject) => {
+    try {
+      await page.goto(link);
+      await new Promise( r => setTimeout(r, wt));
+      const fecha = await page.$eval('span#span_vHOY', e => {
+        const tbfch = (e.textContent).split('/');
+        return `20${tbfch[2]}/${tbfch[1]}/${tbfch[0]}`;
+      })
+      const actualizado = new Date(fecha);
+      console.log(actualizado)
+      let data = []
+      let next = false;
+      do {
+        data = [...data, ...await getFields(page, 'table#GridContainerTbl > tbody > tr')];
+        const btn = await page.$('li.next');
+        next = await btn.evaluate( e => {
+          const disa = e.getAttribute('class').includes('disabled');
+          return !disa;
+        });
+        console.log('Next', next);
+        if(next) {
+          await btn.click();
+          await new Promise( r => setTimeout(r, wt));
+        }
+
+      } while (next);
+      //const actualizado = document.getElementById('span_vHOY').innerText;
+      const retData = []
+      for (let i = 0; i < data.length; i++) {
+        const el = data[i];
+        const retel:any = {};
+        const tbFch = el['COMP_FECHA'].split('/');
+        const tbPeriodo = el['COMSALPERIODO'].split('/');
+        const tbVto = el['COMP_VTO1'].split('/');
+        retel.id = el['COMSALFORMULAID'];
+        retel.comprobante = `${el['FORM_DESCR']} ${el['COMP_LETRA']} ${el['COMP_SECCI']}-${el['COMP_NUMER']}`
+        retel.fecha = new Date(`${tbFch[2]}/${tbFch[1]}/${tbFch[0]}`);
+        retel.vtoFch = new Date(`${tbVto[2]}/${tbVto[1]}/${tbVto[0]}`);
+        retel.periodo = `${tbPeriodo[1]}/${tbPeriodo[0]}`;
+        retel.importe = Number(el['SALDO'].replace('.','').replace(',','.'));
+        retel.recargo = Number(el['INTERESES'].replace('.','').replace(',','.'));
+        retel.total = Number(el['SALDO_TOTAL'].replace('.','').replace(',','.'));
+        retel.data = el;
+        retData.push(retel)
+      }
+      resolve({retData,actualizado});
+    } catch (error) {
+      reject(`Error al leer saldos ${error} ${link}`)
+    }
+  });
+}
+
+const consumos = async (page:Page, link:string) => {
+  return new Promise ( async (resolve, reject) => {
+    try {
+      await page.goto(link);
+      await new Promise( r => setTimeout(r, wt));
+      await page.click('button#DDO_MANAGEFILTERSContainer_btnGroupDrop')
+      const dropmenu = await page.$('div#DDO_MANAGEFILTERSContainer');
+      const btn = await dropmenu.$('button');
+      console.log('button')
+      btn.click()
+      await new Promise( r => setTimeout(r, wt));
+      const limpia = await dropmenu.$('a');
+      console.log(limpia);
+      await limpia.focus();
+      await limpia.click();
+      await new Promise( r => setTimeout(r, wt));
+
+      let data = []
+      let next = false;
+      
+      do {
+        data = [...data, ...await getFields(page, 'table#GridContainerTbl > tbody > tr')];
+        const btn = await page.$('li.next');
+        next = await btn.evaluate( e => {
+          const disa = e.getAttribute('class').includes('disabled');
+          return !disa;
+        });
+        console.log('Next', next);
+        if(next) {
+          await btn.click();
+          await new Promise( r => setTimeout(r, wt));
+        }
+
+      } while (next);
+      //const actualizado = document.getElementById('span_vHOY').innerText;
+      const retData = []
+      for (let i = 0; i < data.length; i++) {
+        const el = data[i];
+        const retel:any = {};
+        /*
+        const tbFch = el['COMP_FECHA'].split('/');
+        const tbPeriodo = el['COMSALPERIODO'].split('/');
+        const tbVto = el['COMP_VTO1'].split('/');
+        retel.id = el['COMSALFORMULAID'];
+        retel.comprobante = `${el['FORM_DESCR']} ${el['COMP_LETRA']} ${el['COMP_SECCI']}-${el['COMP_NUMER']}`
+        retel.fecha = new Date(`${tbFch[2]}/${tbFch[1]}/${tbFch[0]}`);
+        retel.vtoFch = new Date(`${tbVto[2]}/${tbVto[1]}/${tbVto[0]}`);
+        retel.periodo = `${tbPeriodo[1]}/${tbPeriodo[0]}`;
+        retel.importe = Number(el['SALDO'].replace('.','').replace(',','.'));
+        retel.recargo = Number(el['INTERESES'].replace('.','').replace(',','.'));
+        retel.total = Number(el['SALDO_TOTAL'].replace('.','').replace(',','.'));
+        */
+        retel.data = el;
+        retData.push(retel)
+      }
+      resolve(retData);
+    } catch (error) {
+      reject(`Error al leer consumos ${error} ${link}`)
+    }
+  });
+}
+
 const login = async (page:Page) => {
   return new Promise<any>(async (resolve, reject) => {
     try {
@@ -112,34 +307,12 @@ const login = async (page:Page) => {
   });
 }
 
-const selectClient = async (page:Page, client:ElementHandle<HTMLAnchorElement>) => {
-  return new Promise<any>(async (resolve, reject) => {
-    try {
-      /**
-       * Select Cliente
-       */
-      console.log(`${page.url()}`);
-      const [response] = await Promise.all([
-        page.waitForNavigation({waitUntil: ['networkidle2']}),
-        client.click()
-      ]);
-      await new Promise( r => setTimeout(r, wt));
-      const W0018SOC_APELLI = await page.$eval('span#span_W0018SOC_APELLI', e => e.textContent);
-
-      const data = {W0018SOC_APELLI,  ...(await cargaTablas(page, 'table#GridContainerTbl > tbody > tr'))};
-      resolve(data);
-    } catch (error) {
-      console.log(error);
-      reject(false)
-    }
-  });
-}
 
 export const sameep = async (req:Request, res:Response, next: NextFunction ): Promise<any> => {
   try {
     let retData = [];
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: 'new',
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox', 
@@ -162,19 +335,39 @@ export const sameep = async (req:Request, res:Response, next: NextFunction ): Pr
     const nroClientes = await page.$$eval('a[data-gx-evt="5"]', clients => clients.length);
     const tb = await listaClients(page, 'table#GridContainerTbl > tbody > tr');
     console.log(tb);
-    console.log(`Cantidad de Clientes ${nroClientes}`)
-    retData.push({nroClientes});
-    for (let i = 0; i < nroClientes; i++) {
+    console.log(`Cantidad de Clientes ${tb.length}`)
+    for (let i = 0; i < tb.length; i++) {
+    
       const links = await page.$$('a[data-gx-evt="5"]');
       console.log(links);
       // selecciona el cliente
       const e = links[i];
       const cliente = await selectClient(page,e);
-      console.log({...tb[i], ...cliente})
       retData[i] = {...tb[i], ...cliente};
+      if(i < tb.length-1){
+        await new Promise( r => setTimeout(r, wt));
+        await page.goto('http://apps8.chaco.gob.ar/sameepweb/servlet/com.sameep.wpseleccionarcliente');
+      }
+    }
+    console.log(retData);    
+    for (let n = 0; n < retData.length; n++) {
+      const cl = retData[n];
+      const saldo:any = await saldos(page,cl.vSALDO);
+      cl.fch_saldo = saldo.actualizado;
+      cl.vSALDO = saldo.retData;
       await new Promise( r => setTimeout(r, wt));
-      await page.goto('http://apps8.chaco.gob.ar/sameepweb/servlet/com.sameep.wpseleccionarcliente');
-    }    
+      /**
+       * Consumos
+       */
+      //cl.vCONSUMOS = await consumos(page, cl.vCONSUMOS);
+      //await new Promise( r => setTimeout(r, wt));
+      /*
+      await page.goto(cl.vRECLAMOS);
+      await new Promise( r => setTimeout(r, wt+5000));
+      await page.goto(cl.vVERINTIMACION);
+      await new Promise( r => setTimeout(r, wt+5000));
+      */
+    }
 
 
     await new Promise( r => setTimeout(r, 3000));
@@ -183,75 +376,4 @@ export const sameep = async (req:Request, res:Response, next: NextFunction ): Pr
   } catch (error) {
     console.log(error);    
   }
-}
-
-const prev = async (page:Page, retData:any) => {
-  const nroClientes = 0;
-  for (let i = 0; i < nroClientes; i++) {
-    // Obtiene los links de selección de cada cliente de la página
-    const links = await page.$$('a[data-gx-evt="5"]');
-    // selecciona el link
-    const element = links[i];
-    console.log(`Click: ${i}`);
-    await element.click();
-    await new Promise( r => setTimeout(r, wt));
-    // Obtiene link de saldos
-    const ltr = await page.$$('span.ReadonlyAttribute > a');
-    console.log(ltr)
-    await ltr[0].click();
-    await new Promise( r => setTimeout(r, 2500));
-    // PeriodosAdeudados
-    const nroPaginas = await page.$$eval('ul.pagination > li > a', pgs => pgs.length-1);
-    const actualizado = `${await page.$eval('span[id="span_vHOY"]', el => el.innerText)}`;
-    console.log(`Actualizado: ${actualizado}`);
-    for (let p = 1; p < nroPaginas; p++) {
-      await new Promise( r => setTimeout(r, 1000));
-      const paginas = await page.$$('ul.pagination > li > a');
-      const element = paginas[p];
-      await element.click();
-      console.log(`Pagina: ${p}`)
-      const vencimientos = await page.$$eval('table[id="GridContainerTbl"] > tbody > tr', (vencimiento: HTMLTableRowElement[]) => {
-        const vto = [];
-        const actualizado = document.getElementById('span_vHOY').innerText;
-        const cliente = document.getElementById('span_W0015SOC_NUMERO').innerText;
-        const suministro = document.getElementById('span_W0015SUMI_NUMER').innerText;
-        const calle = document.getElementById('span_W0015SUMI_CALLE').innerText;
-        const nro = document.getElementById('span_W0015SUMI_NROCA').innerText;
-        const nombre = document.getElementById('span_W0015SOC_APELLI').innerText;
-
-        vencimiento.map(e => {
-          const columnas = e.getElementsByTagName('td');
-          console.log('columnas',columnas.length);
-          const row = {}
-          for (let c = 0; c < columnas.length; c++) {
-            const ce = columnas[c];
-            const sdata = ce.getElementsByTagName('span');
-            for (let d = 0; d < sdata.length; d++) {
-              const de = sdata[d];
-              const id = de.getAttribute('id');
-              const valor = de.innerText;
-              row[id] = valor
-            }
-          }
-          row['actualizado'] = actualizado;
-          row['cliente'] = cliente;
-          row['suministro'] = suministro;
-          row['direccion'] = `${calle} ${nro}`
-          row['nombre'] = nombre;
-          vto.push(row)  
-        })
-        return vto;
-      })
-      await new Promise( r => setTimeout(r, 2000));
-      retData = [...retData, ...vencimientos]
-      console.log(vencimientos)
-    }
-    await new Promise( r => setTimeout(r, 1000));
-    await page.goBack({waitUntil: 'domcontentloaded'});
-
-    await new Promise( r => setTimeout(r, 3000));
-    await page.goBack({waitUntil: 'domcontentloaded'});
-    await new Promise( r => setTimeout(r, 1500));
-  }
-
 }

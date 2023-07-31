@@ -51,7 +51,7 @@ const getPeriodos = async (page:Page) => {
 export const secheep = async (req:Request, res:Response, next: NextFunction ): Promise<any> => {
   try {
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: 'new',
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox', 

@@ -1,18 +1,18 @@
   <!--header>Header</header-->
   <div id="main">
     <article >
-      <!--div class="enca-page">
+      <div *ngIf="isEncaPage" class="enca-page">
         Info Selected
-      </div-->
-      <div class="lista">
+      </div>
+      <div class="lista" [ngClass]="{'menos-enca': isEncaPage}">
         <router-outlet/>
       </div>
     </article>
     <nav>
-      <div class="enca-menu">
+      <div *ngIf="isEncaMenu" class="enca-menu">
         <h2>Home User</h2>
       </div>
-      <div class="lista" id="msjs">
+      <div class="lista" [ngClass]="{'menos-enca': isEncaMenu}">
         <app-v-menu/>
       </div>
     </nav>

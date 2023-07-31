@@ -10,15 +10,19 @@ body {
   display: flex;
   min-height: calc(100vh - 252px);
   max-height: calc(100vh - 252px);
-  min-height: calc(100vh - 60px);
-  max-height: calc(100vh - 60px);
+  min-height: calc(100vh - 63px);
+  max-height: calc(100vh - 63px);
+  /*
+  background-color: rgb(191, 230, 236);
+  */
 }
 
 #main > article {
    flex: 1;
-   max-height: calc(100vh - 60px);
+   max-height: calc(100vh - 63px);
+   /*
    background-color: darksalmon;
-   overflow-y: scroll;
+   */
 }
 
 /*
@@ -26,7 +30,9 @@ body {
 */
 #main > aside {
   flex: 0 0 30vw;
+  /*
   background: rgb(241, 241, 79);
+  */
 }
 ::-webkit-scrollbar {
   width: 5px;
@@ -54,26 +60,40 @@ body {
   /*
   max-height: calc(100vh - 252px);
   */
-  max-height: calc(100vh - 60px);
-  overflow-y: scroll;
+  max-height: calc(100vh - 63px);
+  background-color: #eaeaea;
+}
+
+#listmenu {
+  max-height: calc(100vh - 126px);
 }
 
 .enca-menu {
   width: 100%;
-  height: 60px;
+  height: 63px;
+  /*
   background-color: cadetblue;
+  */
 }
 .enca-page {
   width: 100%;
-  height: 60px;
+  height: 63px;
+  /*
   background-color: blue;
+  */
 }
 
 
 .lista{
-  max-height: calc(100vh - 60px);
+  max-height: calc(100vh - 63px);
+  overflow-y: auto;
+  /*
   background-color:chocolate ;
-  overflow-y: scroll;
+  */
+}
+
+.menos-enca {
+  max-height: calc(100vh - 126px);
 }
 
 /*
@@ -82,6 +102,8 @@ header, footer, article, nav, aside {
  }
 */
 header, footer {
-  background: yellowgreen;
   height: 70px;
+  /*
+  background: yellowgreen;
+  */
 }

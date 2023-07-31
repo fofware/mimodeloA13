@@ -29,7 +29,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 //  toastService = inject(ToastService);
 
   ngOnInit(): void {
-    this.readData();
+    //this.readData();
   }
 
   readData(){
@@ -44,11 +44,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       console.log(error);
     }
   }
-  
+
   get loggedUser() {
     return userLogged;
   }
-  
+
   get isLogged() {
     return userIsLogged;
   }

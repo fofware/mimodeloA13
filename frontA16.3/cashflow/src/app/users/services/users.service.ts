@@ -5,13 +5,15 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, map } from 'rxjs';
+import { iTopMenu } from 'src/app/components/top-menu/top-menu.component';
 
 const URL = environment.AUTH_URL;
 
 export const userAlerts = signal<userAlertMsg[]>([]);
 export const userIsLogged = signal<boolean>(false);
 export const userLogged = signal<User>(unknowUser);
-
+export const userTopMenu = signal<iTopMenu[]>([]);
+export const userVMenu = signal<iTopMenu[]>([]);
 
 @Injectable({
   providedIn: 'root'
@@ -33,10 +35,6 @@ export class UsersService {
         }).join('')));
       const d = new Date().getTime()/1000;
       if (jwtToken.exp >= d){
-        const rol = jwtToken.roles[0];
-        const type = rol.split('_');
-        jwtToken['type'] = type[0];
-        jwtToken['subType'] = type[1];
         userLogged.set(jwtToken);
         userIsLogged.set(true);
         return jwtToken;
@@ -52,16 +50,70 @@ export class UsersService {
     return this.http
       .post(`${URL}/signin`, user)
       .pipe(
-        map( (res:any) => {
+        map( async (res:any) => {
           this.saveToken(res);
           this.decodeToken(res);
-          //userLogged.set(this.decodeToken(res));
-          //this._socket.connect();
+          userTopMenu.set(await this.getVMenuP('topMenu'));
+          //this._socket.connect();s
           return res
         })
       );
   }
 
+  signInP( user: any ): Promise<object> {
+    return new Promise( async (resolve, reject) => {
+      try {
+        this.http
+        .post(`${URL}/signin`, user)
+        .subscribe( async (res:any) => {
+          this.saveToken(res);
+          this.decodeToken(res);
+          userTopMenu.set(await this.getVMenuP('topMenu'));
+          resolve(res);
+        })
+      } catch (error) {
+
+      }
+    })
+  }
+
+  getVMenuP(menu:string): Promise<iTopMenu[]> {
+    return new Promise( ( resolve, reject ) => {
+      try {
+        this.getvMenu(menu).subscribe( (res:any) => {
+          resolve(res);
+        })
+      } catch (error) {
+        console.log(error);
+        reject(false)
+      }
+    })
+  }
+
+  getvMenu(menu:string): Observable<object> {
+    const logged = userIsLogged() ? `/logged` :  ``;
+    return this.http.get(`${URL}/usermenu${logged}/${menu}`);
+  }
+/*
+  getTopMenuP(): Promise<iTopMenu[]> {
+    return new Promise( ( resolve, reject ) => {
+      try {
+        this.getTopMenu().subscribe( (res:any) => {
+          resolve(res);
+        })
+      } catch (error) {
+        console.log(error);
+        reject(false)
+      }
+    })
+  }
+*/
+/*
+  getTopMenu(): Observable<object> {
+    const logged = userIsLogged() ? `/logged` :  ``;
+    return this.http.get(`${URL}/usermenu${logged}`);
+  }
+*/
   signUp( user: object ): Observable<object>  {
     return this.http.post(`${URL}/signup`, user);
   }
@@ -91,11 +143,12 @@ export class UsersService {
       }))
   }
 
-  logout(): void {
+  async logout() {
     localStorage.removeItem('token');
     userAlerts.set([]);
-    userIsLogged.set(false);
     userLogged.set(unknowUser);
+    userIsLogged.set(false);
+    userTopMenu.set(await this.getVMenuP('topMenu'));
     this.router.navigate([``]);
   }
 

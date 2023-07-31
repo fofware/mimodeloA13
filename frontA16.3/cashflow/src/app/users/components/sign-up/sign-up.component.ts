@@ -49,6 +49,7 @@ export class SignUpComponent {
         Validators.minLength(3)
       ]],
     apellido: [''],
+/*
     mierda:['',
       {
         validators:[
@@ -61,8 +62,8 @@ export class SignUpComponent {
         updateOn: 'blur'
       }
     ],
-    nemail: ['',
-        /*
+*/
+    email: ['',
       {
         validators:[
           Validators.required,
@@ -74,7 +75,6 @@ export class SignUpComponent {
         ],
         updateOn: 'blur'
       }
-        */
     ],
     mypassword: ['', [Validators.required, Validators.minLength(6)]],
     repassword: ['', [Validators.required, eMailValidation.MatchPassword('password')]],
@@ -188,7 +188,7 @@ export class SignUpComponent {
         this.userService.signUp(this.formParent.value).subscribe(data => {
           console.log(data)
           const user = {
-            email: this.formParent.value.nemail,
+            email: this.formParent.value.email,
             password: this.formParent.value.mypassword,
             nombre: this.formParent.value.nombre,
             apellido: this.formParent.value.apellido,

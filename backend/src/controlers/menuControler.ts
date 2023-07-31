@@ -43,7 +43,7 @@ class MenuControlers {
 
     const filter = makeFilter(fldsString, params);
     const count = await menu.count(filter);
-    
+
     params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
     params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
 
@@ -66,7 +66,7 @@ class MenuControlers {
         rows,
         message: 'Ok'
       }
-        
+
     } catch (error) {
       console.log(error);
       status = 400;
@@ -86,9 +86,9 @@ class MenuControlers {
     const update = Object.assign({},req.query,req.params,req.body);
     const filter = { 
       menuid: update.menuid,
-      path: update.path,
-      
+      path: update.path
     };
+
     try {
       let ret = await menu.findOneAndUpdate(filter, update, {
         new: true,

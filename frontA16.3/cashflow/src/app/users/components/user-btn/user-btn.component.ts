@@ -23,7 +23,7 @@ export class UserBtnComponent {
     password: ''
   }
 
-  _authService = inject(UsersService);
+  _user = inject(UsersService);
 //  _activatedRoute = inject(ActivatedRoute);
   _router = inject(Router)
 
@@ -33,7 +33,7 @@ export class UserBtnComponent {
 
   ngOnInit(){
     /*
-    this._authService.isLogged
+    this._user.isLogged
         .pipe( takeUntil(this.destroy$) )
         .subscribe( res => {
           this.isLogged = res;
@@ -48,21 +48,21 @@ export class UserBtnComponent {
 //    this.destroy$.complete();
   }
 
-  login(myDrop:any):void {
-    console.log(this.user)
-
-    this._authService.signIn(this.user).subscribe(res => {
-      const token:any = res;
+  async login(myDrop:any) {
+    /*
+    const loguser = await this._user.signInP(this.user);
+    const menu = await this._user.getMenuP();
+    myDrop.close();
+    */
+    this._user.signIn(this.user).subscribe(res => {
       myDrop.close();
-      //this._router.navigate([`/${user.group}`],)
-      //this._router.navigate([`/users/`],)
       this._router.navigateByUrl(`users`)
     })
 
   }
 
   logout(){
-    this._authService.logout();
+    this._user.logout();
   }
 
   profile(){

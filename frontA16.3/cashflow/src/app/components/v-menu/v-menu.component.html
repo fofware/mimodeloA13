@@ -1,1 +1,19 @@
-<p>v-menu works!</p>
+<nav class="nav flex-column p-2">
+  <ul
+    ngbNav
+    [activeId]="_activatedRoute.fragment | async"
+    class="nav-pills"
+    orientation="vertical"
+  >
+    <li class="fs-6" [ngbNavItem]="menu.link" *ngFor="let menu of userMenu">
+      <a
+        ngbNavLink
+        [hidden]="menu.hidden || false"
+        [routerLink]="menu.link"
+        [fragment]="menu.fragment"
+        routerLinkActive="active"
+        [innerHTML]="texto(menu)"
+      ></a>
+    </li>
+  </ul>
+</nav>

@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { isLogged } from 'src/app/users/services/auth.service';
+import { userIsLogged } from 'src/app/users/services/users.service';
 
 @Component({
   selector: 'app-wapp-btn',
@@ -11,6 +11,6 @@ import { isLogged } from 'src/app/users/services/auth.service';
 })
 export class WappBtnComponent {
   get _isLogged(){
-    return isLogged;
+    return userIsLogged;
   }
 }

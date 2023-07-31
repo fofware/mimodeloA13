@@ -1,26 +1,45 @@
 import { Schema, model, Document } from "mongoose";
 
+
+/*
+export interface ivMenu {
+  icon?:string;
+  title: string,
+  link: string | string[],
+  fragment?: string,
+  roles?: string[],
+  hidden?: boolean,
+  outlet?: string
+  state?:any
+}
+*/
 export interface IMenu extends Document {
   _id?: string;
-  menuGroup: string;
-  name: string;
-  path: string;
+  parent?: string;
+  name?: string;
+  clase?: string;
+  usrroles?:[];
+  title: string;
+  icon?: string;
   link: string;
-  icon: string;
-  target: string;
-  roles: [];
+  fragment?: string;
+  target?: string;
+  outlet?: string;
+  roles?: [];
 }
 
 const menuSchema = new Schema({
   _id: { type: Schema.Types.ObjectId }
-  , menuGroup: { type: Schema.Types.String, index: true }
-  , name: { type: Schema.Types.String, index: true }
-  , roles: {  type: Schema.Types.Array, default: [], index: true }
-  , parent: { type: Schema.Types.String, default: null, index: true }
-  
-  , link: { type: Schema.Types.String, default: '' }
-  , icon: { type: Schema.Types.String, default: '' }
-  , target: { type: Schema.Types.String, default: '' }
+  , parent: { type: Schema.Types.ObjectId, ref: "Producto", default: null }
+  , name: { type: Schema.Types.String, default: '' }
+  , clase: { type: Schema.Types.String, default: '' }
+  , usrroles: { type: Schema.Types.Array, default: [], index: true }
+  , title: { type: Schema.Types.String, index: null }
+  , icon: { type: Schema.Types.String, default: null }
+  , link: { type: Schema.Types.String, default: null }
+  , fragment: { tyme: Schema.Types.String }
+  , target: { type: Schema.Types.String, default: null }
+  , outlet: { type: Schema.Types.String, default: null }
 },{
   strict: false,
   timestamps: false,
