@@ -8,12 +8,12 @@
   </div>
   <div class="card-container">
     <div *ngFor="let item of Menu.links" class="card">
-      <a *ngIf="item.link" [routerLink]="link(item)" routerLinkActive="router-link-active">
-        <i class="{{texto(item)}}"></i>
+      <a *ngIf="item.link" [routerLink]="item.link" routerLinkActive="router-link-active">
+        <span [innerHTML]="icon(item)"></span>
         <div>{{item.title}}</div>
       </a>
       <a *ngIf="item.href" href="{{item.href}}" target="{{item.target}}">
-        <i class="{{item.icon}}"></i>
+        <span class="fs-4" [innerHTML]="icon(item)"></span>
         <div>{{item.title}}</div>
       </a>
     </div>

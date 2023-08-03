@@ -8,6 +8,8 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { apiInterceptor } from './interceptors/api.interceptor';
 import { tokenInterceptor } from './interceptors/token.interceptor';
 
+//https://www.youtube.com/watch?v=UqQSjGsL4zg para ngx-socket
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(appRoutes, withComponentInputBinding()),

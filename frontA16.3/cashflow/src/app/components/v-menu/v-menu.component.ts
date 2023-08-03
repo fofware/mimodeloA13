@@ -5,6 +5,7 @@ import { UsersService } from 'src/app/users/services/users.service';
 import { NgbNav, NgbNavItem, NgbNavLink } from '@ng-bootstrap/ng-bootstrap';
 import { userVMenu } from 'src/app/users/services/users.service';
 import { iTopMenu } from '../top-menu/top-menu.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-v-menu',
@@ -23,14 +24,19 @@ import { iTopMenu } from '../top-menu/top-menu.component';
 export class VMenuComponent {
   _activatedRoute = inject(ActivatedRoute);
   _menu = inject(UsersService);
-
+  sanitized = inject(DomSanitizer);
   get userMenu(){
     //console.log("asdfadfadf",userVMenu());
     return userVMenu();
   }
 
-  texto(it:iTopMenu) {
+  icon(it:iTopMenu){
     const icon = it.icon === undefined ? '' : it.icon;
+    return this.sanitized.bypassSecurityTrustHtml(icon);
+  }
+
+  texto(it:iTopMenu) {
+    const icon = it.icon === undefined ? '' : this.icon(it);
     const title = it.title === undefined ? '' : it.title;
     return (`${icon} ${title}`).trim();
   }

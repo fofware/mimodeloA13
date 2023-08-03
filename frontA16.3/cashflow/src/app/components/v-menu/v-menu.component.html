@@ -12,8 +12,11 @@
         [routerLink]="menu.link"
         [fragment]="menu.fragment"
         routerLinkActive="active"
-        [innerHTML]="texto(menu)"
-      ></a>
+      >
+        <span [innerHTML]="icon(menu)"></span>
+
+        {{menu.title}}
+      </a>
     </li>
   </ul>
 </nav>

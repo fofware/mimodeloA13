@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MenuService, iMenuData, iMenuLink, menuPage } from 'src/app/services/menu.service';
 import { RouterLink } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-p-menu',
@@ -19,24 +20,18 @@ export class PMenuComponent {
   _user = inject(UsersService);
   */
   _menu = inject(MenuService);
-
+  sanitized = inject(DomSanitizer);
   get Menu(){
     //console.log("asdfadfadf",userVMenu());
     return menuPage();
   }
 
-  texto(it:iMenuLink) {
+  icon(it:iMenuLink){
     const icon = it.icon === undefined ? '' : it.icon;
-    const clase = icon.match(/.*class="([a-z -]+)".*/);
-    if(clase){
-      //console.log(clase[1]);
-      return (`fa-2xl ${clase[1]}`).trim();
-    }
-//    it.link = ['../', ...it.link];
-    //const title = it.title === undefined ? '' : it.title;
-    return ''
+    return this.sanitized.bypassSecurityTrustHtml(icon);
   }
+
   link(it:iMenuLink){
-    return ['..', ...it.link]
+    return [['..'], ...it.link]
   }
 }
