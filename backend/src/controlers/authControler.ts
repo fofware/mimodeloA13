@@ -61,6 +61,7 @@ const menuData:iMenuData[] = [
         link: ['users'], 
         roles: ['client_admin', 'client_user'] 
       },
+
       { 
         title: 'Sistema', 
         link: ['system'], 
@@ -354,16 +355,26 @@ export const getmenu = async (req: Request, res: Response): Promise<Response> =>
   const {id} = req.params;
   //console.log("GetMenu",id,req.user)
   const menuIdx = menuData.findIndex(m => m.name === id);
-  const menu = await setMenu(req.user, menuData[menuIdx].links);
-  return res.status(200).json(menu);
+  try {
+    const menu = await setMenu(req.user, menuData[menuIdx].links);
+    return res.status(200).json(menu);
+  } catch (error) {
+    return res.status(500).json(error);
+    
+  }
 }
 export const fullmenu = async (req: Request, res: Response): Promise<Response> => {
   const {id} = req.params;
   //console.log("GetMenu",id,req.user)
   const menuIdx = menuData.findIndex(m => m.name === id);
   const menu = menuData[menuIdx]
-  menu.links = await setMenu(req.user, menuData[menuIdx].links);
-  return res.status(200).json(menu);
+  try {
+    menu.links = await setMenu(req.user, menuData[menuIdx].links);
+  } catch (error) {
+    console.log(error);    
+    return res.status(500).json(error);
+
+  }
 }
 
 /*
