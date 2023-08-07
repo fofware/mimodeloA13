@@ -1,4 +1,4 @@
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import user from "./models/user";
 import jwt from 'jsonwebtoken';
 import config from './config';
@@ -53,38 +53,52 @@ const sendData = async (data:any, socket:any, msg:string) => {
   await socket.emit(`server:${msg}`,respta);
 }
 
-export default (io: Server) => {
+export const setsockets = (io: Server) => {
+  /*
   io.use( async (socket, next) => {
     try {
       const token:any = socket.handshake.query.token;
       const payload = jwt.verify( token, config.jwtSecret);
       console.log(payload);
+      next;
     } catch (error) {
       console.log('fallo la Athentication')
       console.log(error)
     }
   })
-  .on('connection', (socket) => {
-    socket.on('message', (message) => {
-      io.emit('message', message);
+  */
+  io.on('connection', async (socket:Socket) => {
+    console.log('---------- Socket.Id -----------')
+    console.log(socket.id)
+    try {
+      if(socket.handshake.query && socket.handshake.query.token){
+        const token:any = socket.handshake.query.token;
+        const payload = jwt.verify( token, config.jwtSecret);
+        console.log(payload);
+      }
+    } catch (error) {
+      console.log("ERROR NO TOCKEN PROVIDED")      
+    }
+    console.log('---------- Socket.Id -----------')
+    socket.emit('Hola', 'mundo','apiSrv');
+
+    socket.on('ping', async () => {
+      console.log('onping');
+      const d = new Date().getTime();
+      socket.emit('pong', 'onping', d);
+      //io.emit('pong', 'onping');
+    });
+    
+    socket.on('pingtoall', async () => {
+      const d = new Date().toISOString()
+      io.emit('pongtoall', 'apiSrv', d);
+    });
+
+    socket.onAny( (e:any, ...args:any[] ) => {
+      console.log('onAny',e);
+      console.log( ...args );
+      //socket.emit('pong','onAny');
     });
   });
-//  io.on('connection', async (socket:any) => {
-//    console.log("Nueva coneccion");
-//    //console.log(socket);
-//    //const userList = await user.find();
-//    //const articuloList = await articulo.find();
-//    //const productoList = await producto.find();
-//    //await socket.emit('server:producto', productoList);
-//
-//		//const readData: any = await productoGetData({});
-//    //console.log("leyo");
-//    //socket.emit('server:userList', userList);
-//    //socket.emit('server:articulo', articuloList);
-//
-//    socket.onAny((eventName:string, ...args: any) => {
-//      console.log(eventName);
-//      console.log(args);
-//    });
-//  });
+
 }

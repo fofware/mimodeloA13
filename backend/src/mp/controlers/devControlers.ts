@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import { mp_httpClient, mp_makeUri } from "../mpUtils";
 import config from '../../config';
+import app from "../../app";
 
 export class devControler {
   public router: Router = Router();
@@ -59,7 +60,9 @@ export class devControler {
       }
     };
     try {
+      const io = app.get('sio')
       const data = await mp_httpClient(options);
+      io.emit('mptipodoc', data);
       res.json(data);
     } catch (error) {
       res.json(error);

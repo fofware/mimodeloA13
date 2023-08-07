@@ -1,6 +1,5 @@
 import { Request, Response, Router } from "express";
 import { Socket } from "socket.io";
-import io from '../../sockets'
 class IpnControler {
 
   public router: Router = Router();
@@ -24,9 +23,12 @@ class IpnControler {
   } 
   pindex(req: Request, res: Response){
     const data:any = req.body;
-    const io:Socket = req.app.get('sio');
+    const io = req.app.get('sio');
     console.log("POST",data);
     console.log('qry',req.query);
+    // se debe buscar la forma de identificar
+    // cada empresa/grupo/usuario 
+    // que deba recibir este dato
     io.emit("server:mp:ipn",req.query,data);
     res.status(200).json('ok');
   } 

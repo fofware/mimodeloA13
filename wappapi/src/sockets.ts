@@ -12,9 +12,12 @@ export default (io:any) => {
   const documents = {};
   const decodeToken = (token) => {
     if (!token) return {}
+    return jwt.verify( token, config.jwtSecret);
+    /*
     return JSON.parse(decodeURIComponent(atob(token.split('.')[1]).split('').map(function(c) {
       return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join('')));
+    */
   }
 
   const setSkt = (socket:Socket,user) => {
@@ -59,26 +62,41 @@ export default (io:any) => {
 
   io.on('connection', async (socket:Socket) => {
     console.log("Nueva coneccion");
-    if(socket.handshake.query && socket.handshake.query.token){
-      //const user = decodeToken(socket.handshake.query.token);
-      const token:any = socket.handshake.query.token;
-      const payload = jwt.verify( token, config.jwtSecret);
-      socket['decode'] = payload;
-
-      console.log(payload);
-      setSkt(socket,payload);
-      socket.join('5493624380337');
-      socket.join('5493624683656');
-    } else {
-      socket.join('no-authorized');
-      socket.emit('no-authorized','no-authorized')
-      socket.disconnect(true);
-      return;
+    console.log(socket.id);
+    try {
+      if(socket.handshake.query && socket.handshake.query.token){
+        //const user = decodeToken(socket.handshake.query.token);
+        const token:any = socket.handshake.query.token;
+        const payload = jwt.verify( token, config.jwtSecret);
+        socket['decode'] = payload;
+        
+        console.log(payload);
+        setSkt(socket,payload);
+        socket.join('5493624380337');
+        socket.join('5493624683656');
+      } else {
+        socket.join('no-authorized');
+        socket.emit('no-authorized','no-authorized')
+        socket.disconnect(true);
+        return;
+      }
+    } catch (error) {
+      console.log("INVALID TOCKEN")      
     }
-    
+
+    socket.on('pingtoall', async () => {
+      const d = new Date().toISOString()
+      io.emit('pongtoall', 'wapiSrv',d)
+    })
+    socket.on('ping', () => {
+      console.log('onping')
+      socket.emit('pong');
+    })
+
     socket.onAny((...args)=>{
       console.warn('-------- onAny ---------');
       console.log(args);
+      //socket.emit('onAny')
     });
 
     socket.on('registranumero', async (token) => {
@@ -209,9 +227,11 @@ export default (io:any) => {
 
     console.log(`Socket ${socket.id} has connected`);
   
+    /*
     socket.onAny((eventName:string, ...args: any) => {
       console.log(`eventName:${eventName}`,args);
     });
+    */
     socket.on("disconnect", () => {
       console.warn('Desconecto');
     });

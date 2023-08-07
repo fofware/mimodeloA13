@@ -28,7 +28,10 @@ export const appRoutes: Routes = [
     loadChildren: () => import('./mp/mp.routes')
                       .then(mod => mod.MP_ROUTES)
   },
-
+  {
+    path:'whatsapp',
+    loadChildren: () => import('./wapp/wapp.routes').then( mod => mod.WAPP_ROUTES)
+  },
   {
     path: 'toast',
     //canMatch: [() => inject(AuthService).isLogged],

@@ -49,7 +49,7 @@ export class TopMenuComponent implements OnInit {
 
   _activatedRoute = inject(ActivatedRoute);
   _user = inject(UsersService);
-  _menu = inject(MenuService);
+  //_menu = inject(MenuService);
 
   ngOnInit(): void {
     this.onResize();

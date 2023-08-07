@@ -207,26 +207,28 @@ const setMenu = async (user, defmenu:iMenuLink[]): Promise<iMenuLink[]> => {
   return new Promise( (resolve, reject) => {
     try {
       //console.log('SetMenu for ',user);
-      console.log(user.email);
+      //console.log(user?.email);
       const usrMenu:iMenuLink[] = defmenu.filter( (item:iMenuLink) => {
         if (item.roles?.length){
           for (let ir:number = 0; ir < item.roles.length; ir++) {
             const rol = item.roles[ir];
-            const roles:string[] | undefined = user?.roles;
-            console.log(item.title, roles,rol,roles.indexOf(rol))
+            const roles:string[] | string | undefined = user?.roles;
+            //console.log(item.title, roles,rol,roles?.indexOf(rol))
             if (rol && roles) {
-              if(roles.indexOf(rol) > -1) return true;
+              if( typeof roles === 'string') return true;
+              if(roles?.indexOf(rol) > -1) return true;
             }
           }
           return false;
         }
-        console.log(item.title, item.roles);
+        //console.log(item.title, item.roles);
         return true;
       })
       //usrMenu.map( it => delete(it.roles))
       //console.log(usrMenu);
       resolve(usrMenu);
     } catch (error) {
+      console.log(error);
       const retvalue: iMenuLink[] = []
       reject( retvalue );
     }
@@ -353,14 +355,15 @@ export const signIn = async (req: Request, res: Response): Promise<Response> => 
 
 export const getmenu = async (req: Request, res: Response): Promise<Response> => {
   const {id} = req.params;
-  //console.log("GetMenu",id,req.user)
   const menuIdx = menuData.findIndex(m => m.name === id);
+  //console.log("GetMenu",id,req.user, menuIdx,menuData[menuIdx])
   try {
     const menu = await setMenu(req.user, menuData[menuIdx].links);
+    //console.log(menu);
     return res.status(200).json(menu);
   } catch (error) {
+    console.log(error);
     return res.status(500).json(error);
-    
   }
 }
 export const fullmenu = async (req: Request, res: Response): Promise<Response> => {
@@ -370,10 +373,10 @@ export const fullmenu = async (req: Request, res: Response): Promise<Response> =
   const menu = menuData[menuIdx]
   try {
     menu.links = await setMenu(req.user, menuData[menuIdx].links);
+    return res.status(200).json(menu);
   } catch (error) {
     console.log(error);    
     return res.status(500).json(error);
-
   }
 }
 

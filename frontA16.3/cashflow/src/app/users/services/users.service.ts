@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, map } from 'rxjs';
 import { iTopMenu } from 'src/app/components/top-menu/top-menu.component';
+import { dataSocketService } from 'src/app/services/socket.service';
 
 const URL = environment.AUTH_URL;
 
@@ -23,6 +24,7 @@ export const userVMenu = signal<iTopMenu[]>([]);
 export class UsersService {
   http = inject(HttpClient);
   router = inject(Router);
+  skt = inject(dataSocketService);
 
   constructor() {
     this.getToken();
@@ -54,6 +56,7 @@ export class UsersService {
           this.saveToken(res);
           this.decodeToken(res);
           userTopMenu.set(await this.getVMenuP('topMenu'));
+          this.skt.connect();
           //this._socket.connect();s
           return res
         })
@@ -144,6 +147,8 @@ export class UsersService {
   }
 
   async logout() {
+    this.skt.disconnect();
+
     localStorage.removeItem('token');
     userAlerts.set([]);
     userLogged.set(unknowUser);
