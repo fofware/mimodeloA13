@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { MenuService, iMenuData, iMenuLink, menuPage } from 'src/app/services/menu.service';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -8,7 +8,9 @@ import { DomSanitizer } from '@angular/platform-browser';
   selector: 'app-p-menu',
   standalone: true,
   imports: [
-    CommonModule,
+    //CommonModule,
+    NgIf,
+    NgFor,
     RouterLink,
   ],
   templateUrl: './p-menu.component.html',
@@ -20,6 +22,7 @@ export class PMenuComponent {
   _user = inject(UsersService);
   */
   _menu = inject(MenuService);
+
   sanitized = inject(DomSanitizer);
   get Menu(){
     //console.log("asdfadfadf",userVMenu());

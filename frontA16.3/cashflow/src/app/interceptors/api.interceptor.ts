@@ -5,12 +5,23 @@ import { environment } from "src/environments/environment";
 import { ToastService } from 'src/app/services/toast.service';
 
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
+  const toast = inject(ToastService);
   const isApiUrl = req.url.startsWith(environment.API_URL);
   const spinner = req.headers.get('spinner');
   const enabled = spinner && spinner === 'false' ? false : true;
 
   return next(req)
+    .pipe(
+      tap( res => console.log(res)),
+      catchError( res => {
+        console.log(res.error)
+        toast.warning( res.error.text, { header: res.error.title, delay: 15000, autohide: false })
+        //return EMPTY;
+        return throwError(() => res)
+      })
+    )
 /*
+
     .pipe(
       tap( (res: any)  => {
         console.log('response', res);

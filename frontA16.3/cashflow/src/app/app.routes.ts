@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { NoPageComponent } from './components/no-page/no-page.component';
+import { userIsLogged } from './users/services/users.service';
+import { loggedMatchGuard } from './guards/logged-match.guard';
 
 const getContact = (param:number): string => {
   const data = [
@@ -38,12 +40,26 @@ export const appRoutes: Routes = [
     loadComponent: () => import('./test/ngbd-toast-global/ngbd-toast-global.component')
                         .then(mod => mod.NgbdToastGlobal)
   },
-
   {
     path: 'users',
     //canMatch: [() => inject(AuthService).isLogged],
     loadChildren: () => import('./users/users.routes')
                         .then(mod => mod.USERS_ROUTES)
+  },
+  {
+    path: 'finanzas',
+    //canMatch: [() => inject(AuthService).isLogged],
+    loadChildren: () => import('./finanzas/finanzas.routes')
+                        .then(mod => mod.FINANZAS_ROUTES)
+  },
+  {
+    path: 'alquileres',
+    canMatch: [
+      loggedMatchGuard // haciendo los guard se obtiene acceso al
+      //() => userIsLogged()
+    ],
+    loadChildren: () => import('./alquileres/alquileres.routes')
+                        .then(mod => mod.ALQUILERES_ROUTES),
   },
 
   /*

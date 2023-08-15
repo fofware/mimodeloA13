@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, Signal, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { userIsLogged } from '../users/services/users.service';
 import { environment } from 'src/environments/environment';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 const URL = environment.AUTH_URL;
 
@@ -59,4 +60,9 @@ export class MenuService {
     return this.http.get(`${URL}/fullmenu${logged}/${menu}`);
   }
 
+  
+  readMenu(menu:string): Signal<object> {
+    const logged = userIsLogged() ? `/logged` :  ``;
+    return toSignal(this.http.get(`${URL}/fullmenu${logged}/${menu}`), {initialValue: {}});
+  }
 }

@@ -18,7 +18,7 @@ export class NgbdToastGlobal implements OnDestroy {
 	}
 
 	showSuccess() {
-		this.toastService.show('I am a success toast', { classname: 'bg-success text-light', delay: 10000 });
+		this.toastService.show('<strong>I am</strong> a success toast', { classname: 'bg-success text-light', delay: 10000 });
 	}
 
 	showDanger(dangerTpl:any) {
