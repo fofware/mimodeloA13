@@ -61,7 +61,6 @@ const menuData:iMenuData[] = [
         link: ['users'], 
         roles: ['client_admin', 'client_user'] 
       },
-
       { 
         title: 'Sistema', 
         link: ['system'], 
@@ -174,6 +173,7 @@ const menuData:iMenuData[] = [
       }
     ]
   },
+  
   {
     name: 'system',
     title: 'Sistemas',
@@ -246,7 +246,7 @@ const setMenu = async (user, defmenu:iMenuLink[]): Promise<iMenuLink[]> => {
   return new Promise( (resolve, reject) => {
     try {
       //console.log('SetMenu for ',user);
-      //console.log(user?.email);
+      console.log(user?.email);
       const usrMenu:iMenuLink[] = defmenu.filter( (item:iMenuLink) => {
         if (item.roles?.length){
           for (let ir:number = 0; ir < item.roles.length; ir++) {

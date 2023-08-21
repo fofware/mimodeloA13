@@ -5,7 +5,73 @@ import jwt from 'jsonwebtoken';
 import config from '../config';
 import passport from "passport";
 import { ObjectId } from 'bson';
+import { makeFilter } from '../common/utils';
 
+export const list = async (req: Request, res: Response ) => {
+	try {
+    const fldsString = [
+      'email',
+      'apellido',
+			'nombre'
+    ];
+  
+    const params = Object.assign({
+      limit: 50,
+      offset: 0,
+      iniTime: new Date().getTime(),
+      sort: { fullname: 1 },
+      searchItem: ''
+    },req.query,req.params,req.body);
+
+    const filter = makeFilter(fldsString, params);
+		
+		const count = await User.count(filter);
+    
+    params.limit = typeof(params.limit) === 'string' ? parseInt(params.limit) : params.limit;
+    params.offset = typeof(params.offset) === 'string' ? parseInt(params.offset) : params.offset;
+    let nextOffset = params.offset+params.limit;
+    nextOffset = nextOffset > count ? false : params.offset+params.limit;
+    let status = 0;
+    let ret = {}
+		console.log(params);
+		const rows = await User.find(filter, {password: 0});
+		res.status(200).json(rows);
+	} catch (error) {
+		const msg = {
+			title: 'Server Error',
+			text: JSON.stringify(error)
+		}
+		res.status(500).json(msg)
+	}
+}
+export const getById = async (req: Request, res: Response) => {
+	const {id} = req.params;
+	const reg = await User.findById(id, {password:0})
+	res.status(200).json(reg)
+}
+/*
+export const add = async (req: Request, res: Response) => {
+	const {email, password} = req.body;
+	const user = await User.find({email});
+	if(user){
+		const msg = {text:'email ya está registrado', title: ''};
+		return res.status(400).json(msg);
+	}
+
+	const reg = await User.findById(id, {password:0})
+	res.status(200).json(reg)
+}
+*/
+export const update = async (req: Request, res: Response) => {
+	const {id} = req.params;
+	const reg = await User.findById(id, {password:0})
+	res.status(200).json(reg)
+}
+export const borrar = async (req: Request, res: Response) => {
+	const {id} = req.params;
+	const reg = await User.findById(id, {password:0})
+	res.status(200).json(reg)
+}
 /*
 export const list = async ( req: Request, res: Response ) =>{
   User.find({}, {password: 0}).sort({name: 1})

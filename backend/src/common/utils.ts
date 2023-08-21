@@ -55,7 +55,7 @@ export function saniObject(element): any {
   return element;
 }
 
-export function makeFilter(fldsString:any,params:any){
+export function makeFilter(fldsString:any=[],params:any){
   const filter = {};
   const keys = [];
   for (let i = 0; i < fldsString.length; i++) {

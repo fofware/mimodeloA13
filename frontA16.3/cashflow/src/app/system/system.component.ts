@@ -8,7 +8,6 @@ import { MenuService, menuPage } from '../services/menu.service';
   selector: 'app-system',
   standalone: true,
   imports: [
-    //CommonModule,
     RouterOutlet,
     PMenuComponent
   ],

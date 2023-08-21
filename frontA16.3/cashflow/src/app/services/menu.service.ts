@@ -63,6 +63,6 @@ export class MenuService {
   
   readMenu(menu:string): Signal<object> {
     const logged = userIsLogged() ? `/logged` :  ``;
-    return toSignal(this.http.get(`${URL}/fullmenu${logged}/${menu}`), {initialValue: {}});
+    return toSignal(this.http.get(`${URL}/fullmenu${logged}/${menu}`), {initialValue: {name:'Desconocido',links:[]}});
   }
 }

@@ -1,4 +1,4 @@
-import express, { Application, NextFunction, Request, Response, Router } from 'express';
+import express, { Router } from 'express';
 import path from 'path'
 import morgan from 'morgan';
 import cors from 'cors';
@@ -32,6 +32,19 @@ import { MenuCtrl } from './controlers/menuControler';
 import { extraDataCtrl } from './controlers/extradataControler';
 import { tallaCtrl } from './controlers/tallaControler';
 import { mAbmCtrl } from './controlers/mabmControlers';
+
+import productNameRouter from './routes/productoname.routes'
+import articulosRouter from './routes/articulos.routes';
+import edadesRouter from './routes/edades.routes'
+import especiesRouter from './routes/especies.routes'
+import extradataRouter from './routes/extradata.routes'
+import fabricantesRouter from './routes/fabricantes.routes'
+import lineasRouter from './routes/lineas.routes'
+import marcasRouter from './routes/marcas.routes'
+import medidasRouter from './routes/medidas.routes'
+import preciosRouter from './routes/precios.routes'
+import presentacionesRouter from './routes/presentaciones.routes'
+import usersRouter from './routes/user.routes';
 
 //import { articuloCtrl } from './controlers/articuloControler';
 //import { productoCtrl } from './controlers/productoControler';
@@ -76,4 +89,18 @@ app.use(proveedorProductoCtrl.router);
 app.use(extraDataCtrl.router);
 app.use(MenuCtrl.router);
 app.use(authRoutes);
+
+app.use('/v2/articulos',articulosRouter)
+app.use('/v2/edades', edadesRouter)
+app.use('/v2/especies', especiesRouter)
+app.use('/v2/extradata', extradataRouter)
+app.use('/v2/fabricantes', fabricantesRouter)
+app.use('/v2/lineas', lineasRouter)
+app.use('/v2/marcas', marcasRouter)
+app.use('/v2/medidas', medidasRouter)
+app.use('/v2/precios', preciosRouter)
+app.use('/v2/presentaciones', presentacionesRouter)
+app.use('/v2/productname',productNameRouter)
+app.use('/v2/users',usersRouter);
+
 export default app;
