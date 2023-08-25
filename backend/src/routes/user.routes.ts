@@ -31,7 +31,7 @@ import passport from "passport";
 
 const router = Router()
 router.get('', 
-            passport.authenticate('jwt', {session:false}),
+            //passport.authenticate('jwt', {session:false}),
             controler.docGetAll(modelo, 
               {
                 sort:{'artName':1, 'prodName': 1},

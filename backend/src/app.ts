@@ -90,6 +90,7 @@ app.use(extraDataCtrl.router);
 app.use(MenuCtrl.router);
 app.use(authRoutes);
 
+
 app.use('/v2/articulos',articulosRouter)
 app.use('/v2/edades', edadesRouter)
 app.use('/v2/especies', especiesRouter)

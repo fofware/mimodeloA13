@@ -14,6 +14,7 @@ export interface ResponseUser {
 export interface User {
   id?: string;
   email?: string;
+  emailvalidated?: boolean;
   nickname: string;
   image: string;
   nombre?: string;

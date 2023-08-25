@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { UsersService, userAlerts, userIsLogged, userLogged } from '../../services/users.service';
 
 @Component({
@@ -17,48 +17,35 @@ import { UsersService, userAlerts, userIsLogged, userLogged } from '../../servic
   templateUrl: './user-btn.component.html',
   styleUrls: ['./user-btn.component.scss']
 })
-export class UserBtnComponent {
+
+export class UserBtnComponent implements AfterViewInit {
+  @ViewChild('myDrop', { static: true }) myDrop!: NgbDropdown;
   user = {
     email: '',
     password: ''
   }
 
   _user = inject(UsersService);
-//  _activatedRoute = inject(ActivatedRoute);
   _router = inject(Router)
 
-//  @Output() newLoginEvent = new EventEmitter<boolean>()
-
-//  private destroy$ = new Subject<any>();
-
   ngOnInit(){
-    /*
-    this._user.isLogged
-        .pipe( takeUntil(this.destroy$) )
-        .subscribe( res => {
-          this.isLogged = res;
-          //this.user = this.authService.userValue;
-          this.newLoginEvent.emit(res);
-        });
-    */
   }
+  ngAfterViewInit(){
+    if(userIsLogged() && !userLogged().emailvalidated){
+      this.myDrop.open();
+      console.log("userLogged", userLogged())
+    }
 
+  }
   ngOnDestroy(): void {
-//    this.destroy$.next({});
-//    this.destroy$.complete();
   }
 
   async login(myDrop:any) {
-    /*
-    const loguser = await this._user.signInP(this.user);
-    const menu = await this._user.getMenuP();
-    myDrop.close();
-    */
     this._user.signIn(this.user).subscribe(res => {
       myDrop.close();
+      console.log('Login',res);
       this._router.navigateByUrl(`users`)
     })
-
   }
 
   logout(){

@@ -87,7 +87,6 @@ const docGetAll = (model: Model<any>, options?:genericOptions) => async (req: Re
     }
     res.status(200).json(ret)
   } catch (err) {
-    console.log(JSON.parse(JSON.stringify(err)))
     const error = {
       url: req.headers.host+req.headers['x-original-uri'],
       //user: req.user,

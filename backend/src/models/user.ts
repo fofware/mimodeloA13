@@ -1,8 +1,9 @@
-import { Schema, model, Document, Model } from "mongoose";
+import { Schema, model, Document, Model, SchemaType } from "mongoose";
 import bcrypt from "bcrypt"
 
 export interface IUser extends Document {
   email: string;            // e-Mail del Usuario
+  emailvalidated: boolean;
   interna: boolean;
   parentAccountId: object;  // es el _id del usuario que generó la cuenta
   status: boolean;          // 0 - Disabled, 1 - Enabled
@@ -38,6 +39,7 @@ export interface IUser extends Document {
 
 const userSchema = new Schema({
   email:{ type: String, unique: true, required: true, lowercase: true, trim: true }
+  , emailvalidated: { type: Schema.Types.Boolean, default: false}
   , interna: {type: Schema.Types.Boolean, default: false }
   , parentAccountId: {ref: 'user',type: Schema.Types.ObjectId, default: null}
   , status: { type: Schema.Types.Boolean, default: true }

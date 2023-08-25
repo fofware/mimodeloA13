@@ -43,12 +43,14 @@ export class SignUpComponent {
   wappPic = ''
   wapp:WhatsApp = {isWhatsapp: false}
   formParent = this.fb.group({
+    /*
     nombre: ['',
       [
         Validators.required,
         Validators.minLength(3)
       ]],
     apellido: [''],
+    */
 /*
     mierda:['',
       {
@@ -76,7 +78,7 @@ export class SignUpComponent {
         updateOn: 'blur'
       }
     ],
-    mypassword: ['', [Validators.required, Validators.minLength(6)]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
     repassword: ['', [Validators.required, eMailValidation.MatchPassword('password')]],
     phone: ['',
       {
@@ -186,12 +188,11 @@ export class SignUpComponent {
         this.formParent.patchValue({'captcha': token})
         console.log("Envia", this.formParent.value);
         this.userService.signUp(this.formParent.value).subscribe(data => {
-          console.log(data)
+          //console.log(data)
+          /*
           const user = {
             email: this.formParent.value.email,
-            password: this.formParent.value.mypassword,
-            nombre: this.formParent.value.nombre,
-            apellido: this.formParent.value.apellido,
+            password: this.formParent.value.password,
             phone: this.formParent.value.phone
           }
           this.userService.signIn(user).subscribe(res => {
@@ -199,6 +200,9 @@ export class SignUpComponent {
               this.router.navigate(['/user/profile']);
             //}, 2000);
           })
+          */
+          this.router.navigate(['/']);
+
         })
     });
   }

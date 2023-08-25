@@ -15,7 +15,15 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
       tap( res => console.log(res)),
       catchError( res => {
         console.log(res.error)
-        toast.warning( res.error.text, { header: res.error.title, delay: 15000, autohide: false })
+        switch (res.error) {
+          case 500:
+            toast.danger( res.error.message, { header: res.error.title, delay: 15000, autohide: false })
+            break;
+          default:
+            const header = res.error.title ? res.error.title : `(${res.status}) - Mensaje de API`;
+            toast.warning( res.error.message, { header, delay: 5000, autohide: false })
+            break;
+        }
         //return EMPTY;
         return throwError(() => res)
       })

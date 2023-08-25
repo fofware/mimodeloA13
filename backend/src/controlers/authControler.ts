@@ -10,6 +10,7 @@ import jwt from 'jsonwebtoken';
 import config from '../config';
 import  RefreshToken  from '../models/refreshToken'
 import { requestPromise } from "../common/httpClient-promise";
+import { transporter } from "../common/mailer";
 
 export interface iMenuData {
   name:string;
@@ -281,6 +282,7 @@ function createToken(user: IUser | any ) {
     email: user.email,
     apellido: user.apellido,
     nombre: user.nombre,
+    emailvalidated: user.emailvalidated,
     site: [],
     menu: user.menu,
     accounts: [],
@@ -295,80 +297,95 @@ function createToken(user: IUser | any ) {
 };
 
 export const signUp = async (req: Request, res: Response): Promise<Response> => {
-  /*
-  if (!req.body.email || !req.body.password)
-    return res.status(400).json({ msg: 'Por favor. Envíe su e-Mail y contraseña' });
-  const user = await User.findOne({ email: req.body.email });
-  if (user) return res.status(400).json({ msg: 'eMail ya está registrado' });
-  const userwapp = await User.findOne({ whatsapp: req.body.whatsapp });
-  if (userwapp) return res.status(400).json({ msg: 'WhatsApp ya está registrado existe' });
-  if (req.body.password !== req.body.confirmPassword)
-    return res.status(400).json({msg: 'Las contraseñas no coinciden'})
-  delete req.body.confirmPassword;
-  */
-  const userIp = req.socket.remoteAddress;
-  const recaptchaToken = req.body.captcha;
-  const secretKey = config.captchaKey;
+  console.log(req.body);
+  try {
+    if (!req.body.email || !req.body.password)
+      return res.status(400).json({ message: 'Por favor. Envíe su e-Mail y contraseña' });
+
+    if (req.body.password !== req.body.repassword)
+      return res.status(400).json({ message: 'Las contraseñas no coinciden'})
   
+    const chkUser = await User.findOne({ email: req.body.email });
+    if (chkUser) return res.status(400).json({ message: 'eMail ya está registrado' });
 
-  /*
-  const options = {
-    host: 'firulais.net.ar',
-    path: `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}&remoteip=${userIp}`,
-    method: 'GET',
-    port: 443,
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json; charset=UTF-8'
+    if(req.body.whatsapp){
+      const userwapp = await User.findOne({ whatsapp: req.body.whatsapp });
+      if (userwapp) return res.status(400).json({ title: 'WhatsAppBot', message: `${req.body.whatsapp} WhatsApp ya está registrado existe` });
     }
-  }
-  */
-  const options = {
-    url: `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}&remoteip=${userIp}`,
-    method: 'GET'
-  }
-  const captchaRpta = JSON.parse( await requestPromise(options));
-  /*
-  const captchaRpta = JSON.parse(await request.get(
-    {
-        url: `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}&remoteip=${userIp}`,
-    }));
 
-    //.then((response) => {
-    //  console.log(response)
-    //// If response false return error message
-    //if (response.success === false) {
-    //    return res.status(200).json({success: false, error: 'Recaptcha token validation failed'});
-    //}
-    //// otherwise continue handling/saving form data
-    //    return response
-    //})
-  */
+    
+    delete req.body.repassword;
+
+    //const userIp = req.socket.remoteAddress;
+    const recaptchaToken = req.body.captcha;
+    const secretKey = config.captchaKey;
+    /*
+    console.log('---------------------------------');
+    console.log('userIp',userIp);
+    console.log('recaptchaToken',recaptchaToken);
+    console.log('secretKey',secretKey);
+    console.log('---------------------------------');
+    */
+
+    //const captchaRpta = JSON.parse( await requestPromise(options));
+    const captchaRpta = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `secret=${secretKey}&response=${recaptchaToken}`,
+    }).then(res =>  res.json())
+/*
   console.log('-------------------')
   console.log(captchaRpta);
   console.log('-------------------')
+*/  
   if ( captchaRpta.score < .7 )
-    return res.status(401).json({ title: 'Hmmm....', text: 'Parece no ser humano...' })
-  console.log(req.body);
+    return res.status(401).json({ title: 'reCAPTCHA', message: 'Hmmm....Parece no ser humano...' })
   const user = {
     email: req.body.email,
-    nombre: req.body.nombre,
-    apellido: req.body.apellido,
+    //nombre: req.body.nombre,
+    //apellido: req.body.apellido,
     roles: ['client_admin'],
     group: 'user',
     phone: req.body.phone,
     password: req.body.password
   }
+  let info = await transporter.sendMail({
+    from: '"mailer Firulais" <firulais.net.ar@gmail.com>',
+    to: `${user.email}`,
+    subject: "Testing Firulais Mailer",
+    html: `
+      <h1><strong>Hola Mundo</strong></h1>
+      Espero que esto funcione
+    `
+  })
+  console.log(info);
+
   const newUser = new User(user);
-  await newUser.save();
-  delete newUser.password;
-  const token = createToken(newUser);
-  console.log(newUser);
-  delete newUser.__v;
-  delete newUser.password;
-  newUser.__v = null;
-  newUser.password = null;
-  return res.status(200).json({ token, newUser });
+  //await newUser.save();
+  //delete newUser.password;
+  //const token = createToken(newUser);
+  //console.log(newUser);
+  //delete newUser.__v;
+  //delete newUser.password;
+  //newUser.__v = null;
+  //newUser.password = null;
+  //return res.status(200).json({ token, newUser });
+  
+  return res.status(200).json(user)
+    
+  } catch (err) {
+    console.log(JSON.parse(JSON.stringify(err)))
+    const error = {
+      url: req.headers.host+req.headers['x-original-uri'],
+      //user: req.user,
+      //otro: req.ip,
+      //headers: req.headers,
+
+      filter: Object.assign(req.query,req.params,req.body),
+      ...JSON.parse(JSON.stringify(err)).error
+    }
+    res.status(500).json({ error });
+  }
 };
 
 export const signIn = async (req: Request, res: Response): Promise<Response> => {
@@ -466,14 +483,14 @@ export const refreshtoken = async (req: Request, res: Response): Promise<Respons
 */
 export const emailcheck = async (req: Request, res: Response) => {
   const { email } = req.params;
-  console.log(email);
+  //console.log(email);
   User.findOne( { email })
   .then( ( rpta: any ) => {
-    console.log(rpta);
+    //console.log(rpta);
     if(!rpta) return res.status(200).json( { exists: false } );
     else return res.status(200).json( { exists: true } );
   }).catch( (err: any) => {
-    return res.status(404).json( err );
+    return res.status(404).json( ...JSON.parse(JSON.stringify(err)) );
   })
   
 }

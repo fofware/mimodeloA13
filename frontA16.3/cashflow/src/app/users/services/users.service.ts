@@ -56,7 +56,7 @@ export class UsersService {
           this.saveToken(res);
           this.decodeToken(res);
           userTopMenu.set(await this.getVMenuP('topMenu'));
-          this.skt.connect();
+          //this.skt.connect();
           //this._socket.connect();s
           return res
         })
@@ -65,6 +65,10 @@ export class UsersService {
 
   signInP( user: any ): Promise<object> {
     return new Promise( async (resolve, reject) => {
+      this.signIn(user).subscribe( res => {
+        resolve(res);
+      })
+      /*
       try {
         this.http
         .post(`${URL}/signin`, user)
@@ -75,8 +79,9 @@ export class UsersService {
           resolve(res);
         })
       } catch (error) {
-
+        console.log(error);
       }
+      */
     })
   }
 
@@ -95,6 +100,7 @@ export class UsersService {
 
   getvMenu(menu:string): Observable<object> {
     const logged = userIsLogged() ? `/logged` :  ``;
+
     return this.http.get(`${URL}/usermenu${logged}/${menu}`);
   }
 /*
