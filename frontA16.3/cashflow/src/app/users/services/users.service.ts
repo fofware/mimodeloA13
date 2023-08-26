@@ -55,9 +55,11 @@ export class UsersService {
         map( async (res:any) => {
           this.saveToken(res);
           this.decodeToken(res);
-          userTopMenu.set(await this.getVMenuP('topMenu'));
+          if(userIsLogged() && userLogged().emailvalidated){
+            userTopMenu.set(await this.getVMenuP('topMenu'));
+          }
           //this.skt.connect();
-          //this._socket.connect();s
+          //this._socket.connect();
           return res
         })
       );
@@ -67,7 +69,7 @@ export class UsersService {
     return new Promise( async (resolve, reject) => {
       this.signIn(user).subscribe( res => {
         resolve(res);
-      })
+      });
       /*
       try {
         this.http
@@ -82,7 +84,7 @@ export class UsersService {
         console.log(error);
       }
       */
-    })
+    });
   }
 
   getVMenuP(menu:string): Promise<iTopMenu[]> {

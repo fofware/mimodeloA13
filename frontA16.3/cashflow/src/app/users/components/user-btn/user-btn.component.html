@@ -60,6 +60,6 @@
     <button type="button" (click)="$event.stopPropagation();myDrop.close;logout()" ngbDropdownItem>Logout</button>
   </ng-template>
   <ng-template #viewValidate>
-    debe validar la direccion de correo
+    <button type="button" ngbDropdownItem (click)="$event.stopPropagation();myDrop.close;validateEmail()">Validar e-Mail</button>
   </ng-template>
 </div>

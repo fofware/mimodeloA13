@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { NoPageComponent } from './components/no-page/no-page.component';
-import { userIsLogged } from './users/services/users.service';
+import { userIsLogged, userLogged } from './users/services/users.service';
 import { loggedMatchGuard } from './guards/logged-match.guard';
 
 const getContact = (param:number): string => {
@@ -40,11 +40,19 @@ export const appRoutes: Routes = [
     loadComponent: () => import('./test/ngbd-toast-global/ngbd-toast-global.component')
                         .then(mod => mod.NgbdToastGlobal)
   },
+
+  {
+    path: 'users',
+    canMatch: [() => userLogged().emailvalidated],
+    loadChildren: () => import('./users/users.routes')
+                        .then(mod => mod.USERS_ROUTES)
+  },
+
   {
     path: 'users',
     //canMatch: [() => inject(AuthService).isLogged],
-    loadChildren: () => import('./users/users.routes')
-                        .then(mod => mod.USERS_ROUTES)
+    loadComponent: () => import('./users/components/email-validate/email-validate.component')
+                        .then(mod => mod.EmailValidateComponent)
   },
   {
     path: 'finanzas',

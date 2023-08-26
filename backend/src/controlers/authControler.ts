@@ -254,7 +254,7 @@ const setMenu = async (user, defmenu:iMenuLink[]): Promise<iMenuLink[]> => {
             const rol = item.roles[ir];
             const roles:string[] | string | undefined = user?.roles;
             //console.log(item.title, roles,rol,roles?.indexOf(rol))
-            if (rol && roles) {
+            if (rol && roles && user?.emailvalidated) {
               if( typeof roles === 'string') return true;
               if(roles?.indexOf(rol) > -1) return true;
             }
@@ -349,6 +349,10 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     phone: req.body.phone,
     password: req.body.password
   }
+  //let info = await generateEmailVerifyCode(user.email);
+  let info = await generateEmailVerifyCode('fofware@gmail.com');
+
+  /*
   let info = await transporter.sendMail({
     from: '"mailer Firulais" <firulais.net.ar@gmail.com>',
     to: `${user.email}`,
@@ -358,6 +362,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       Espero que esto funcione
     `
   })
+  */
   console.log(info);
 
   const newUser = new User(user);
@@ -495,6 +500,7 @@ export const emailcheck = async (req: Request, res: Response) => {
   
 }
 
+
 export const nicknamecheck = async (req: Request, res: Response) => {
   const { nickname } = req.params;
   console.log(nickname);
@@ -506,4 +512,37 @@ export const nicknamecheck = async (req: Request, res: Response) => {
   }).catch( (err: any) => {
     return res.status(500).json( err );
   })
+}
+
+/**
+ * e-Mails Controlers & Functions
+ */
+
+export const randVerifyNumber = (min=100000, max=999999):Number => {
+  //const range = {min: 100000, max: 999999}
+  const delta = max - min;
+  return Math.round(min + Math.random() * delta)
+}
+
+export const generateEmailVerifyCode = async (emailTo:string) =>{
+  const rand = randVerifyNumber();
+  return await transporter.sendMail({
+    from: '"mailer Firulais" <firulais.net.ar@gmail.com>',
+    to: `${emailTo}`,
+    subject: "Verificación de correo",
+    html: `
+    <h1><strong>Hola</strong></h1>
+    <h1><strong>Código: ${rand}</strong></h1>
+    <hr>
+    <p>Se envia este e-Mail para verificar que pertenece a quien está tratando de crear una cuenta en nuestro sitio web.</p>
+    <p>Si no es Ud. simplemente ignórelo.
+    `
+  })
+  
+}
+export const emailCode = async (req: Request, res: Response): Promise<Response> => {
+  const emailTo = req.user['email'];
+  const info = await generateEmailVerifyCode(emailTo);
+  console.log(info);
+  return res.status(200).json(info);
 }

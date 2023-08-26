@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { VMenuComponent } from '../components/v-menu/v-menu.component';
 import { NgClass, NgIf } from '@angular/common';
-import { UsersService, userVMenu } from './services/users.service';
+import { UsersService, userLogged, userVMenu } from './services/users.service';
 
 @Component({
   selector: 'app-users',
@@ -26,6 +26,7 @@ export class UsersComponent implements OnInit {
   }
 
   async setMenu(){
+    if(userLogged().emailvalidated)
     userVMenu.set(await this._user.getVMenuP('usersHome') );
     console.log(userVMenu());
   }

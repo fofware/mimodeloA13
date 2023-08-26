@@ -31,11 +31,12 @@ export class UserBtnComponent implements AfterViewInit {
   ngOnInit(){
   }
   ngAfterViewInit(){
+    /*
     if(userIsLogged() && !userLogged().emailvalidated){
       this.myDrop.open();
       console.log("userLogged", userLogged())
     }
-
+    */
   }
   ngOnDestroy(): void {
   }
@@ -44,7 +45,7 @@ export class UserBtnComponent implements AfterViewInit {
     this._user.signIn(this.user).subscribe(res => {
       myDrop.close();
       console.log('Login',res);
-      this._router.navigateByUrl(`users`)
+      this._router.navigateByUrl(`users`);
     })
   }
 
@@ -54,6 +55,10 @@ export class UserBtnComponent implements AfterViewInit {
 
   profile(){
     //this._router.navigate(['/user/profile']);
+  }
+
+  validateEmail(){
+    this._router.navigate(['/users']);
   }
   get _loggedUser(){
     return userLogged;
