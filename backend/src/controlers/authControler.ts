@@ -5,6 +5,8 @@
 
 import { Request, Response, Router } from "express";
 import User, { IUser } from "../models/user";
+import verifyemail from "../models/verifyemail";
+
 import { ExtractJwt } from "passport-jwt";
 import jwt from 'jsonwebtoken';
 import config from '../config';
@@ -297,27 +299,28 @@ function createToken(user: IUser | any ) {
 };
 
 export const signUp = async (req: Request, res: Response): Promise<Response> => {
-  console.log(req.body);
+  const reqData = req.body;
+  console.log(reqData);
   try {
-    if (!req.body.email || !req.body.password)
+    if (!reqData.email || !reqData.password)
       return res.status(400).json({ message: 'Por favor. Envíe su e-Mail y contraseña' });
 
-    if (req.body.password !== req.body.repassword)
+    if (reqData.password !== reqData.repassword)
       return res.status(400).json({ message: 'Las contraseñas no coinciden'})
   
-    const chkUser = await User.findOne({ email: req.body.email });
+    const chkUser = await User.findOne({ email: reqData.email });
     if (chkUser) return res.status(400).json({ message: 'eMail ya está registrado' });
 
-    if(req.body.whatsapp){
-      const userwapp = await User.findOne({ whatsapp: req.body.whatsapp });
-      if (userwapp) return res.status(400).json({ title: 'WhatsAppBot', message: `${req.body.whatsapp} WhatsApp ya está registrado existe` });
+    if(reqData.whatsapp){
+      const userwapp = await User.findOne({ whatsapp: reqData.whatsapp });
+      if (userwapp) return res.status(400).json({ title: 'WhatsAppBot', message: `${reqData.whatsapp} WhatsApp ya está registrado existe` });
     }
 
     
-    delete req.body.repassword;
+    delete reqData.repassword;
 
     //const userIp = req.socket.remoteAddress;
-    const recaptchaToken = req.body.captcha;
+    const recaptchaToken = reqData.captcha;
     const secretKey = config.captchaKey;
     /*
     console.log('---------------------------------');
@@ -338,45 +341,29 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
   console.log(captchaRpta);
   console.log('-------------------')
 */  
-  if ( captchaRpta.score < .7 )
-    return res.status(401).json({ title: 'reCAPTCHA', message: 'Hmmm....Parece no ser humano...' })
-  const user = {
-    email: req.body.email,
-    //nombre: req.body.nombre,
-    //apellido: req.body.apellido,
-    roles: ['client_admin'],
-    group: 'user',
-    phone: req.body.phone,
-    password: req.body.password
-  }
-  //let info = await generateEmailVerifyCode(user.email);
-  let info = await generateEmailVerifyCode('fofware@gmail.com');
+    if ( captchaRpta.score < .7 )
+      return res.status(401).json({ title: 'reCAPTCHA', message: 'Hmmm....Parece no ser humano...' })
+    const user = {
+      email: reqData.email,
+      roles: ['client_admin'],
+      group: 'user',
+      phone: reqData.phone,
+      password: reqData.password
+    }
+    let info = await generateEmailVerifyCode(user.email);
+    console.log(info);
 
-  /*
-  let info = await transporter.sendMail({
-    from: '"mailer Firulais" <firulais.net.ar@gmail.com>',
-    to: `${user.email}`,
-    subject: "Testing Firulais Mailer",
-    html: `
-      <h1><strong>Hola Mundo</strong></h1>
-      Espero que esto funcione
-    `
-  })
-  */
-  console.log(info);
+    const newUser = new User(user);
+    await newUser.save();
+    delete newUser.password;
+    const token = createToken(newUser);
+    delete newUser.__v;
+    delete newUser.password;
+    newUser.__v = null;
+    newUser.password = null;
+    console.log(newUser);
 
-  const newUser = new User(user);
-  //await newUser.save();
-  //delete newUser.password;
-  //const token = createToken(newUser);
-  //console.log(newUser);
-  //delete newUser.__v;
-  //delete newUser.password;
-  //newUser.__v = null;
-  //newUser.password = null;
-  //return res.status(200).json({ token, newUser });
-  
-  return res.status(200).json(user)
+    return res.status(200).json({ token });
     
   } catch (err) {
     console.log(JSON.parse(JSON.stringify(err)))
@@ -526,6 +513,13 @@ export const randVerifyNumber = (min=100000, max=999999):Number => {
 
 export const generateEmailVerifyCode = async (emailTo:string) =>{
   const rand = randVerifyNumber();
+  try {
+    await verifyemail.findOneAndDelete({email: emailTo});
+    const verify = new verifyemail({email: emailTo, verify: rand});
+    await verify.save();
+  } catch (error) {
+    console.log(error)
+  }  
   return await transporter.sendMail({
     from: '"mailer Firulais" <firulais.net.ar@gmail.com>',
     to: `${emailTo}`,
@@ -540,7 +534,13 @@ export const generateEmailVerifyCode = async (emailTo:string) =>{
   })
   
 }
-export const emailCode = async (req: Request, res: Response): Promise<Response> => {
+export const verifyEmailCode = async (req: Request, res: Response): Promise<Response> => {
+  const emailTo = req.user['email'];
+  const info = verifyemail.findOne({email: emailTo})
+  console.log(info);
+  return res.status(200).json(info);
+}
+export const newEmailCode = async (req: Request, res: Response): Promise<Response> => {
   const emailTo = req.user['email'];
   const info = await generateEmailVerifyCode(emailTo);
   console.log(info);

@@ -30,8 +30,13 @@ router.get('/fullmenu/:id',
 router.get('/fullmenu/logged/:id',
             passport.authenticate('jwt', {session:false}),
             auth.fullmenu);
-router.get('/fullmenu/logged/:id',
+/*
+router.get('/verify/email',
             passport.authenticate('jwt', {session:false}),
-            auth.fullmenu);
-
+            auth.ver);
+router.get('/verify/email/new',
+            passport.authenticate('jwt', {session:false}),
+            auth.newEmailCode);
+export default router;
+*/
 export default router;

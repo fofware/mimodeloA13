@@ -45,6 +45,7 @@ import medidasRouter from './routes/medidas.routes'
 import preciosRouter from './routes/precios.routes'
 import presentacionesRouter from './routes/presentaciones.routes'
 import usersRouter from './routes/user.routes';
+import verifyemailRouter from './routes/verifyemail.routes';
 
 //import { articuloCtrl } from './controlers/articuloControler';
 //import { productoCtrl } from './controlers/productoControler';
@@ -103,5 +104,6 @@ app.use('/v2/precios', preciosRouter)
 app.use('/v2/presentaciones', presentacionesRouter)
 app.use('/v2/productname',productNameRouter)
 app.use('/v2/users',usersRouter);
+app.use('/v2/verifyemail',verifyemailRouter);
 
 export default app;
