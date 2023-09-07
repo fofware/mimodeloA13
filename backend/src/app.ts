@@ -46,6 +46,7 @@ import preciosRouter from './routes/precios.routes'
 import presentacionesRouter from './routes/presentaciones.routes'
 import usersRouter from './routes/user.routes';
 import verifyemailRouter from './routes/verifyemail.routes';
+import { corsWhiteList } from './middlewares/whitelistcors';
 
 //import { articuloCtrl } from './controlers/articuloControler';
 //import { productoCtrl } from './controlers/productoControler';
@@ -60,7 +61,11 @@ const corsOptions = {
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+//
+//app.use(corsWhiteList);
+//
 app.use(passport.initialize());
+
 passport.use(passportMiddelware);
 app.disable('etag');
 const router: Router = Router();

@@ -4,7 +4,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { filter, map, Subject, take, takeUntil, tap } from 'rxjs';
 //import { userService } from '../../services/auth.service';
 import { Router } from '@angular/router';
-import { RecaptchaV3Module, ReCaptchaV3Service } from 'ng-recaptcha';
+//import { RecaptchaV3Module, ReCaptchaV3Service } from 'ng-recaptcha';
 import { eMailValidation } from '../../../validators/email/email-exists.validator';
 import { UniqueMailValidator } from '../../../validators/email/unique-mail-validator.directive';
 import { UsersService } from '../../services/users.service';
@@ -19,7 +19,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RecaptchaV3Module
+//    RecaptchaV3Module
   ],
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.scss'],
@@ -30,9 +30,9 @@ export class SignUpComponent {
   regexmail =  '^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$';
   regexmail1 = `^[a-z0-9\.]+@([a-z0-9\.]+)+[a-z0-9]{2,4}$`
   private destroy$ = new Subject<any>();
-  captchaResolved = false;
+  //captchaResolved = false;
   private fb = inject(FormBuilder);
-  private recaptchaV3Service = inject(ReCaptchaV3Service);
+  //private recaptchaV3Service = inject(ReCaptchaV3Service);
   private userService = inject(UsersService);
   private uniquemail = inject(UniqueMailValidator);
   private existWapp = inject(existWhatsAppValidator);
@@ -94,7 +94,7 @@ export class SignUpComponent {
         */
       }
     ],
-    captcha: ['', []]
+    //captcha: ['', []]
   });
   //constructor() { }
 
@@ -178,8 +178,19 @@ export class SignUpComponent {
     //  this.userService.emailFind(values.email).pipe(map())
   }
   */
-  enviar(){
 
+  enviar(){
+    this.userService.signUp(this.formParent.value)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((data:any) => {
+      console.log(data);
+      this.userService.processToken(data.token);
+      this.router.navigate(['/users']);
+    });
+  }
+
+  /*
+  enviar1(){
     this.recaptchaV3Service
       .execute('registerCustomer')
       .pipe(takeUntil(this.destroy$))
@@ -187,26 +198,16 @@ export class SignUpComponent {
         console.log(`Token [${token}] generated`);
         this.formParent.patchValue({'captcha': token})
         console.log("Envia", this.formParent.value);
-        this.userService.signUp(this.formParent.value).subscribe(data => {
-          //console.log(data)
-          /*
-          const user = {
-            email: this.formParent.value.email,
-            password: this.formParent.value.password,
-            phone: this.formParent.value.phone
-          }
-          this.userService.signIn(user).subscribe(res => {
-            //setTimeout(function(){
-              this.router.navigate(['/user/profile']);
-            //}, 2000);
-          })
-          */
-          this.router.navigate(['/']);
+        this.userService.signUp(this.formParent.value).subscribe((data:any) => {
+          console.log(data);
+          //const tocken = data.token
+          this.userService.processToken(data.token);
+          this.router.navigate(['/users']);
 
         })
     });
   }
-
+*/
   isInvalid(fieldname:string){
     const campo = this.formParent.get(fieldname);
     if(campo?.touched){

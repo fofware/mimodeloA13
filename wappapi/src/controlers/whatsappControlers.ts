@@ -80,6 +80,7 @@ const srvs = [];
   }
 })
 
+
 WAGControler.get('/info/:contact/extra',
   async (req:Request, res:Response) => {
   let {contact} = req.params;

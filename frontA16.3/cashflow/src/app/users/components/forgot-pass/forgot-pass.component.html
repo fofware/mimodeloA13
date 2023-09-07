@@ -1,0 +1,190 @@
+<ng-template #content let-modal>
+	<div class="modal-header  pb-1">
+		<h4 class=" flex-grow-1 modal-title text-center">{{wapp.user?.name || wapp.user?.shortName || wapp.user?.pushname || wapp.formatedNumber }}</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body text-center pt-2">
+    <!--div class="fs-5">{{wapp.formatedNumber}}</div-->
+    <div style="width: 100%;
+      height: 100%;
+      background-position: center;
+      background-image: url('{{wapp.picUrl}}');
+      background-size: contain;
+      background-repeat: no-repeat;">
+    </div>
+  </div>
+	<div class="modal-footer">
+    <div>{{wapp.about}}</div>
+		<!--button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button-->
+	</div>
+</ng-template>
+
+
+<div class="d-flex align-items-center justify-content-center full-height">
+  <div class="card mb-3" style="max-width: 540px;width: 540px;">
+    <div class="row g-0">
+      <div class="col-md-4 text-info">
+        <i *ngIf="paso===0" class="fa-solid fa-key fa-bounce" style="line-height: 1; font-size: 9em;"></i>
+        <i *ngIf="paso===1" class="fa-solid fa-paper-plane fa-bounce" style="line-height: 1; font-size: 9em;"></i>
+        <i *ngIf="paso===2" class="fa-solid fa-spinner fa-spin" style="line-height: 1; font-size: 9em;"></i>
+        <i *ngIf="paso===3" class="fa-solid fa-unlock fa-bounce" style="line-height: 1; font-size: 9em;"></i>
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h4 class="card-title" [innerHTML]="getTitle()"></h4>
+          <!--p class="card-text">Ingrese la dirección de correo que usa para ingresar</p-->
+          <form class="need-validation" [formGroup]="formParent">
+            <ng-container *ngIf="paso===0">
+              <div class="mb-3 form-field">
+                <label class="form-label">Ingrese el Nro. de Celular registrado en la cuenta {{formParent.get('phone')?.valid}}</label>
+                <ng-container *ngIf="wapp.isWhatsapp">
+                  <i class="fa-brands fa-whatsapp fa-xl mx-2"></i>
+                  <img class="rounded-circle"
+                    src="{{wapp.picUrl}}"
+                    style="width: 40px;"
+                    alt="" (click)="open(content)">
+                  <span class="mx-1">{{wapp.formatedNumber}}</span>
+                </ng-container>
+                <input type="text"
+                  class="form-control"
+                  placeholder="Ej: 5493624683356"
+                  formControlName="phone"
+                  (blur)="wapp.isWhatsapp=false;checkWapp(formParent.get('phone'))"
+                  [ngClass]="{ 'is-invalid': isInvalid('phone') }"
+                  />
+                <div class="invalid-feedback">
+                  <!--
+                  para debug
+                  {{formParent.get('phone')?.errors | json}}
+                  {{formParent.get('phone')?.errors | json}}
+                  -->
+                  <ul>
+                    <li *ngIf="formParent.get('phone')?.errors?.['minlength']">Deben ser
+                      {{formParent.get('phone')?.errors?.['minlength'].requiredLength}} números y tiene
+                      {{formParent.get('phone')?.errors?.['minlength'].actualLength}}</li>
+                    <li *ngIf="formParent.get('phone')?.errors?.['maxlength']">Deben ser
+                      {{formParent.get('phone')?.errors?.['maxlength'].requiredLength}} números y tiene
+                      {{formParent.get('phone')?.errors?.['maxlength'].actualLength}}</li>
+                    <li *ngIf="formParent.get('phone')?.errors?.['pattern']">Deben ser sólo números y tiene
+                      {{formParent.get('phone')?.errors?.['pattern'].actualValue}}</li>
+
+                  </ul>
+                </div>
+              </div>
+
+              <div class="mb-3 form-field">
+                <label class="form-label">Ingrese la dirección de correo que usa para ingresar {{formParent.get('email')?.valid}}</label>
+                <input type="text"
+                  name="email"
+                  class="form-control"
+                  placeholder="Ej: name@example.com"
+                  formControlName="email"
+                  [ngClass]="{ 'is-invalid': isInvalid('email') }"
+                  autocomplete="new-email"
+                />
+                <div class="invalid-feedback">
+                  <!--
+                  para debug
+                  {{formParent.get('email')?.errors | json}}
+                  <li>{{formParent.get('email')?.errors | json}}</li>
+                  -->
+                  <ul>
+                    <li *ngIf="formParent.get('email')?.errors?.['required']">El campo no puede quedar vacio</li>
+                    <li *ngIf="formParent.get('email')?.errors?.['pattern']">
+                      {{formParent.get('email')?.errors?.['pattern'].actualValue}} no parece ser un e-Mail real</li>
+                    <li *ngIf="formParent.get('email')?.errors?.['uniqueMail']">Este e-Mail ya se encuentra registrado</li>
+                  </ul>
+                </div>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="paso===1">
+              <div class="form-group">
+                <div class="btn-group-vetical mt-3" btnRadioGroup>
+                  <div class="mb-3 form-field">
+                    <input
+                      id="rbemail"
+                      type="radio"
+                      value="email"
+                      name="sender"
+                      formControlName="sender"
+                      (change)="onSenderClick($event)"
+                    />
+                    <label class="custom-control-label" for="rbemail">
+                      <i class="fa-regular fa-envelope fa-xl mx-2"></i>
+                      <strong class="mx-1">{{ formParent.get('email')?.value }}</strong>
+                    </label>
+                  </div>
+                  <div class="mb-3 form-field">
+                    <input
+                      id="rbwapp"
+                      type="radio"
+                      value="wapp"
+                      name="sender"
+                      formControlName="sender"
+                      (change)="onSenderClick($event)"
+                    />
+                    <label class="custom-control-label" for="rbwapp">
+                      <i class="fa-brands fa-whatsapp fa-xl mx-2"></i>
+                      <!--img class="rounded-circle"
+                        src="{{wapp.picUrl}}" style="width: 40px;"
+                        alt="" (click)="open(content)"-->
+                      <strong class="mx-1">{{wapp.formatedNumber}}</strong>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="paso===2">
+              <div class="">
+                asdfasdfasdfadf
+
+              </div>
+            </ng-container>
+            <ng-container *ngIf="paso===3">
+              <div class="">
+                <button type="submit"
+                  class="btn btn-primary btn-lg float-end mb-3"
+                  (click)="nuevocodigo()">Enviar nuevo correo con Código</button>
+              </div>
+
+              <div class="mb-3 form-field">
+                <label class="form-label">Ingrese el Código recibido {{formParent.get('verify')?.valid}}</label>
+                <input type="text"
+                  id="verify"
+                  class="form-control"
+                  placeholder="Código de verificación"
+                  formControlName="verify"
+                  [ngClass]="{ 'is-invalid': isInvalid('verify') }"
+                  />
+                  <label *ngIf="sendto === 'email'" class="form-label">Si no lo encuentra en la carpeta de recibidos, revise todas las carpetas incluida la de correo no deseado.</label>
+                  <div class="invalid-feedback">
+                  <ul>
+                    <li *ngIf="formParent.get('verify')?.errors?.['minlength']">Deben ser
+                      {{formParent.get('verify')?.errors?.['minlength'].requiredLength}} números y tiene
+                      {{formParent.get('verify')?.errors?.['minlength'].actualLength}}</li>
+                    <li *ngIf="formParent.get('verify')?.errors?.['maxlength']">Deben ser
+                      {{formParent.get('verify')?.errors?.['maxlength'].requiredLength}} números y tiene
+                      {{formParent.get('verify')?.errors?.['maxlength'].actualLength}}</li>
+                    <li *ngIf="formParent.get('verify')?.errors?.['pattern']">Deben ser sólo números y tiene
+                      {{formParent.get('verify')?.errors?.['pattern'].actualValue}}</li>
+                  </ul>
+                </div>
+              </div>
+            </ng-container>
+          </form>
+
+          <div style="height: 48px;">
+            <button type="submit"
+              class="btn btn-primary btn-lg float-end"
+              [hidden]="formParent.invalid"
+              (click)="confirmar()">Confirmar e-Mail</button>
+            <button type="submit"
+              class="btn btn-primary btn-lg float-end"
+              [hidden]="hiddeNext"
+              (click)="siguiente()">Siguiente {{paso}} {{hiddeNext}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -36,7 +36,7 @@ router.get('',
               {
                 sort:{'artName':1, 'prodName': 1},
                 projection: {'password': 0},
-                fieldstr:['sText', 'tags']
+                fieldstr:['email', 'phone']
               })
           );
 router.get('/:_id', 

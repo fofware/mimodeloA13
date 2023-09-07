@@ -5,6 +5,14 @@ export class ToastService {
 
   toasts: any[] = [];
 
+  info(textOrTpl: string | TemplateRef<any>, options: any = {}) {
+    this.toasts.push({ textOrTpl, classname: 'bg-info', delay: 10000, ...options })
+  }
+
+  success(textOrTpl: string | TemplateRef<any>, options: any = {}) {
+    this.toasts.push({ textOrTpl, classname: 'bg-success', delay: 10000, ...options })
+  }
+
   warning(textOrTpl: string | TemplateRef<any>, options: any = {}) {
     this.toasts.push({ textOrTpl, classname: 'bg-warning', delay: 10000, ...options })
   }

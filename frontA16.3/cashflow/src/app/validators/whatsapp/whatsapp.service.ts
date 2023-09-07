@@ -48,7 +48,7 @@ export class WhatsappService {
 
   _httpClient = inject(HttpClient);
 
-  exist(number:string) {
+  exist(number:string):Observable<WhatsApp> {
     console.log(`${this.WAPPURL}/info/${number}`)
     return this._httpClient.get<WhatsApp>(`${this.WAPPURL}/info/${number}`)
   }

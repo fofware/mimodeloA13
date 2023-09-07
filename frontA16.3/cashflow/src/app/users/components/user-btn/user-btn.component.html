@@ -47,10 +47,10 @@
     <div class="dropdown-divider"></div>
 
     <button type="button" ngbDropdownItem [routerLink]="['users/signup']">Registarse</button>
-    <button type="button" ngbDropdownItem>Forgot password?</button>
+    <button type="button" ngbDropdownItem [routerLink]="['users/forgot']">Olvidó la clave?</button>
   </ng-template>
   <ng-template #viewLogged>
-    <div class="text-bg-info rounded-top p-2 mb-2"><h5 class="p-2">{{_loggedUser().nickname}}</h5></div>
+    <div class="text-bg-info rounded-top p-2 mb-2"><h5 class="p-2">{{_loggedUser().showname}}</h5></div>
     <ng-container *ngIf="!_loggedUser().emailvalidated then  viewValidate">
       <!--div ngbDropdownMenu aria-labelledby="authdropdownForm" class="dropdown-menu dropdown-menu-md-start dropdown-menu-lg-end logform"-->
       <button type="button" ngbDropdownItem (click)="$event.stopPropagation();myDrop.close;profile()">Profile</button>

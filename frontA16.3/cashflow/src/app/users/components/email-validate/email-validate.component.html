@@ -15,23 +15,23 @@
           <p class="card-text">Se envió un correo a <strong>{{userLogged().email}}</strong>, por favor abraló y escriba a continuación el codigo enviado</p>
           <form class="need-validation" [formGroup]="formParent">
             <div class="mb-3 form-field">
-              <label class="form-label">Nro Celular</label>
+              <!--label class="form-label">Código</label-->
               <input type="text"
                 class="form-control"
-                placeholder="Ej: 5493624683356"
-                formControlName="phone"
-                [ngClass]="{ 'is-invalid': isInvalid('phone') }"
+                placeholder="Ingrese código de validación"
+                formControlName="verify"
+                [ngClass]="{ 'is-invalid': isInvalid('verify') }"
                 />
               <div class="invalid-feedback">
                 <ul>
-                  <li *ngIf="formParent.get('phone')?.errors?.['minlength']">Deben ser
-                    {{formParent.get('phone')?.errors?.['minlength'].requiredLength}} números y tiene
-                    {{formParent.get('phone')?.errors?.['minlength'].actualLength}}</li>
-                  <li *ngIf="formParent.get('phone')?.errors?.['maxlength']">Deben ser
-                    {{formParent.get('phone')?.errors?.['maxlength'].requiredLength}} números y tiene
-                    {{formParent.get('phone')?.errors?.['maxlength'].actualLength}}</li>
-                  <li *ngIf="formParent.get('phone')?.errors?.['pattern']">Deben ser sólo números y tiene
-                    {{formParent.get('phone')?.errors?.['pattern'].actualValue}}</li>
+                  <li *ngIf="formParent.get('verify')?.errors?.['minlength']">Deben ser
+                    {{formParent.get('verify')?.errors?.['minlength'].requiredLength}} números y tiene
+                    {{formParent.get('verify')?.errors?.['minlength'].actualLength}}</li>
+                  <li *ngIf="formParent.get('verify')?.errors?.['maxlength']">Deben ser
+                    {{formParent.get('verify')?.errors?.['maxlength'].requiredLength}} números y tiene
+                    {{formParent.get('verify')?.errors?.['maxlength'].actualLength}}</li>
+                  <li *ngIf="formParent.get('verify')?.errors?.['pattern']">Deben ser sólo números y tiene
+                    {{formParent.get('verify')?.errors?.['pattern'].actualValue}}</li>
 
                 </ul>
               </div>
@@ -40,14 +40,13 @@
           <div class="">
             <button type="submit"
               [hidden]="formParent.invalid"
-              class="btn btn-primary btn-lg float-end"
+              class="btn btn-primary btn-lg float-end mb-3"
               (click)="confirmar()">Confirmar e-Mail</button>
           </div>
           <div class="">
             <button type="submit"
-              [hidden]="formParent.invalid"
               class="btn btn-primary btn-lg float-end"
-              (click)="nuevocodigo()">Enviar nuevo Código</button>
+              (click)="nuevocodigo()">Enviar nuevo correo con Código</button>
           </div>
 
         </div>

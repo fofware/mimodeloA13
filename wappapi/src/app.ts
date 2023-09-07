@@ -20,7 +20,7 @@ import whatsapp from './models/whatsapp';
 import contacts from './models/contacts';
 import { WAG_Clients } from './wapplib';
 import { WAGControler } from './controlers/whatsappControlers';
-
+import { corsWhiteList } from './middlewares/whitelistcors';
 
 //import { articuloCtrl } from './controlers/articuloControler';
 //import { productoCtrl } from './controlers/productoControler';
@@ -32,14 +32,17 @@ if(config.public)
 app.use('/media',express.static(path.join(__dirname,'/../mediaReceive')))
 app.use(morgan('common'));
 
+app.use(cors(
+  {
+    origin: '*'
+  }));
 
-app.use(cors());
-
-app.options('*', cors());
+//app.options('*', cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 //const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
+app.use( corsWhiteList )
 app.use(passport.initialize());
 passport.use(passportMiddelware);
 /**
@@ -63,6 +66,7 @@ router.get('/media/:file', (req, res) => {
   res.send(buffer);
 });
 
+//app.use(corsOptionsDelegate)
 app.use(WAGControler);
 app.use(importCtrl.router);
 app.use(router);

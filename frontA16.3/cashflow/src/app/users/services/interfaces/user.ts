@@ -10,12 +10,17 @@ export interface ResponseUser {
   message: string;
   rows?: User[];
 }
+export interface logInUser {
+  email: string;
+  password: string;
+}
 
 export interface User {
   id?: string;
   email?: string;
   emailvalidated?: boolean;
-  nickname: string;
+  nickname?: string;
+  showname: string;
   image: string;
   nombre?: string;
   apellido?: string;
@@ -27,7 +32,7 @@ export interface User {
 }
 
 export const unknowUser: User = {
-  nickname: 'Visitante',
+  showname: 'Visitante',
   image: '/assets/images/defuser.png',
   roles: []
 }

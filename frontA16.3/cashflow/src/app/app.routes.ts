@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { NoPageComponent } from './components/no-page/no-page.component';
 import { userIsLogged, userLogged } from './users/services/users.service';
 import { loggedMatchGuard } from './guards/logged-match.guard';
+//import { RECAPTCHA_V3_SITE_KEY } from 'ng-recaptcha';
+//import { environment } from 'src/environments/environment';
 
 const getContact = (param:number): string => {
   const data = [
@@ -43,23 +45,21 @@ export const appRoutes: Routes = [
 
   {
     path: 'users',
-    canMatch: [() => userLogged().emailvalidated],
+    canMatch: [
+      //() => userLogged().emailvalidated,
+      //() => userIsLogged(),
+    ],
     loadChildren: () => import('./users/users.routes')
                         .then(mod => mod.USERS_ROUTES)
   },
 
-  {
-    path: 'users',
-    //canMatch: [() => inject(AuthService).isLogged],
-    loadComponent: () => import('./users/components/email-validate/email-validate.component')
-                        .then(mod => mod.EmailValidateComponent)
-  },
   {
     path: 'finanzas',
     //canMatch: [() => inject(AuthService).isLogged],
     loadChildren: () => import('./finanzas/finanzas.routes')
                         .then(mod => mod.FINANZAS_ROUTES)
   },
+
   {
     path: 'alquileres',
     canMatch: [

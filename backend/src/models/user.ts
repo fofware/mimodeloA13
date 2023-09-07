@@ -1,23 +1,17 @@
-import { Schema, model, Document, Model, SchemaType } from "mongoose";
+import { Schema, model, Document, Model} from "mongoose";
 import bcrypt from "bcrypt"
 
 export interface IUser extends Document {
+  _id?
   email: string;            // e-Mail del Usuario
   emailvalidated: boolean;
-  interna: boolean;
-  parentAccountId: object;  // es el _id del usuario que generó la cuenta
+  phone: string;
+  isWapp: boolean;
   status: boolean;          // 0 - Disabled, 1 - Enabled
   password: string;
+  lastlogin: Date;
   apellido: string;
   nombre: string;
-  fijo: string;
-  celular: string;
-  whatsapp: boolean;
-  direccion: string;
-  localidad: string;
-  provincia: string;
-  zipcode: string;
-  pais: string;
   group: string;
   roles: [];                /*
                                 Se debe setear automáticamente al crear la cuenta, 
@@ -40,22 +34,15 @@ export interface IUser extends Document {
 const userSchema = new Schema({
   email:{ type: String, unique: true, required: true, lowercase: true, trim: true }
   , emailvalidated: { type: Schema.Types.Boolean, default: false}
-  , interna: {type: Schema.Types.Boolean, default: false }
-  , parentAccountId: {ref: 'user',type: Schema.Types.ObjectId, default: null}
+  , phone: { type: Schema.Types.String, trim: true }
+  , isWapp: { type: Schema.Types.Boolean, default: false }
   , status: { type: Schema.Types.Boolean, default: true }
   , password: { type: Schema.Types.String, required: true }
+  , lastlogin: { type: Schema.Types.Date, }
   , apellido: { type: Schema.Types.String, trim: true }
   , nombre: { type: Schema.Types.String, trim: true }
-  , fijo: { type: Schema.Types.String, trim: true }
-  , celular: { type: Schema.Types.String, trim: true }
-  , whatsapp: { type: Schema.Types.Boolean, default: false}
-  , direccion: { type: Schema.Types.String, trim: true }
-  , localidad: { type: Schema.Types.String, trim: true }
-  , provincia: { type: Schema.Types.String, trim: true }
-  , zipcode: { type: Schema.Types.String, trim: true }
-  , pais: { type: Schema.Types.String, trim: true }
-  , roles: []
   , group: { type: Schema.Types.String, trim: true }
+  , roles: []
 },{
   timestamps: false,
   versionKey: false

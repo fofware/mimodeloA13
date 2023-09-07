@@ -7,7 +7,7 @@ export interface IverifyEmail extends Document {
 
 const verifyEmailSchema = new Schema({
   email: { type: Schema.Types.String, trim: true, index: true, unique: true, require: true, lowercase: true },
-  verify: { type: Schema.Types.Number},
+  verify: { type: Schema.Types.Number, index: true},
 },
 { 
   strict: true,
