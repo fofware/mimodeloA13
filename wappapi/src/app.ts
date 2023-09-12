@@ -42,7 +42,7 @@ app.use(cors(
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 //const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
-app.use( corsWhiteList )
+//app.use( corsWhiteList )
 app.use(passport.initialize());
 passport.use(passportMiddelware);
 /**

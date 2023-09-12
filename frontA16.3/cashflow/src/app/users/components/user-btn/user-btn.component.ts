@@ -48,6 +48,10 @@ export class UserBtnComponent implements AfterViewInit {
       this._router.navigateByUrl(`users`);
     })
   }
+  changePassword(){
+    console.log('Chage password');
+    this._router.navigate(['/users/changepass'])
+  }
 
   logout(){
     this._user.logout();

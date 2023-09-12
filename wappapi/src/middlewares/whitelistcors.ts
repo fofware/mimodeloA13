@@ -17,6 +17,6 @@ export const corsWhiteList = (req:Request, res:Response, next:NextFunction) => {
   if(valid){
     next();
   } else {
-    res.status(403).json({message: 'Unauthorized'});
+    res.status(403).json({message: 'Unauthorized wapi'});
   }
 }

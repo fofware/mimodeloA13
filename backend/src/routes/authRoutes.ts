@@ -16,7 +16,11 @@ router.get('/nicknamecheck/:nickname', auth.nicknamecheck);
 router.post('/pass/rst/code/new', authForGotPass.newcode)
 router.post('/pass/rst/code/verify', authForGotPass.confirmVerifycode)
 router.get('/pass/rst/code/verify', authForGotPass.confirmVerifycode)
-
+router.post('/pass/rst',auth.savePassword)
+router.post('/pass/change',
+              passport.authenticate('jwt', {session:false}),
+              auth.changePassword
+            )
 /*
 router.get('/usermenu',
             //passport.authenticate('jwt', {session:false}),

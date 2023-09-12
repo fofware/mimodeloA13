@@ -50,13 +50,25 @@ const userSchema = new Schema({
 
 userSchema.pre<IUser>('save', async function(next) {
   const user = this;
-  if(!user.isModified('password')) return next();
+  console.log('-------- Pre Save --------');
+  console.log(user);
+  console.log('--------------------------');
+  console.log(user.isModified('name'));
+  console.log(user.isDirectModified('password'));
+  console.log('--------------------------');
+
+  //if(!user.isModified('password')) return next();
+  if(user.isModified('password')){
+    const password = user.password;
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+  }
 
   /*
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(user.password, salt);
   */
-  user.password = await this.encriptPassword(user.password);
+  //user.password = await this.encriptPassword(user.password);
   next();
 });
 

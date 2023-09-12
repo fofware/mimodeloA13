@@ -9,7 +9,7 @@ import { Router } from 'express';
 import app from './app';
 import { Socket } from 'socket.io';
 import fs from 'fs';
-
+import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { WAG_Client, WAG_Clients } from './wapplib';
 
@@ -591,6 +591,7 @@ export const setRoutes = async (client:Client) => {
    */
   const router: Router = Router();
   const num  = client.info.wid.user || client.info.me.user;
+
   router.get(`/${num}/blockedcontactos`, async (req, res) =>{
     const contacts = await client.getBlockedContacts();
     res.status(200).json(contacts);

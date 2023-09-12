@@ -12,14 +12,17 @@ import { randVerifyNumber, verifyCode } from "./verifycode";
 
 export const generateEmailVerifyCode = async (emailTo:string) =>{
   const rand = randVerifyNumber();
+  let retVerify;
   try {
     await verifyemail.findOneAndDelete({email: emailTo});
     const verify = new verifyemail({email: emailTo, verify: rand});
-    await verify.save();
+    retVerify = await verify.save();
   } catch (error) {
     console.log(error)
-  }  
-  return await transporter.sendMail({
+    return false;
+  }
+    
+  const mail =  await transporter.sendMail({
     from: '"mailer Firulais" <firulais.net.ar@gmail.com>',
     to: `${emailTo}`,
     subject: "Verificación de correo",
@@ -30,8 +33,9 @@ export const generateEmailVerifyCode = async (emailTo:string) =>{
     <p>Se envia este e-Mail para verificar que pertenece a quien está tratando de crear una cuenta en nuestro sitio web.</p>
     <p>Si no es Ud. simplemente ignórelo.
     `
-  })
-  
+  });
+  if ( retVerify && mail ) return true;
+  return false;
 }
 
 /*

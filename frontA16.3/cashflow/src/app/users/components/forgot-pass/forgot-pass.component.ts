@@ -11,6 +11,7 @@ import { WhatsApp, WhatsappService } from 'src/app/validators/whatsapp/whatsapp.
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiMsgComponent } from '../modals/api-msg/api-msg.component';
 import { ToastService } from 'src/app/services/toast.service';
+import { logInUser } from '../../services/interfaces/user';
 
 @Component({
   selector: 'app-forgot-pass',
@@ -40,22 +41,21 @@ export class ForgotPassComponent {
   timeOutId:any;
 
   paso = 0;
+  pasos = [
+    'Identificación',
+    'Paso 1',
+    'Generando',
+    'Verificar',
+    'Validadndo',
+    'Cambio de Clave',
+    'Grabando nueva Clave'
+  ]
   hiddeNext = true;
   showNext = false;
 
-  //touched = signal(false);
-  /*
-  hiddenNext = computed(() => {
-    let hidden = false;
-    this.touched();
-    switch (this.paso()) {
-      case 0:
-        hidden = this.formParent.get('email')?.invalid as boolean;
-        break;
-    }
-    return hidden;
-  })
-  */
+  invalid = 0;
+  codecount = 0;
+
   sendto = 'email'
   private fb = inject(FormBuilder);
   formParent = this.fb.group({
@@ -89,9 +89,12 @@ export class ForgotPassComponent {
       }
     ]
   });
+  formReset = this.fb.group({
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    repassword: ['', [Validators.required, eMailValidation.MatchPassword('password')]],
+  });
 
   isInvalid(fieldname:string){
-
     const campo = this.formParent.get(fieldname);
     //console.log(fieldname);
     /*
@@ -108,6 +111,7 @@ export class ForgotPassComponent {
   */
   //  clearTimeout(this.setTimeOutId);
   //  this.setTimeOutId = setTimeout(this.enableNext, 50);
+
     this.enableNext();
     if(campo?.touched){
       //console.log(fieldname,campo?.invalid,campo?.touched,campo?.invalid && campo?.touched);
@@ -117,6 +121,13 @@ export class ForgotPassComponent {
     return false;
   }
 
+  passIsInvalid(fieldname:string){
+    const campo = this.formReset .get(fieldname);
+    if(campo?.touched){
+      return campo?.invalid && campo?.touched;
+    }
+    return false;
+  }
 
   enableNext(){
     switch ( this.paso ) {
@@ -144,7 +155,7 @@ export class ForgotPassComponent {
         //this.hiddeNext = true;
         break;
     }
-    console.log('paso', this.paso, 'hiddeNext',this.hiddeNext)
+    //console.log('paso', this.paso, 'hiddeNext',this.hiddeNext)
   }
 
   generaCodigo(){
@@ -152,7 +163,7 @@ export class ForgotPassComponent {
       this.userService.newResetPassworCode(this.formParent.value)
       .pipe(
         map( (ret:any) => {
-          console.log(ret);
+          console.warn(ret);
           if(ret.codigo) {
             this.siguiente();
           } else {
@@ -165,23 +176,26 @@ export class ForgotPassComponent {
       this.paso = 0;
       console.log(error);
     }
-
-
-    /*
-    this.timeOutId = setTimeout(() => {
-      console.log("generando codigo");
-      //this.paso--;
-      this.siguiente();
-    }, 2500);
-    */
-    //return 'asdf asdf asdf asdf asdf asdf asdf asd'
   }
 
   confirmar(){
     console.log(this.formParent.value);
     this.userService.confirmResetPassworCode(this.formParent.value)
-    .subscribe(res => {
+    .subscribe((res:any) => {
       console.log(res);
+      if(res['codigo']){
+        this.toastr.success('Verificado',{delay: 1000, header:'Código de Verificación'})
+        this.siguiente();
+      } else {
+        this.toastr.warning('Inválido, verifique y vuelva a interntarlo',{header:'Código de Verificación'})
+        if(this.invalid===3){
+          this.invalid = 0;
+          this.paso = 0;
+          this.formParent.reset();
+        } else {
+          this.invalid++;
+        }
+      }
     })
   }
 
@@ -268,9 +282,9 @@ export class ForgotPassComponent {
 	}
 
   nuevocodigo(){
-    console.log('nuevo código')
-    this.userService.newConfirmEmail()
-    .subscribe();
+    console.log('nuevo código');
+    this.paso = 1;
+    this.siguiente();
   }
 
   checkWapp(number:any){
@@ -307,10 +321,13 @@ export class ForgotPassComponent {
         else
           title = `Código enviado a<br> ${this.wapp.formatedNumber}`
         break;
-      case 3:
-        title = 'Verificar Código';
-        break;
-      default:
+        case 3:
+          title = 'Verificar Código';
+          break;
+        case 4:
+          title = 'Cambio de Clave';
+          break;
+        default:
           title = `Titulo ${this.paso}`
         break;
     }
@@ -330,7 +347,18 @@ export class ForgotPassComponent {
     this.sendto = `${this.formParent.value?.sender}`;
     console.log('onSenderClick()', this.sendto);
   }
+  writenewpasswor(){
+    const data:logInUser = {
+      email: <string>this.formParent.value.email,
+      password: <string>this.formReset.value.password
+    }
+    this.userService.savePassword(data).subscribe( (res:any) => {
+      this.userService.processToken(res.token)
+      this.toastr.success('Se cambió la clave exitosamente',{delay: 2000, header:'Nueva Clave'})
+      this.router.navigate(['users'])
+    })
 
+  }
   open( content: any){
     this.modalService.open(content, { centered: true, fullscreen: true, scrollable: true })
   }

@@ -135,11 +135,25 @@ export class UsersService {
   newResetPassworCode(data:any){
     return this.http.post(`${URL}/pass/rst/code/new`,data);
   }
-
+  cambiarClave(data:any){
+    return this.http.post(`${URL}/pass/change`,data);
+    //return this.http
+    //  .post(`${URL}/pass/change`,data)
+    //  .pipe(
+    //    map( async (res:any) => {
+    //      this.processToken(res);
+    //      //this.skt.connect();
+    //      //this._socket.connect();
+    //      return res
+    //    })
+    //  );
+  }
   confirmResetPassworCode(data:any){
     return this.http.post(`${URL}/pass/rst/code/verify`,data);
   }
-
+  savePassword(data:logInUser) {
+    return this.http.post(`${URL}/pass/rst`,data)
+  }
   getVMenuP(menu:string): Promise<iTopMenu[]> {
     return new Promise( ( resolve, reject ) => {
       try {

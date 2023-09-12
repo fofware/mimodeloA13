@@ -34,6 +34,7 @@ const docAdd = (model: Model<any>) => async (req: Request, res: Response, next: 
     const result = await doc.save();
     res.status(201).json(result)
   } catch (err) {
+   /*
     console.log(JSON.parse(JSON.stringify(err)))
     const error = {
       url: req.headers.host+req.headers['x-original-uri'],
@@ -44,7 +45,8 @@ const docAdd = (model: Model<any>) => async (req: Request, res: Response, next: 
       collection: model.modelName,
       ...JSON.parse(JSON.stringify(err))
     }
-    res.status(500).json({ error });
+    */
+    res.status(500).json( errorHandle(req, model, err) )    
   }
 };
 
@@ -87,6 +89,7 @@ const docGetAll = (model: Model<any>, options?:genericOptions) => async (req: Re
     }
     res.status(200).json(ret)
   } catch (err) {
+    /*
     const error = {
       url: req.headers.host+req.headers['x-original-uri'],
       //user: req.user,
@@ -96,7 +99,8 @@ const docGetAll = (model: Model<any>, options?:genericOptions) => async (req: Re
       collection: model.modelName,
       ...JSON.parse(JSON.stringify(err))
     }
-    res.status(500).json({ error });
+    */
+    res.status(500).json( errorHandle(req, model, err) )    
   }
 };
 
@@ -124,6 +128,7 @@ const docGet = (model: Model<any>, options?:genericOptions) => async (req: Reque
     }
     res.status(404).json({error})
   } catch (err) {
+    /*
     const error = {
       url: req.headers.host+req.headers['x-original-uri'],
       //user: req.user,
@@ -133,7 +138,8 @@ const docGet = (model: Model<any>, options?:genericOptions) => async (req: Reque
       collection: model.modelName,
       ...JSON.parse(JSON.stringify(err))
     }
-    res.status(500).json({ error })    
+    */
+    res.status(500).json( errorHandle(req, model, err) )    
   }
 }
 
@@ -151,6 +157,7 @@ const docUpdate = (model: Model<any>, options?:genericOptions) => async (req: Re
       .populate( opt.populate )
     res.status(200).json(rows)
   } catch (err) {
+    /*
     console.log(JSON.parse(JSON.stringify(err)))
     const error = {
       url: req.headers.host+req.headers['x-original-uri'],
@@ -161,7 +168,8 @@ const docUpdate = (model: Model<any>, options?:genericOptions) => async (req: Re
       collection: model.modelName,
       ...JSON.parse(JSON.stringify(err))
     }
-    res.status(500).json({ error })    
+    */
+    res.status(500).json( errorHandle(req, model, err) )    
   }
 }
 
@@ -179,6 +187,7 @@ const docDelete = (model: Model<any>, options?:genericOptions) => async (req: Re
       .populate( opt.populate )
     res.status(200).json(rows)
   } catch (err) {
+    /*
     console.log(JSON.parse(JSON.stringify(err)))
     const error = {
       url: req.headers.host+req.headers['x-original-uri'],
@@ -189,8 +198,32 @@ const docDelete = (model: Model<any>, options?:genericOptions) => async (req: Re
       collection: model.modelName,
       ...JSON.parse(JSON.stringify(err))
     }
-    res.status(500).json({ error })    
+    */
+    console.log(JSON.parse(JSON.stringify(err)))
+    const error = {
+      url: req.headers.host+req.headers['x-original-uri'],
+      //user: req.user,
+      //otro: req.ip,
+      //headers: req.headers,
+      filter: Object.assign(req.query,req.params,req.body),
+      collection: model.modelName,
+      ...JSON.parse(JSON.stringify(err))
+    }
+    res.status(500).json( errorHandle(req, model, err) )    
   }
+}
+export const errorHandle = (req:Request, model: Model<any>, err:any) => {
+  console.log(JSON.parse(JSON.stringify(err)))
+  const error = {
+    url: req.headers.host+req.headers['x-original-uri'],
+    //user: req.user,
+    //otro: req.ip,
+    //headers: req.headers,
+    filter: Object.assign(req.query,req.params,req.body),
+    collection: model.modelName,
+    ...JSON.parse(JSON.stringify(err))
+  }
+  return { error }    
 }
 
 export default { 
@@ -198,5 +231,5 @@ export default {
   docGet, 
   docGetAll, 
   docUpdate, 
-  docDelete 
+  docDelete,
 };

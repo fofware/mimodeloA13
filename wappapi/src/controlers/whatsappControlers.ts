@@ -33,7 +33,7 @@ WAGControler.get('/info/:contact',
 
   contact = contact.length === 10 ? `549${contact}` : contact;
   console.log('busca', contact);
-const srvs = [];
+  const srvs = [];
   const clientes = [];
   /*
   for (const key in WAG_Clients) {
@@ -57,6 +57,7 @@ const srvs = [];
     if (Object.prototype.hasOwnProperty.call(WAG_Clients, key)) {
       const element = WAG_Clients[key];
       const {client} = WAG_Clients[key];
+      console.log('WAG_Clients',key)
       console.log(key, await client.getState());
 
       try {
@@ -119,6 +120,32 @@ WAGControler.get('/info/:contact/extra',
       }
     }
   }
+})
+
+WAGControler.post(`/sendto`, async (req:Request, res:Response) => {
+  let { bot, to, msg } = req.body;
+/*
+  to = to.replace('+','');
+  if(to.length < 10){
+    res.status(200).json({isWhatsapp: false});
+    return;
+  }
+
+  to = to.length === 10 ? `549${to}` : to;
+*/
+  if (!Object.prototype.hasOwnProperty.call(WAG_Clients, bot)) {
+    return res.status(200).json({message: `${bot} no está registrado para enviar mensajes`, title: `Bot Inválido`})
+  }
+  const {client} = WAG_Clients[`${bot}`];
+  const state = await client.getState();
+  if(state!== 'CONNECTED') {
+    return res.status(200).json({message:`${bot} - ${state}`})
+  }
+  const {_serialized } = await client.getNumberId(to)
+  let info = client.info;
+
+  const ret = await client.sendMessage(_serialized,msg);
+  res.status(200).json(ret);
 })
 
 WAGControler.get(`/messages/:num`, async (req, res) =>{

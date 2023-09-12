@@ -24,7 +24,8 @@
     "qr-image": "^3.2.0",
     "socket.io": "^4.7.0",
     "uuid": "^9.0.0",
-    "whatsapp-web.js": "^1.22.1"
+    "whatsapp-web.js": "^1.22.1",
+    "wwebjs-mongo": "^1.1.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",

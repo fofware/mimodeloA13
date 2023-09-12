@@ -57,6 +57,8 @@
       <button type="button" ngbDropdownItem (click)="$event.stopPropagation();myDrop.close;profile()">Profile</button>
     </ng-container>
     <div class="dropdown-divider"></div>
+    <button type="button" (click)="$event.stopPropagation();myDrop.close;changePassword()" ngbDropdownItem>Cambiar Clave</button>
+    <div class="dropdown-divider"></div>
     <button type="button" (click)="$event.stopPropagation();myDrop.close;logout()" ngbDropdownItem>Logout</button>
   </ng-template>
   <ng-template #viewValidate>

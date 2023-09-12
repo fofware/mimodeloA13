@@ -26,6 +26,15 @@ export const USERS_ROUTES: Routes = [
       .then(mod => mod.SignUpComponent)
   },
   {
+    path: 'changepass',
+    canActivate: [
+      () => userIsLogged()
+    ],
+    loadComponent: () =>
+      import('./components/change-password/change-password.component' )
+      .then( mod => mod.ChangePasswordComponent)
+  },
+  {
     path: 'forgot',
     canActivate: [
       () => !userIsLogged()
