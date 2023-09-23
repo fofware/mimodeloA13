@@ -5,6 +5,7 @@ import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router
 import { NgbdToastComponent } from './components/ngbd-toast/ngbd-toast.component';
 import { ToastContainerComponent } from './components/toast-container/toast-container.component';
 import { filter } from 'rxjs';
+import { UsersService, userTopMenu } from './users/services/users.service';
 
 @Component({
   selector: 'app-root',
@@ -23,11 +24,15 @@ import { filter } from 'rxjs';
 export class AppComponent implements OnInit{
   title = 'cashflow';
   route = inject(Router);
+  userService = inject(UsersService);
+
   breadcrumb:any = [];
 
   ngOnInit(): void {
-    this.makeBreadcrumb(this.route.url)
-    console.log(this.route.events)
+    this.userService.decodeToken(this.userService.getToken());
+
+    this.makeBreadcrumb(this.route.url);
+    console.log(this.route.events);
 
     this.route.events
       .pipe(filter(event => event instanceof NavigationEnd))

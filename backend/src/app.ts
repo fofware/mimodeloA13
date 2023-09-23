@@ -14,7 +14,7 @@ import { WebHooksCtrl } from './mp/controlers/webhooksControler';
 import { SucursalesCtrl } from './mp/controlers/sucursalesControler';
 import { devCtrl } from './mp/controlers/devControlers';
 import { prodNameCtrl } from './controlers/productonameControler';
-import authRoutes from './routes/authRoutes';
+import authRoutes from './routes/auth.routes';
 //import { makeCtrl } from './controlers/makeDataControler';
 //import { importCtrl } from './controlers/importControler';
 import { presentacionCtrl } from './controlers/presentacionesControlers';
@@ -46,6 +46,8 @@ import preciosRouter from './routes/precios.routes'
 import presentacionesRouter from './routes/presentaciones.routes'
 import usersRouter from './routes/user.routes';
 import verifyemailRouter from './routes/verifyemail.routes';
+import menuRouter from './routes/menues.routes';
+
 import { corsWhiteList } from './middlewares/whitelistcors';
 
 //import { articuloCtrl } from './controlers/articuloControler';
@@ -110,5 +112,6 @@ app.use('/v2/presentaciones', presentacionesRouter)
 app.use('/v2/productname',productNameRouter)
 app.use('/v2/users',usersRouter);
 app.use('/v2/verifyemail',verifyemailRouter);
+app.use('/v2/menu',menuRouter);
 
 export default app;

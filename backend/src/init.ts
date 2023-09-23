@@ -1,4 +1,4 @@
-import menu from "./models/menu";
+import menu from "./models/menues";
 import user from "./models/user";
 import config from './config';
 

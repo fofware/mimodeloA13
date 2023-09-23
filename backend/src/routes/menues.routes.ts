@@ -1,6 +1,6 @@
 import { Router } from "express";
 import controler from '../controlers/genericControlers'
-import modelo from "../models/articulos";
+import modelo from "../models/menues";
 import passport from "passport";
 
 const router = Router()
@@ -12,21 +12,6 @@ router.post('',
             passport.authenticate('jwt', {session:false}),
             controler.docAdd
           );
-router.get('/list',
-          controler.docGetAll(modelo,
-            {
-              populate:[
-                'fabricante',
-                'marca',
-                'modelo',
-                'especie',
-                'talla',
-                'edad',
-                'rubro',
-                'linea',
-              ]
-            }
-          ));
 router.get('/:_id', 
             passport.authenticate('jwt', {session:false}),
             controler.docGet(modelo,
@@ -48,4 +33,5 @@ router.delete('/:_id',
                 searchBy:['_id']
               })
           );
+
 export = router; 

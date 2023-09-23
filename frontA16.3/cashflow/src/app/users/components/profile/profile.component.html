@@ -1,0 +1,112 @@
+<ng-template #content let-modal>
+	<div class="modal-header  pb-1">
+		<h4 class=" flex-grow-1 modal-title text-center">{{wapp.user?.name || wapp.user?.shortName || wapp.user?.pushname || wapp.formatedNumber }}</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body text-center pt-2">
+    <!--div class="fs-5">{{wapp.formatedNumber}}</div-->
+    <div style="width: 100%;
+      height: 100%;
+      background-position: center;
+      background-image: url('{{wapp.picUrl}}');
+      background-size: contain;
+      background-repeat: no-repeat;">
+    </div>
+  </div>
+	<div class="modal-footer">
+    <div>{{wapp.about}}</div>
+		<!--button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button-->
+	</div>
+</ng-template>
+<div class="container">
+    <div class="d-flex justify-content-center align-items-center">
+      <div class="col-6 mt-5">
+        <div class="card">
+          <h3 class="card-header">Perfil de usuario</h3>
+          <div class="card-body">
+            <form class="need-validation" [formGroup]="formParent">
+              <div class="mb-3 form-field">
+                <label class="form-label">Nombres</label>
+                <input type="text"
+                  class="form-control"
+                  placeholder="Ej: Juan"
+                  formControlName="nombre"
+                  [ngClass]="{'is-invalid': isInvalid('nombre')}" />
+                <div class="invalid-feedback">
+                <!--
+                para debug
+                {{formParent.get('name')?.errors | json}}
+                -->
+                  <ul>
+                    <li *ngIf="formParent.get('nombre')?.errors?.['required']">El campo no puede quedar vacio</li>
+                    <li *ngIf="formParent.get('nombre')?.errors?.['minlength']">La longitud mínima es de
+                      {{formParent.get('nombre')?.errors?.['minlength'].requiredLength}} caracteres solo tiene
+                      {{formParent.get('nombre')?.errors?.['minlength'].actualLength}}</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="mb-3 form-field">
+                <label class="form-label">Apellido</label>
+                <input type="text" class="form-control" placeholder="Ej: Perez" formControlName="apellido"
+                  [ngClass]="{'is-invalid': isInvalid('apellido')}" />
+                <div class="invalid-feedback">
+                <!--
+                para debug
+                {{formParent.get('apellido')?.errors | json}}
+                -->
+                  <ul>
+                    <li *ngIf="formParent.get('apellido')?.errors?.['required']">El campo no puede quedar vacio</li>
+                    <li *ngIf="formParent.get('apellido')?.errors?.['minlength']">La longitud mínima es de
+                      {{formParent.get('apellido')?.errors?.['minlength'].requiredLength}} caracteres solo tiene
+                      {{formParent.get('apellido')?.errors?.['minlength'].actualLength}}</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="mb-3 form-field">
+                <label class="form-label">Nro Celular</label>
+                <ng-container *ngIf="wapp.isWhatsapp">
+                  <i class="fa-brands fa-whatsapp fa-1x mx-2"></i>
+                  <img class="rounded-circle"
+                    src="{{wapp.picUrl}}"
+                    style="width: 40px;"
+                    alt="" (click)="open(content)">
+                  <span class="mx-1">{{wapp.user?.number}}</span>
+                </ng-container>
+                <input type="text"
+                  class="form-control"
+                  placeholder="Ej: 5493624683356"
+                  formControlName="phone"
+                  (blur)="wapp.isWhatsapp=false;checkWapp(formParent.get('phone'))"
+                  [ngClass]="{ 'is-invalid': isInvalid('phone') }"
+                  />
+                <div class="invalid-feedback">
+                  <!--
+                  para debug
+                  {{formParent.get('phone')?.errors | json}}
+                  {{formParent.get('phone')?.errors | json}}
+                  -->
+                  <ul>
+                    <li *ngIf="formParent.get('phone')?.errors?.['minlength']">Deben ser
+                      {{formParent.get('phone')?.errors?.['minlength'].requiredLength}} números y tiene
+                      {{formParent.get('phone')?.errors?.['minlength'].actualLength}}</li>
+                    <li *ngIf="formParent.get('phone')?.errors?.['maxlength']">Deben ser
+                      {{formParent.get('phone')?.errors?.['maxlength'].requiredLength}} números y tiene
+                      {{formParent.get('phone')?.errors?.['maxlength'].actualLength}}</li>
+                    <li *ngIf="formParent.get('phone')?.errors?.['pattern']">Deben ser sólo números y tiene
+                      {{formParent.get('phone')?.errors?.['pattern'].actualValue}}</li>
+
+                  </ul>
+                </div>
+              </div>
+            </form>
+            <div class="">
+              <button type="submit"
+                [hidden]="formParent.invalid"
+                class="btn btn-primary btn-lg float-end"
+                (click)="enviar()">Registrarse</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -22,12 +22,14 @@ export class UsersComponent implements OnInit {
   isEncaPage = false;
 
   ngOnInit(): void {
-    this.setMenu()
+  //  this.setMenu()
   }
 
   async setMenu(){
+    /*
     if(userLogged().emailvalidated)
-    userVMenu.set(await this._user.getVMenuP('usersHome') );
+      userVMenu.set(await this._user.getVMenuP('usersHome') );
+    */
     console.log(userVMenu());
   }
 }

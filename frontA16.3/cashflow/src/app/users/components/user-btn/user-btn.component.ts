@@ -57,8 +57,12 @@ export class UserBtnComponent implements AfterViewInit {
     this._user.logout();
   }
 
+  cuenta(){
+    this._router.navigate(['/users'])
+  }
+
   profile(){
-    //this._router.navigate(['/user/profile']);
+    this._router.navigate(['/users/profile']);
   }
 
   validateEmail(){

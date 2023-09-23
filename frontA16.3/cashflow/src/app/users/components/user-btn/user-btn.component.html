@@ -54,9 +54,10 @@
     <ng-container *ngIf="!_loggedUser().emailvalidated then  viewValidate">
       <!--div ngbDropdownMenu aria-labelledby="authdropdownForm" class="dropdown-menu dropdown-menu-md-start dropdown-menu-lg-end logform"-->
       <button type="button" ngbDropdownItem (click)="$event.stopPropagation();myDrop.close;profile()">Profile</button>
-      <button type="button" ngbDropdownItem (click)="$event.stopPropagation();myDrop.close;profile()">Profile</button>
     </ng-container>
     <div class="dropdown-divider"></div>
+    <button type="button" (click)="$event.stopPropagation();myDrop.close;cuenta()" ngbDropdownItem>Cuenta</button>
+    <button type="button" (click)="$event.stopPropagation();myDrop.close;profile()" ngbDropdownItem>Perfil</button>
     <button type="button" (click)="$event.stopPropagation();myDrop.close;changePassword()" ngbDropdownItem>Cambiar Clave</button>
     <div class="dropdown-divider"></div>
     <button type="button" (click)="$event.stopPropagation();myDrop.close;logout()" ngbDropdownItem>Logout</button>

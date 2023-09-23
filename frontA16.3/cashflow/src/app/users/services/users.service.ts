@@ -31,10 +31,10 @@ export class UsersService {
   toast = inject(ToastService);
 
   constructor() {
-    this.getToken();
+    //this.getToken();
   }
 
-  decodeToken(token:any = null){
+  async decodeToken(token:any = null){
     if (token && token !== null ) {
       const jwtToken = JSON.parse(decodeURIComponent(atob(token.split('.')[1]).split('').map(function(c) {
           return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
@@ -43,12 +43,16 @@ export class UsersService {
       if (jwtToken.exp >= d){
         userLogged.set(jwtToken);
         userIsLogged.set(true);
+        userTopMenu.set(await this.getVMenuP('topMenu'));
+        userVMenu.set(await this.getVMenuP('usersHome'));
         return jwtToken;
       }
       localStorage.removeItem('token');
     }
     userLogged.set(unknowUser);
     userIsLogged.set(false);
+    userTopMenu.set(await this.getVMenuP('topMenu'));
+    userVMenu.set([]);
     return unknowUser;
   }
 
@@ -199,7 +203,6 @@ export class UsersService {
   saveToken(token:string){
     localStorage.setItem('token',token);
   }
-
   getToken(): string | null{
     const token = localStorage.getItem('token');
     return token;

@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import passport from "passport";
 import { makeFilter } from "../common/utils";
-import menu from "../models/menu";
+import menu from "../models/menues";
 
 class MenuControlers {
 

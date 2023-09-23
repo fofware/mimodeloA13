@@ -8,8 +8,8 @@ import User, { IUser } from "../models/user";
 import { ExtractJwt } from "passport-jwt";
 import jwt from 'jsonwebtoken';
 import config from '../config';
-import  RefreshToken  from '../models/refreshToken'
-import { requestPromise } from "../common/httpClient-promise";
+//import  RefreshToken  from '../models/refreshToken'
+//import { requestPromise } from "../common/httpClient-promise";
 import { options } from "../routes/productoname.routes";
 import { generateEmailVerifyCode } from "./authControler/email";
 import verifyemail from "../models/verifyemail";

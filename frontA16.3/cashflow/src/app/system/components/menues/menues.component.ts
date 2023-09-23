@@ -17,7 +17,7 @@ export class MenuesComponent {
   _menu = inject(MenuService);
 
   ngOnInit(): void {
-    this.setMenu()
+    //this.setMenu()
   }
 
   async setMenu(){

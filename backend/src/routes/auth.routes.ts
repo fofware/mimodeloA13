@@ -4,8 +4,6 @@ import * as authMenu from '../controlers/authControler/menues';
 import * as authForGotPass from '../controlers/authControler/resetpassword';
 import * as authEmail from '../controlers/authControler/email'
 import passport from "passport";
-import { verify } from "jsonwebtoken";
-import { verifyCode } from "../controlers/authControler/verifycode";
 
 const router = Router();
 

@@ -53,8 +53,8 @@ export class TopMenuComponent implements OnInit {
 
   ngOnInit(): void {
     this.onResize();
-    this._user.decodeToken(this._user.getToken());
-    this._user.getvMenu('topMenu').subscribe((res:any) => userTopMenu.set(res));
+    //this._user.decodeToken(this._user.getToken());
+    //this._user.getvMenu('topMenu').subscribe((res:any) => userTopMenu.set(res));
   }
 
   get userTopMenu(){

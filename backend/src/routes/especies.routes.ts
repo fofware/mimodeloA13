@@ -10,7 +10,7 @@ router.get('',
           );
 router.post('', 
             passport.authenticate('jwt', {session:false}),
-            controler.docAdd
+            controler.docAdd(modelo)
           );
 router.get('/:_id', 
             passport.authenticate('jwt', {session:false}),
