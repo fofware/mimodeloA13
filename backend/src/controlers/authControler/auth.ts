@@ -4,16 +4,16 @@
  */
 
 import { Request, Response, Router } from "express";
-import User, { IUser } from "../models/user";
+import User, { IUser } from "../../models/user";
 import { ExtractJwt } from "passport-jwt";
 import jwt from 'jsonwebtoken';
-import config from '../config';
+import config from '../../config';
 //import  RefreshToken  from '../models/refreshToken'
 //import { requestPromise } from "../common/httpClient-promise";
-import { options } from "../routes/productoname.routes";
-import { generateEmailVerifyCode } from "./authControler/email";
-import verifyemail from "../models/verifyemail";
-import { errorHandle } from "./genericControlers";
+import { options } from "../../routes/productoname.routes";
+import { generateEmailVerifyCode } from "./email";
+import verifyemail from "../../models/verifyemail";
+import { errorHandle } from "../genericControlers";
 
 export const createToken = (user: IUser | any ) => {
   //const menu:iMenuLink[] = await setMenu(user);
@@ -236,24 +236,3 @@ export const changePassword = async (req: Request, res: Response): Promise<Respo
     return res.status(500).json({message: 'Cambiando Password', title: 'Api Error'})
   }
 }
-/**
- * Controlar Passwords
- */
-/*
-export const resetPasswordGenerateCode = async (req: Request, res: Response): Promise<Response> => {
-  try {
-    console.log(`resetPasswordGenerateCode:`,req.body);
-
-  } catch (error) {
-    return res.status(500).json({title: 'Api Error', message:'resetPassworGenerateCode', error })
-  }
-}
-
-export const resetPasswordValidateCode = async (req: Request, res: Response): Promise<Response> => {
-  try {
-        
-  } catch (error) {
-    return res.status(500).json({title: 'Api Error', message:'resetPassworValidateCode', error })
-  }
-}
-*/

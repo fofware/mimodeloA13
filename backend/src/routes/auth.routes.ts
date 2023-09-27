@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as auth from "../controlers/authControler";
+import * as auth from "../controlers/authControler/auth";
 import * as authMenu from '../controlers/authControler/menues';
 import * as authForGotPass from '../controlers/authControler/resetpassword';
 import * as authEmail from '../controlers/authControler/email'

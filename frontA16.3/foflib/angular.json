@@ -1,0 +1,40 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "fof-userbtn": {
+      "projectType": "library",
+      "root": "projects/fof-userbtn",
+      "sourceRoot": "projects/fof-userbtn/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/fof-userbtn/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/fof-userbtn/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/fof-userbtn/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/fof-userbtn/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

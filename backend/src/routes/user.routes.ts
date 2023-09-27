@@ -24,6 +24,7 @@
 //
 
 //export default router;
+
 import { Router } from "express";
 import controler from '../controlers/genericControlers'
 import modelo from "../models/user";

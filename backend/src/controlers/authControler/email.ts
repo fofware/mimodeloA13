@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 import verifyemail from "../../models/verifyemail";
 import { transporter } from "../../common/mailer";
 import config from '../../config';
-import { createToken } from "../authControler";
+import { createToken } from "./auth";
 import User, { IUser } from "../../models/user";
 import { randVerifyNumber, verifyCode } from "./verifycode";
 

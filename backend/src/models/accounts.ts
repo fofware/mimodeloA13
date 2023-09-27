@@ -9,7 +9,7 @@ const accountSchema = new Schema({
   name: { type: Schema.Types.String },
   description: { type: Schema.Types.String },
   owner: { type: Schema.Types.ObjectId, ref: "User"},
-  appusers: [{ 
+  accusers: [{ 
     type: Schema.Types.ObjectId, 
     ref: "User"
   }]
